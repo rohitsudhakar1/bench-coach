@@ -93,7 +93,7 @@ function render() {
   else if (!busy) showNotice('');
   const key = JSON.stringify([state.run, state.recording, state.note]);
   if (key !== noteKey) { noteKey = key; renderNote(); }
-  controls(); transient();
+  controls(); transient(); updateNvidia();
 }
 function transient() {
   if (!state) return;
@@ -195,3 +195,71 @@ setInterval(transient,500);
 // A periodic snapshot also catches capture results written after the run event.
 setInterval(() => { if (connected) refresh(); },5000);
 tab('protocol'); socket(); pollParts(); cameraConfig();
+
+let nvidiaRun = null, nvidiaPending = false, nvidiaKey = '';
+function updateNvidia() {
+  const run = state?.run && !state.recording ? state.run : null;
+  if (run !== nvidiaRun) {
+    nvidiaRun = run; nvidiaKey = '';
+    $('nvidia-tasks').replaceChildren(); $('nvidia-comparison').replaceChildren();
+    $('nvidia-status').textContent = run ? 'Checking task export…' : 'Stop a run to export training tasks.';
+    $('nvidia-synth-status').textContent = ''; $('nvidia-synth').disabled = true;
+    $('nvidia-export').hidden = true;
+  }
+  pollNvidia();
+}
+function nvidiaRender(data) {
+  const key = JSON.stringify(data);
+  if (key === nvidiaKey) return;
+  nvidiaKey = key;
+  const exp = data.export, synth = data.synth;
+  $('nvidia-status').textContent = exp.status === 'ready'
+    ? `Rules solver: ${exp.score.mean ?? '—'} / 1 across ${exp.score.tasks} tasks.`
+    : exp.status === 'error' ? exp.message : exp.status === 'idle' ? 'No export yet.' : `Task export ${exp.status}…`;
+  $('nvidia-export').hidden = !['idle','error'].includes(exp.status);
+  $('nvidia-tasks').replaceChildren();
+  for (const task of exp.tasks || []) {
+    const p = document.createElement('p'), checker = document.createElement('small'), link = document.createElement('a');
+    checker.textContent = `Checker: ${task.kind} — ${task.checker}`;
+    link.textContent = 'Download task ZIP';
+    link.href = `/nvidia/${encodeURIComponent(nvidiaRun)}/tasks/${encodeURIComponent(task.id)}.zip`;
+    p.append(document.createTextNode(task.question), checker, link); $('nvidia-tasks').append(p);
+  }
+  $('nvidia-synth').disabled = ['queued','running','ready'].includes(synth.status);
+  $('nvidia-synth-status').textContent = synth.status === 'ready'
+    ? `${synth.manifest.synthetic_runs} synthetic runs. ${synth.manifest.engine_detail}. ${synth.manifest.notes}.`
+    : synth.status === 'error' ? synth.message : synth.status === 'idle' ? '' : `Synthetic runs ${synth.status}…`;
+  $('nvidia-comparison').replaceChildren();
+  for (const [name, recorded] of Object.entries(synth.recorded || {})) {
+    const title = document.createElement('p'); title.textContent = `${name}: skip rates (recorded uses prior ${synth.manifest.prior}; ${recorded.runs} recorded run).`;
+    const table = document.createElement('table'), head = document.createElement('tr');
+    for (const label of ['Step','Recorded','Synthetic']) { const th = document.createElement('th'); th.scope = 'col'; th.textContent = label; head.append(th); }
+    table.append(head);
+    recorded.skip_rate.forEach((value, index) => {
+      const row = document.createElement('tr');
+      for (const text of [index + 1, `${(value*100).toFixed(1)}%`, `${((synth.synthetic[name]?.skip_rate[index] ?? 0)*100).toFixed(1)}%`]) {
+        const cell = document.createElement('td'); cell.textContent = text; row.append(cell);
+      }
+      table.append(row);
+    });
+    $('nvidia-comparison').append(title, table);
+  }
+}
+async function pollNvidia() {
+  if (!nvidiaRun || nvidiaPending) return;
+  const run = nvidiaRun; nvidiaPending = true;
+  try { const data = await api(`/nvidia/${encodeURIComponent(run)}`); if (run === nvidiaRun) nvidiaRender(data); }
+  catch (error) { if (run === nvidiaRun) $('nvidia-status').textContent = error.message; }
+  finally { nvidiaPending = false; }
+}
+async function startNvidia(kind) {
+  const run = nvidiaRun;
+  if (!run) return;
+  $(kind === 'synth' ? 'nvidia-synth' : 'nvidia-export').disabled = true;
+  try { const data = await api(`/nvidia/${encodeURIComponent(run)}/${kind}`, {method:'POST'}); if (run === nvidiaRun) nvidiaRender(data); }
+  catch (error) { if (run === nvidiaRun) $('nvidia-' + (kind === 'synth' ? 'synth-status' : 'status')).textContent = error.message; }
+  finally { if (kind === 'export') $('nvidia-export').disabled = false; nvidiaKey = ''; pollNvidia(); }
+}
+$('nvidia-export').onclick = () => startNvidia('export');
+$('nvidia-synth').onclick = () => startNvidia('synth');
+setInterval(pollNvidia, 1500);

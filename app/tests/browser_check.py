@@ -50,6 +50,10 @@ def main():
                 elif path == '/run/stop':
                     state.update(recording=False,warnings=[],question=None,angle=None,note={'run':'demo','url':'http://127.0.0.1:8885/note/demo'})
                     value = {'run':'demo','capture':{'ok':True}}
+                elif path == '/nvidia/demo':
+                    value = {'export': {'status':'ready', 'score':{'mean':0.8,'tasks':5}, 'tasks':[{'id':'demo-skipped','kind':'skipped_step','question':'Which steps were skipped?','checker':'Exact set of step numbers'}]}, 'synth': {'status':'idle'}}
+                elif path == '/nvidia/demo/synth':
+                    value = {'export': {'status':'ready', 'score':{'mean':0.8,'tasks':5}, 'tasks':[]}, 'synth': {'status':'ready','manifest':{'synthetic_runs':20,'engine_detail':'local seeded generator; Data Designer was not used','notes':'fixed template','prior':1},'recorded':{'Demo':{'runs':1,'skip_rate':[0.2,0.8]}},'synthetic':{'Demo':{'skip_rate':[0.25,0.75]}}}}
                 elif path.startswith('/lab-note/'):
                     request.fulfill(content_type='text/html',body=note_html); return
                 else:
@@ -78,6 +82,12 @@ def main():
             assert not page.locator('#warning').is_visible()
             assert page.locator('#note-tab').get_attribute('aria-selected') == 'true'
             assert page.locator('#pdf').is_visible() and page.locator('#zip').is_visible()
+            page.get_by_text('Rules solver: 0.8 / 1 across 5 tasks.').wait_for()
+            assert page.get_by_role('link',name='Download task ZIP').get_attribute('href') == '/nvidia/demo/tasks/demo-skipped.zip'
+            page.get_by_role('button',name='Make synthetic runs').click()
+            page.get_by_text('25.0%',exact=True).wait_for()
+            assert '20 synthetic runs' in page.locator('#nvidia-synth-status').inner_text()
+            assert page.evaluate('document.documentElement.scrollHeight <= innerHeight')
             frame = page.frames[1]
             frame.wait_for_selector('video')
             frame.evaluate('''() => document.querySelectorAll('video').forEach(v => { Object.defineProperty(v,'readyState',{value:1}); Object.defineProperty(v,'duration',{value:30}); Object.defineProperty(v,'error',{value:null}); Object.defineProperty(v,'currentTime',{value:0,writable:true}); })''')
