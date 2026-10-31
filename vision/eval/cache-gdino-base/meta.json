@@ -1,0 +1,46 @@
+{
+ "detector": "gdino-base",
+ "min_score": 0.15,
+ "files": {
+  "CP-Left-Front-12-27@0": {
+   "frames": 38,
+   "main_ms": 274.5,
+   "containers_ms": 273.1
+  },
+  "CP-Right-Front-12-27@0": {
+   "frames": 38,
+   "main_ms": 259.5,
+   "containers_ms": 255.4
+  },
+  "CP-Left-Front-249-269@0": {
+   "frames": 50,
+   "main_ms": 232.2,
+   "containers_ms": 223.4
+  },
+  "CP-Right-Front-249-269@0": {
+   "frames": 50,
+   "main_ms": 246.4,
+   "containers_ms": 242.2
+  },
+  "CP-Left-Front-414-445@0": {
+   "frames": 78,
+   "main_ms": 191.3,
+   "containers_ms": 186.4
+  },
+  "CP-Right-Front-414-445@0": {
+   "frames": 78,
+   "main_ms": 269.7,
+   "containers_ms": 266.3
+  },
+  "cas9_hood_033@0": {
+   "frames": 150,
+   "main_ms": 264.5,
+   "containers_ms": 235.4
+  },
+  "pcr_105@0": {
+   "frames": 150,
+   "main_ms": 233.9,
+   "containers_ms": 242.8
+  }
+ }
+}

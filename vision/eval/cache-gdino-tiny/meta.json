@@ -1,0 +1,46 @@
+{
+ "detector": "gdino-tiny",
+ "min_score": 0.25,
+ "files": {
+  "CP-Left-Front-12-27@0": {
+   "frames": 38,
+   "main_ms": 212.1,
+   "containers_ms": 197.6
+  },
+  "CP-Right-Front-12-27@0": {
+   "frames": 38,
+   "main_ms": 207.4,
+   "containers_ms": 202.6
+  },
+  "CP-Left-Front-249-269@0": {
+   "frames": 50,
+   "main_ms": 218.5,
+   "containers_ms": 204.5
+  },
+  "CP-Right-Front-249-269@0": {
+   "frames": 50,
+   "main_ms": 213.4,
+   "containers_ms": 207.0
+  },
+  "CP-Left-Front-414-445@0": {
+   "frames": 78,
+   "main_ms": 204.2,
+   "containers_ms": 196.2
+  },
+  "CP-Right-Front-414-445@0": {
+   "frames": 78,
+   "main_ms": 211.4,
+   "containers_ms": 207.5
+  },
+  "cas9_hood_033@0": {
+   "frames": 150,
+   "main_ms": 186.9,
+   "containers_ms": 181.1
+  },
+  "pcr_105@0": {
+   "frames": 150,
+   "main_ms": 186.4,
+   "containers_ms": 190.6
+  }
+ }
+}

@@ -59,6 +59,8 @@ def speed(name: str) -> dict | None:
         return None
     files = json.loads(meta.read_text())["files"].values()
     n = sum(f["frames"] for f in files)
+    if not n:
+        return None
     return {"frames": n, "main_ms": round(sum(f["main_ms"] * f["frames"] for f in files) / n, 1),
             "containers_ms": round(sum(f["containers_ms"] * f["frames"] for f in files) / n, 1)}
 
