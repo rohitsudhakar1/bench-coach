@@ -1,5 +1,6 @@
 (() => {
   'use strict';
+  const benchPrefix = (location.pathname || '').match(/^\/benches\/[^/]+/)?.[0] || '';
   const el = id => document.getElementById(id);
   let state = null, socket = null, connected = false, synced = false;
   let refreshing = null, dirty = false, sending = false, pending = null;
@@ -37,7 +38,7 @@
         dirty = false;
         const currentSocket = socket;
         try {
-          const response = await fetch('/state', {cache: 'no-store', signal: AbortSignal.timeout(8000)});
+          const response = await fetch(benchPrefix + '/state', {cache: 'no-store', signal: AbortSignal.timeout(8000)});
           if (!response.ok) throw new Error('state');
           const next = await response.json();
           if (socket !== currentSocket || !connected) continue;
@@ -65,7 +66,7 @@
   }
 
   function connect() {
-    socket = new WebSocket(`${location.protocol === 'https:' ? 'wss:' : 'ws:'}//${location.host}/ws`);
+    socket = new WebSocket(`${location.protocol === 'https:' ? 'wss:' : 'ws:'}//${location.host}${benchPrefix}/ws`);
     socket.onopen = () => { connected = true; synced = false; refresh(); };
     socket.onmessage = () => refresh();
     socket.onerror = () => socket.close();
@@ -93,7 +94,7 @@
     pending = pressed;
     el('feedback').textContent = 'Sending confirmation…';
     try {
-      const response = await fetch('/events', {
+      const response = await fetch(benchPrefix + '/events', {
         method: 'POST', headers: {'Content-Type': 'application/json'},
         signal: AbortSignal.timeout(8000),
         body: JSON.stringify({t: Date.now() / 1000, source: 'app', kind: 'speech',

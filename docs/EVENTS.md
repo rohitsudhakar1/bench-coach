@@ -64,3 +64,29 @@ objects), and optionally `min_seconds` and `technique` checks. See `protocols/pi
   carry `detail.question` (the open question, or null once it closes). A step confirmed by a yes
   after a hint has `detail.evidence: "hint+speech"` and `detail.source: "seen+said"`, next to
   `vision`/`seen` and `speech`/`said`.
+
+## Classroom benches
+
+The classroom extension adds one envelope field: `bench`, a nonempty string ID
+(default `"1"` when absent). The hub writes it on every stored and delivered event,
+including run starts/stops, protocol selections and notes. Old logs belong to bench 1.
+No event kind or clock changes. Run IDs remain unique across benches and all files
+stay in `runs/<run>/`.
+
+With `--benches N`, one hub serves `/benches/<id>/` for IDs `1` through `N`.
+Append the existing endpoint paths to that prefix: `/events`, `/ws`, `/state`,
+`/run/start`, `/run/stop`, `/config`, and the other bench controls. The launcher
+passes this scoped hub URL to each bench's producers. Events posted there without
+`bench` inherit that bench; an explicit different ID is rejected. Its history and
+websocket contain only that bench. This keeps older producers isolated without
+changing their event builders. Undelivered producer stdout retains its old envelope;
+the launcher's per-bench process log identifies its bench.
+
+Root `POST /events` accepts explicit bench IDs and routes a batch to the appropriate
+states/logs; unknown IDs reject the whole batch before publishing. Other original
+root endpoints, including `GET /events` and `WS /ws`, continue to describe bench 1.
+`GET /class/state` lists every configured bench for the live grid at `/class`.
+
+For bench number B, service ports are the base port plus `6 * (B - 1)` plus the
+existing capture/vision/angle/coach/note offset. There is only one hub at the base
+port; the later hub slots are unused. The default one-bench ports are unchanged.

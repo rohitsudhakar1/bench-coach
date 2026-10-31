@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 from dataclasses import dataclass
 import json
 import math
@@ -25,6 +26,7 @@ class Part:
     command: list[str]
     port: int
     path: str = '/health'
+    env: dict | None = None
 
 
 def entrypoint(root, name):
@@ -55,6 +57,9 @@ def parse_args(argv=None):
     mic.add_argument('--mic-file', type=Path)
     p.add_argument('--replay', type=Path)
     p.add_argument('--without', nargs='+', action='extend', choices=OFFSETS, default=[])
+    p.add_argument('--benches', type=int, default=1)
+    p.add_argument('--bench-source', nargs=3, action='append', default=[], metavar=('BENCH', 'LEFT', 'RIGHT'))
+    p.add_argument('--bench-cams', nargs=3, action='append', default=[], metavar=('BENCH', 'LEFT', 'RIGHT'))
     p.add_argument('--base-port', type=int, default=8700)
     p.add_argument('--runs', type=Path, default=ROOT / 'runs')
     p.add_argument('--timeout', type=float, default=60)
@@ -68,6 +73,26 @@ def parse_args(argv=None):
     p.add_argument('--calibration', type=Path)
     args = p.parse_args(argv)
     args.table = args.table == 'on'
+    if not 1 <= args.benches <= 100 or args.base_port + 6 * args.benches - 1 > 65535:
+        p.error('Invalid bench count or port range')
+    if args.benches > 1 and 'app' in args.without:
+        p.error('Classroom mode needs the hub')
+    args.bench_inputs = {}
+    for kind, rows in [('source', args.bench_source), ('cams', args.bench_cams)]:
+        for bench, left, right in rows:
+            if bench not in {str(i) for i in range(1, args.benches + 1)} or bench in args.bench_inputs:
+                p.error('Each bench input must name a distinct configured bench')
+            if kind == 'source':
+                values = [str(Path(v).resolve()) for v in (left, right)]
+                if not all(Path(v).is_file() for v in values):
+                    p.error('Bench video file missing')
+            else:
+                try:
+                    values = [int(left), int(right)]
+                    assert min(values) >= 0 and values[0] != values[1]
+                except (ValueError, AssertionError):
+                    p.error('Bench cameras must be two distinct nonnegative numbers')
+            args.bench_inputs[bench] = (kind, values)
     if not 1024 <= args.base_port <= 65530:
         p.error('--base-port must be between 1024 and 65530')
     if not math.isfinite(args.timeout) or args.timeout <= 0:
@@ -105,7 +130,7 @@ def parse_args(argv=None):
     return args
 
 
-def plan(args, root=ROOT):
+def single_plan(args, root=ROOT):
     ports = {name: args.base_port + offset for name, offset in OFFSETS.items()}
     url = lambda name: f'http://127.0.0.1:{ports[name]}'
     python = os.environ.get('BENCH_PY') or sys.executable
@@ -184,6 +209,48 @@ def plan(args, root=ROOT):
     return result
 
 
+def plan(args, root=ROOT):
+    if args.benches == 1 and not args.bench_inputs:
+        return single_plan(args, root)
+    result = []
+    camera_devices = set()
+    for number in range(1, args.benches + 1):
+        bench = str(number)
+        local = copy.deepcopy(args)
+        local.base_port += (number - 1) * 6
+        if bench in args.bench_inputs:
+            kind, values = args.bench_inputs[bench]
+            local.source, local.cams = (values, None) if kind == 'source' else ([], values)
+        elif not local.source:
+            local.cams = [2 * (number - 1), 2 * (number - 1) + 1] if args.cams is None else args.cams
+        if not local.source and 'capture' not in args.without:
+            if camera_devices.intersection(local.cams):
+                raise ValueError('Camera devices cannot be shared between benches')
+            camera_devices.update(local.cams)
+        saved_calibration = args.runs / 'calibrations' / f'bench-{number}.json'
+        if args.benches > 1 and local.calibration is None and saved_calibration.is_file():
+            local.calibration = saved_calibration
+        if args.benches > 1:
+            local.fake_mic = True  # One physical microphone cannot be assigned to several benches.
+        if number > 1:
+            local.without = [*local.without, 'app']
+        scoped = f'http://127.0.0.1:{args.base_port}/benches/{bench}' if args.benches > 1 else f'http://127.0.0.1:{args.base_port}'
+        for part in single_plan(local, root):
+            env = {name.upper() + '_URL': f'http://127.0.0.1:{local.base_port + offset}' for name, offset in OFFSETS.items()}
+            env['APP_URL'] = scoped
+            part.env = env
+            if part.name == 'app':
+                part.command += ['--benches', str(args.benches)]
+            else:
+                if '--hub' in part.command:
+                    part.command[part.command.index('--hub') + 1] = scoped
+                if args.benches > 1:
+                    part.name += '-' + bench
+            result.append(part)
+    # Start the one hub before producers from any bench.
+    return sorted(result, key=lambda part: part.name != 'app')
+
+
 def ready(part):
     try:
         with urlopen(f'http://127.0.0.1:{part.port}{part.path}', timeout=.4) as response:
@@ -224,7 +291,7 @@ class Supervisor:
     def start(self, part):
         self.logs.mkdir(parents=True, exist_ok=True)
         with (self.logs / f'{part.name}.log').open('ab') as log:
-            process = subprocess.Popen(part.command, cwd=self.root, env=self.env, stdout=log,
+            process = subprocess.Popen(part.command, cwd=self.root, env={**(self.env or os.environ), **(part.env or {})}, stdout=log,
                                        stderr=subprocess.STDOUT, start_new_session=True)
         self.children[part.name] = (part, process)
         self.history.append(process)
@@ -234,7 +301,7 @@ class Supervisor:
         for name, (part, process) in list(self.children.items()):
             code = process.poll()
             if code is not None:
-                if name in ('coach', 'note') and name not in self.restarted:
+                if name.split('-')[0] in ('coach', 'note') and name not in self.restarted:
                     self.restarted.add(name)
                     signal_group(process, signal.SIGKILL)
                     message = f'{name}: exited ({code}); restarting once'
@@ -271,6 +338,10 @@ class Supervisor:
                         alive = True
                     except ProcessLookupError:
                         pass
+                    except PermissionError:
+                        # Some sandboxes reject signal 0 even for owned groups.
+                        # Keep escalating real shutdown signals, then reap children.
+                        alive = True
                 if not alive:
                     break
                 time.sleep(.05)
