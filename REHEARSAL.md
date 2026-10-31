@@ -47,6 +47,10 @@ Sample videos, real vision:
 ```
 
 Vision takes about 8 seconds to load its models here; `--timeout 150` covers a cold start.
+It uses Grounding DINO tiny. On this Mac's GPU, with both cameras sharing one detector, it
+measured 4.04 detector runs a second per camera on October 31 (3.69 before the batching change).
+Keep tiny for the stage. `--detector florence2` draws better boxes on still frames but found
+7 of 18 held-out draws against tiny's 15 of 18, and only reaches 2.15 runs a second per camera.
 
 Live cameras (microphone on, the coach listens; still no speaker):
 
@@ -54,7 +58,12 @@ Live cameras (microphone on, the coach listens; still no speaker):
 ./scripts/demo.sh --cams 0 1 --timeout 150
 ```
 
-Angle measures only inside vision's pipette box. To measure a known spot instead, pass the
+The coach's hearing was tuned on October 31 (a slightly quicker noise gate and a list of lab
+words for Whisper). On three reused recordings it went from 12 of 18 right to 18 of 18. A larger
+set made with computer voices went from 81 of 99 to 90 of 107, almost all in one voice. No real
+person at a real bench microphone has been scored, so say a test question before going on stage.
+
+Angle measures only inside a vision pipette box marked as held in a hand. To measure a known spot instead, pass the
 shaft's crop from a still of `http://127.0.0.1:8701/cam/0/frame.jpg`, once per camera, and the
 calibration file if one was made (see `angle/CALIBRATE.md`):
 
@@ -90,8 +99,12 @@ Ctrl-C the launcher, then:
 ```
 
 Table mode and hint mode cannot be combined, and `--fake-vision` replaces both. Table mode was
-not run in this rehearsal (no overhead camera or caps here); `scripts/tests` cover it with
-generated footage only.
+not run on a real table in this rehearsal (no overhead camera or caps here); `scripts/tests` cover it with
+generated footage only. On October 31 it was reworked for coloured and dim light, hue shifts,
+shadows, clutter, shake and a tilted camera. On 60 drawn runs over 15 such conditions it found
+360 of 360 events, against 142 of 360 before, but those drawn runs were also used while making
+the changes. Setup now prints a quality score and preflight prints FIX below 70. Treat the first
+real table run as the real test (`vision/TABLEROBUST-REPORT.md`).
 
 Check the whole chain in about 25 seconds before going on stage:
 
@@ -114,7 +127,9 @@ Each mode starts through `scripts/demo.sh`, starts and stops a run, fetches the 
 PDF, ZIP, Benchling, eLabFTW and CSV downloads, the NVIDIA tasks and a task ZIP, opens
 `/trainer`, `/class`, `/step` and `/calibrate`, and checks that no part logged a traceback and
 every port is released. Real vision and hints skip when the vision models are not cached; the
-sample-video modes skip without `BENCH_SAMPLES`. `SWEEP-REPORT.md` has the results.
+sample-video modes skip without `BENCH_SAMPLES`. All six passed in 111 s on October 31.
+`SWEEP-REPORT.md` has the results. It shows that each mode runs and serves its pages, not that
+recognition is right.
 
 For three benches with scripted vision (bench 2 is at `/benches/2/`, the overview at `/class`):
 
@@ -124,7 +139,13 @@ For three benches with scripted vision (bench 2 is at `/benches/2/`, the overvie
 ```
 
 Without note the Lab note tab says the note service is not running; the training tasks still
-appear.
+appear. Each bench has its own page, run and recordings. Classroom mic input is silent, so use
+each bench's phone Done button (`/benches/<id>/step`). Only three benches on scripted vision
+have been checked.
+
+With note running, the Lab note tab has PDF, run ZIP, Benchling HTML, eLabFTW `.eln` and steps
+CSV downloads. The sweep fetched all five in every mode with note. Pasting into Benchling and
+importing into eLabFTW were not tried.
 
 ## Run of show (3 minutes, scripted vision)
 
@@ -208,9 +229,13 @@ Fixed, each with a test:
 
 Still open (for the part owners):
 
-10. Vision's "pipette" box lands on camera tripods in both 12-27 views, so angle measures a
-    tripod whenever a hint or draw opens its window. Vision owner. Until then, the scripted demo
-    or a chosen `--angle-roi` is the reliable way to show the gauge.
+10. Vision's "pipette" box lands on camera tripods in both 12-27 views. Partly fixed on
+    October 30. Each pipette box now says whether a hand is holding it, and angle only measures
+    held boxes. On the cached replay of these clips angle's crops on tripods and other wrong
+    things went from 10 to 0 (and so did its useful crops). The October 31 sweep still saw hint
+    mode warn "may be tilted about 55 degrees" and "about 89 degrees" with no pipette in hand, so
+    this is still open for the vision owner. The scripted demo or a chosen `--angle-roi` is still
+    the reliable way to show the gauge.
 11. Real vision found no draw or dispense in two minutes of these clips, which is correct
     here because there is no pipetting in them. Detection on real pipetting was not checked in
     this rehearsal; vision's REPORT.md has the labelled-frame numbers.
