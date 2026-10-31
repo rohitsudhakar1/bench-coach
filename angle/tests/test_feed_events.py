@@ -106,7 +106,7 @@ def test_vision_priority_idle_and_stale(monkeypatch):
     assert not calls
     analyze([frame], [Tracker()], [crop], True, None, .1, [True])
     assert calls == [crop]
-    analyze([frame], [Tracker()], [None], True, None, .1, [True])
+    analyze([frame], [Tracker()], [None], True, None, .1, [True], require_held=False)
     assert calls[-1] == (1, 1, 20, 20)
     frame.fresh = False
     analyze([frame], [None], [crop], True, None, .1, [True])
@@ -162,7 +162,7 @@ def test_need_box_never_measures_the_full_frame(monkeypatch):
     assert result is None and not calls
     analyze([frame], [None], [(10, 20, 30, 40)], True, None, .1, [True], need_box=True)
     assert calls == [(10, 20, 30, 40)]
-    analyze([frame], [None], [None], True, None, .1, [True])
+    analyze([frame], [None], [None], True, None, .1, [True], require_held=False)
     assert calls[-1] == (0, 0, 100, 100)
 
 
