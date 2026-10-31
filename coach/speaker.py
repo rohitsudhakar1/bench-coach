@@ -92,7 +92,7 @@ class Speaker:
                       if now - it[1] <= self.max_age * (2 if it[3] in ("answer", "hint") else 1)]
         if not self.items:
             return None
-        best = max(self.items, key=lambda it: (it[0], it[1]))
+        best = max(self.items, key=lambda it: (it[0], -it[1]))   # most important, then oldest
         self.items.remove(best)
         return best
 
