@@ -280,3 +280,48 @@ node --test app/tests/*.test.cjs
 The optional `app/tests/browser_check.py` also checks typing and dialog protection,
 help dismissal, tab keys, double-Space protection and Space on the focused run button.
 See [HOTKEYS-REPORT.md](HOTKEYS-REPORT.md) for results and browser limits.
+
+## Classroom
+
+Run `scripts/demo.sh --benches 3 --source left.mp4 right.mp4` and open `/class`.
+The sample pair is reused at each bench; use the launcher's `--bench-source ID LEFT RIGHT`
+to give benches different files. The grid polls once per second and lists benches
+needing the trainer first, then bench number. Each card shows student, instruction,
+step, last warning and a red dot with a text label when attention is needed. A warning
+or open coach question during a run requires attention; it clears on Stop. Warnings
+remain on the grid for the run, even after the bench banner's display timeout.
+
+Click a card for its full bench page at `/benches/<id>/`. Start/Stop, student name,
+protocol import, cameras, health, note links, phone confirmation (`/benches/<id>/step`),
+and producer streams stay scoped to that bench. The original root page and API still
+operate bench 1. `/trainer` reviews all saved runs. All bench states recover separately
+from their latest logs after restart. A recovered active run still needs Stop before
+another Start, and reports unknown camera recording status as before.
+
+The single hub worker hosts an independent instance of the existing bench app for each
+bench, with separate locks, histories, subscriptions and background-job lifecycles.
+The event contract adds `bench` with default `"1"`; see `docs/EVENTS.md`. Scoped endpoints
+supply the ID for existing producers. This is local coordination, not authentication.
+
+Classroom calibration pages save to `runs/calibrations/bench-<id>.json`; the launcher
+loads these on the next start unless `--calibration` is explicitly supplied. Each bench
+needs its own physical camera calibration. Classroom capture uses a silent mic by
+default; Done in the bench's phone page can supply spoken-confirmation evidence without
+a physical mic. A shared `--mic-file` plays the same recorded input into each coach,
+without speaker playback. Separate physical microphone assignment is not implemented.
+
+No packages were added. FastAPI/Starlette provide mounted apps and routes; Pydantic
+validates IDs; HTTPX and pytest test isolation; Python's contextlib closes each bench's
+background work. Browser APIs implement the grid. Sources and licences are listed above.
+
+```sh
+"$BENCH_PY" -m pytest app/tests/test_classroom.py scripts/tests/test_classroom_launcher.py -q
+"$BENCH_PY" -m app.tests.classroom_browser_check
+node --check app/static/class.js
+```
+
+The sample integration check skips when `BENCH_SAMPLES` or its multicam clips are missing.
+It uses three real captures and coaches with scripted vision, on ports 8800–8899,
+checks each bench's recordings and event IDs, stops all owned children, and checks port
+release. The browser check uses intercepted requests and no server or audio. See
+[CLASSROOM-REPORT.md](CLASSROOM-REPORT.md) for measured results and limits.

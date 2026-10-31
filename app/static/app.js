@@ -1,4 +1,5 @@
 'use strict';
+const benchPrefix = (location.pathname || '').match(/^\/benches\/[^/]+/)?.[0] || '';
 const $ = id => document.getElementById(id);
 let state = null, connected = false, busy = false, previousRun = null, previousRecording = null;
 let noteKey = '', chatKey = '', noteAttempt = 0, refreshActive = false, refreshAgain = false;
@@ -9,7 +10,7 @@ for (const name of names) {
   item.append(dot, document.createTextNode(name === 'app' ? 'hub' : name)); $('parts').append(item);
 }
 async function api(path, options) {
-  const response = await fetch(path, {cache: 'no-store', ...options});
+  const response = await fetch(benchPrefix + path, {cache: 'no-store', ...options});
   if (!response.ok) {
     let message = `Request failed (${response.status})`;
     try { const body = await response.json(); if (typeof body.detail === 'string') message = body.detail; } catch {}
@@ -127,7 +128,7 @@ async function renderNote() {
   if (!note) { message(run && !state.recording ? 'Waiting for the note service to finish this run…' : 'Stop a run to prepare its lab note.'); return; }
   const inline = note.text || note.markdown || note.content;
   if (typeof inline === 'string' && !note.url && !note.path) { const pre = document.createElement('pre'); pre.textContent = inline; $('note-content').append(pre); return; }
-  const base = `/lab-note/${encodeURIComponent(run)}`;
+  const base = `${benchPrefix}/lab-note/${encodeURIComponent(run)}`;
   for (const [id,format] of [['full-note','html'],['pdf','pdf'],['zip','zip']]) { $(id).hidden = false; $(id).href = base + '?format=' + format; }
   message('Loading the lab note…');
   try {
@@ -151,7 +152,7 @@ async function refresh() {
   finally { refreshActive = false; }
 }
 function socket() {
-  const ws = new WebSocket(`${location.protocol === 'https:' ? 'wss:' : 'ws:'}//${location.host}/ws`);
+  const ws = new WebSocket(`${location.protocol === 'https:' ? 'wss:' : 'ws:'}//${location.host}${benchPrefix}/ws`);
   ws.onopen = () => { connected = true; $('connection').textContent = 'Hub connected'; refresh(); controls(); };
   ws.onmessage = () => refresh();
   ws.onclose = () => { connected = false; $('connection').textContent = 'Hub disconnected'; controls(); setTimeout(socket,1500); };
@@ -223,7 +224,7 @@ function nvidiaRender(data) {
     const p = document.createElement('p'), checker = document.createElement('small'), link = document.createElement('a');
     checker.textContent = `Checker: ${task.kind} — ${task.checker}`;
     link.textContent = 'Download task ZIP';
-    link.href = `/nvidia/${encodeURIComponent(nvidiaRun)}/tasks/${encodeURIComponent(task.id)}.zip`;
+    link.href = `${benchPrefix}/nvidia/${encodeURIComponent(nvidiaRun)}/tasks/${encodeURIComponent(task.id)}.zip`;
     p.append(document.createTextNode(task.question), checker, link); $('nvidia-tasks').append(p);
   }
   $('nvidia-synth').disabled = ['queued','running','ready'].includes(synth.status);
@@ -264,3 +265,10 @@ async function startNvidia(kind) {
 $('nvidia-export').onclick = () => startNvidia('export');
 $('nvidia-synth').onclick = () => startNvidia('synth');
 setInterval(pollNvidia, 1500);
+
+if (benchPrefix) {
+  document.title = `Bench ${state?.bench || benchPrefix.split('/').pop()} · Bench Coach`;
+  document.querySelector('.brand').href = '/class';
+  document.querySelector('.brand small').textContent = `Bench ${benchPrefix.split('/').pop()}`;
+  document.querySelector('a[href="/calibrate"]').href = benchPrefix + '/calibrate';
+}

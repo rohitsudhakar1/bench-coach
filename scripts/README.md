@@ -175,3 +175,35 @@ and port release. It has a 90-second work deadline and a two-minute total limit.
 See `TABLE-E2E-REPORT.md` for measured results and limits.
 
 `--table on` and bare `--table` enable table mode; `--table off` disables it.
+
+## Several benches
+
+```sh
+./scripts/demo.sh --benches 3 --base-port 8820 \
+  --source "$BENCH_SAMPLES/multicam_test/camA.mp4" "$BENCH_SAMPLES/multicam_test/camB_sim.mp4" \
+  --fake-vision --without angle note
+```
+
+Open `http://127.0.0.1:8820/class`. One hub serves all benches. Each has its own capture,
+vision, angle, coach and note processes (except excluded parts), with log names such as
+`capture-2.log`. Bench B uses base plus `6 * (B - 1)` for its service block; only the first
+block starts a hub. Three benches at 8820 therefore use ports through 8837. Startup,
+health checks, one coach/note restart, and shutdown apply separately to every process.
+
+`--source LEFT RIGHT` supplies the same looped files to every bench. Repeat
+`--bench-source ID LEFT RIGHT` to override individual benches. Without file inputs,
+cameras default to pairs 0/1, 2/3, 4/5, etc.; `--bench-cams ID LEFT RIGHT` overrides a
+pair. Duplicate physical device numbers are rejected. Give each bench at most one
+input override, using IDs 1 through N. `--benches 1` keeps the original behavior.
+Classroom mode requires the hub and defaults to silent microphones; physical per-bench
+microphone selection is not implemented. `--mic-file` shares one prerecorded input.
+Speaker playback remains off.
+
+The launcher sends every producer to `http://HOST:BASE/benches/ID`, with bench-specific
+capture and note addresses. The hub adds IDs to events, filters subscriptions, and
+stores unique runs in the shared runs directory. Other root APIs remain bench 1.
+Per-bench calibrations saved in the classroom UI are loaded from
+`runs/calibrations/bench-ID.json` on restart; an explicit `--calibration` overrides all.
+Shared table calibration/ROI flags are unchanged; configure appropriate geometry before
+using them on physically different benches. This check uses scripted actions, not measured
+recognition on the sample videos.

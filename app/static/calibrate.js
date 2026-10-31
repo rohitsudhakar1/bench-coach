@@ -1,4 +1,6 @@
 'use strict';
+const calibrationPrefix = (location.pathname || '').match(/^\/benches\/[^/]+/)?.[0] || '';
+const benchFetch = (path, options) => fetch(calibrationPrefix + path, options);
 const el = id => document.getElementById(id);
 let current = null;
 let busy = false;
@@ -30,7 +32,7 @@ function render(state) {
   buttons();
 }
 async function request(path, body) {
-  const response = await fetch(`/calibrate/${path}`, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body || {})});
+  const response = await benchFetch(`/calibrate/${path}`, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body || {})});
   const data = await response.json();
   if (!response.ok) throw new Error(typeof data.detail === 'string' ? data.detail : 'Request failed. Refresh and try again.');
   return data;
@@ -50,7 +52,7 @@ async function poll() {
   if (!busy && !document.hidden) {
     busy = true; buttons();
     try {
-      const response = await fetch('/calibrate/state', {cache: 'no-store'});
+      const response = await benchFetch('/calibrate/state', {cache: 'no-store'});
       if (!response.ok) throw new Error('Hub unavailable');
       connected = true; render(await response.json());
     } catch (_) {

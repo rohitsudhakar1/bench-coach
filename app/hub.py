@@ -35,6 +35,7 @@ SAFE_ID = re.compile(r'^[A-Za-z0-9_-]{1,100}$')
 
 class Event(BaseModel):
     model_config = ConfigDict(extra='allow', allow_inf_nan=False)
+    bench: str = Field(default='1', pattern=r'^[A-Za-z0-9_-]{1,100}$')
     t: float = Field(ge=0)
     source: str = Field(min_length=1, max_length=100)
     kind: str = Field(min_length=1, max_length=100)
@@ -67,7 +68,8 @@ class ProtocolRequest(BaseModel):
 
 
 class Hub:
-    def __init__(self, runs, protocols, parts):
+    def __init__(self, runs, protocols, parts, bench="1"):
+        self.bench = bench
         self.runs, self.protocols, self.parts = runs, protocols, parts
         self.selected_file = 'pipetting-demo.yaml'
         self.protocol = validate_protocol(yaml.safe_load((protocols / self.selected_file).read_text()))
@@ -79,7 +81,7 @@ class Hub:
         self.recover()
 
     def reset(self):
-        self.state = dict(run=None, recording=False, capture=None, recovered=False,
+        self.state = dict(bench=self.bench, run=None, recording=False, capture=None, recovered=False,
                           current_step=None, question=None, steps={}, warnings=[], chat=[],
                           angle=None, objects={}, note=None, protocol=copy.deepcopy(self.protocol),
                           protocol_file=self.selected_file)
@@ -115,12 +117,13 @@ class Hub:
         self.history.append(event)
 
     def publish(self, event):
+        event = dict(event, bench=self.bench)
         # Persist before making an event visible. Caller owns the state lock.
         run = event['detail'].get('run') if event['kind'] in ('run', 'note') else self.state['run']
         if isinstance(run, str) and SAFE_ID.fullmatch(run):
             folder = self.runs / run
             # Late notes can append to real runs, never create producer-named folders.
-            known = event['kind'] != 'note' or (folder / 'events.jsonl').is_file()
+            known = event['kind'] != 'note' or self.owns_run(folder)
             if known and not folder.is_symlink() and not (folder / 'events.jsonl').is_symlink():
                 folder.mkdir(parents=True, exist_ok=True)
                 with (folder / 'events.jsonl').open('a') as stream:
@@ -137,6 +140,20 @@ class Hub:
             else:
                 queue.put_nowait(event)
 
+    def owns_run(self, folder):
+        path = folder / 'events.jsonl'
+        if folder.is_symlink() or path.is_symlink() or not path.is_file():
+            return False
+        with path.open() as stream:
+            for line in stream:
+                try:
+                    row = json.loads(line)
+                    if row.get('kind') == 'run' and row.get('detail', {}).get('status') == 'start':
+                        return row.get('bench', '1') == self.bench
+                except (ValueError, AttributeError):
+                    continue
+        return False
+
     def recover(self):
         # Use the start clock, not mtime: a late note may update an older log.
         candidates = []
@@ -147,7 +164,7 @@ class Hub:
                 for line in stream:
                     try:
                         event = Event.model_validate_json(line).model_dump()
-                        if event['kind'] == 'run' and event['detail'].get('status') == 'start' and event['detail'].get('run') == path.parent.name:
+                        if event['bench'] == self.bench and event['kind'] == 'run' and event['detail'].get('status') == 'start' and event['detail'].get('run') == path.parent.name:
                             candidates.append((event['t'], str(path), path))
                             break
                     except ValueError:
@@ -161,6 +178,8 @@ class Hub:
                 tail = line
                 try:
                     event = Event.model_validate_json(line).model_dump()
+                    if event['bench'] != self.bench:
+                        continue
                     if event['kind'] == 'run':
                         if event['detail'].get('run') != path.parent.name:
                             continue
@@ -185,17 +204,19 @@ def make_event(kind, detail):
     return Event(t=time.time(), source='app', kind=kind, detail=detail).model_dump()
 
 
-def create_app(runs_dir=None, capture_url=None, note_service_url=None, protocols_dir=None):
+def create_app(runs_dir=None, capture_url=None, note_service_url=None, protocols_dir=None, bench="1", service_urls=None):
     app = FastAPI(title='Bench Coach')
     capture = (capture_url or os.getenv('CAPTURE_URL', 'http://127.0.0.1:8701')).rstrip('/')
     note = (note_service_url or os.getenv('NOTE_URL', 'http://127.0.0.1:8705')).rstrip('/')
     parts = PartStatus({'capture': capture + '/cams', 'note': note + '/health', **{
-        name: os.getenv(name.upper() + '_URL', f'http://127.0.0.1:{port}').rstrip('/') + '/health'
+        name: (service_urls or {}).get(name, os.getenv(name.upper() + '_URL', f'http://127.0.0.1:{port}')).rstrip('/') + '/health'
         for name, port in [('vision', 8702), ('angle', 8703), ('coach', 8704)]}})
-    hub = Hub(Path(runs_dir or RUNS), Path(protocols_dir or ROOT.parent / 'protocols'), parts)
+    hub = Hub(Path(runs_dir or RUNS), Path(protocols_dir or ROOT.parent / 'protocols'), parts, bench)
     app.state.hub = hub
     nvidia = install_nvidia(app, hub)
     install_calibration(app, capture, hub.runs)
+    from app.classroom import install_overview
+    install_overview(app, {bench: app})
 
     @app.exception_handler(RequestValidationError)
     async def validation_error(request, exc):
@@ -214,6 +235,8 @@ def create_app(runs_dir=None, capture_url=None, note_service_url=None, protocols
             raise HTTPException(413, 'Send at most 1000 events at once.')
         if any(e.kind in ('run', 'run-config') for e in batch):
             raise HTTPException(422, 'Use the run and protocol controls.')
+        if any('bench' in e.model_fields_set and e.bench != bench for e in batch):
+            raise HTTPException(422, 'Event belongs to a different bench.')
         async with hub.lock:
             for event in batch:
                 hub.publish(event.model_dump())
@@ -233,7 +256,7 @@ def create_app(runs_dir=None, capture_url=None, note_service_url=None, protocols
 
     @app.get('/config')
     async def config():
-        return {'capture_url': os.getenv('CAPTURE_PUBLIC_URL', capture), 'protocol': hub.protocol,
+        return {'capture_url': capture if service_urls else os.getenv('CAPTURE_PUBLIC_URL', capture), 'protocol': hub.protocol,
                 'protocol_file': hub.selected_file}
 
     @app.websocket('/ws')
@@ -413,10 +436,18 @@ def main():
     parser.add_argument('--runs', type=Path, default=RUNS)
     parser.add_argument('--host', default='127.0.0.1')
     parser.add_argument('--port', type=int, default=8700)
+    parser.add_argument('--benches', type=int, default=1)
     parser.add_argument('--capture')
     parser.add_argument('--note')
     args = parser.parse_args()
-    uvicorn.run(create_app(args.runs, args.capture, args.note), host=args.host, port=args.port)
+    if not 1 <= args.benches <= 100 or args.port + 6 * args.benches - 1 > 65535:
+        parser.error('Invalid bench count or port range.')
+    if args.benches > 1:
+        from app.classroom import create_classroom
+        application = create_classroom(args.benches, args.port, args.runs)
+    else:
+        application = create_app(args.runs, args.capture, args.note)
+    uvicorn.run(application, host=args.host, port=args.port)
 
 
 if __name__ == '__main__':
