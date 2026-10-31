@@ -253,3 +253,30 @@ The optional browser check intercepts requests, starts no server and tests three
 viewport sizes and the capture/compute/use/reset controls. `CHROMIUM_PATH` can
 select an existing browser executable. Physical cameras and browser rendering still
 need verification on a machine that permits Chromium to launch.
+
+## Presenter shortcuts
+
+On the bench page, press Space to start or stop, N for Lab note, P for Protocol,
+F to enter or leave full screen, T to open `/trainer` in a new tab, and ? for
+shortcut help. The footer's **? Shortcuts** button opens the same small overlay;
+Escape or its close button dismisses it. Close help before controlling the run.
+
+Space uses the existing run button, including its disconnected and busy states,
+and accepts at most one press per second. Held keys do not repeat actions.
+Shortcuts pause in inputs, text areas, selects, editable text and the protocol
+dialog. Browser modifier shortcuts and text composition keep their usual behavior.
+The shortcuts apply when focus is in the bench document; an embedded lab note
+has its own document. Full screen depends on browser support and permission;
+a refused request shows a notice. Trainer opens without access to the bench's window.
+
+No dependencies were added; the handler uses browser APIs and the existing Node.js
+standard-library test style and licences listed above.
+
+```sh
+node --check app/static/hotkeys.js
+node --test app/tests/*.test.cjs
+```
+
+The optional `app/tests/browser_check.py` also checks typing and dialog protection,
+help dismissal, tab keys, double-Space protection and Space on the focused run button.
+See [HOTKEYS-REPORT.md](HOTKEYS-REPORT.md) for results and browser limits.

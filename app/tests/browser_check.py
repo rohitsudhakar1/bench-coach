@@ -61,8 +61,30 @@ def main():
                 request.fulfill(content_type='application/json',body=json.dumps(value))
             page.route('**/*',route)
             page.goto('http://127.0.0.1:8880/')
-            page.get_by_role('button',name='Start run',exact=True).click()
+            page.locator('#run:not([disabled])').wait_for()
+            page.locator('#student').fill('Presenter')
+            page.keyboard.press('Space')
+            assert not state['recording']
+            page.locator('#student').blur()
+            page.locator('#load').click()
+            page.keyboard.press('Space')
+            assert not state['recording']
+            page.keyboard.press('Escape')
+            page.keyboard.press('?')
+            assert page.locator('#hotkeys-dialog').is_visible()
+            page.keyboard.press('Escape')
+            assert not page.locator('#hotkeys-dialog').is_visible()
+            page.keyboard.press('n')
+            assert page.locator('#note-tab').get_attribute('aria-selected') == 'true'
+            page.keyboard.press('p')
+            assert page.locator('#protocol-tab').get_attribute('aria-selected') == 'true'
+            page.keyboard.press('Space')
             page.locator('#question').wait_for(state='visible')
+            page.keyboard.press('Space')
+            assert state['recording'], 'Double press stopped the run'
+            page.keyboard.press('?')
+            page.screenshot(path=str(OUT/'hotkeys-help.png'))
+            page.keyboard.press('Escape')
             for width,height in [(1920,1080),(1440,900),(390,844)]:
                 page.set_viewport_size({'width':width,'height':height})
                 page.screenshot(path=str(OUT/f'bench-{width}.png'),full_page=True)
@@ -77,7 +99,9 @@ def main():
             page.set_viewport_size({'width':1440,'height':900})
             assert page.locator('#warning').is_visible()
             assert page.locator('[aria-current="step"]').count() == 1
-            page.get_by_role('button',name='Stop run',exact=True).click()
+            page.wait_for_timeout(1050)
+            page.locator('#run').focus()
+            page.keyboard.press('Space')
             page.locator('#note-content iframe').wait_for()
             assert not page.locator('#warning').is_visible()
             assert page.locator('#note-tab').get_attribute('aria-selected') == 'true'
