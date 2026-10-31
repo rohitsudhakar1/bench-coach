@@ -302,3 +302,22 @@ def test_bad_replay_rejected(tmp_path):
         path.write_text('\n'.join(json.dumps(row) for row in rows))
         with pytest.raises(ValueError):
             demo.replay_rows(path)
+
+
+def test_explicit_table_switch():
+    assert demo.parse_args(['--table', 'on']).table is True
+    assert demo.parse_args(['--table']).table is True
+    assert demo.parse_args(['--table', 'off']).table is False
+    assert demo.parse_args([]).table is False
+
+
+def test_port_probe_allows_recently_closed_connections(base):
+    with socket.socket() as listener, socket.socket() as client:
+        listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        listener.bind(('127.0.0.1', base))
+        listener.listen()
+        client.connect(('127.0.0.1', base))
+        connection, _ = listener.accept()
+        connection.close()
+        assert client.recv(1) == b''
+    demo.check_ports([demo.Part('app', [], base)])
