@@ -24,6 +24,12 @@ keeps a copy, `--quiet-objects` keeps `objects` events off the printed log. Othe
 (per camera, default 10), `--start` and `--seconds` to cut a file, `--no-detector` for hands only,
 `--port 0` for no health server.
 
+`--detector` picks the box model: `gdino-tiny` (default), `gdino-base`, `owlv2`, `florence2`,
+`yoloe`, or `ensemble:<a>+<b>` (both, overlapping boxes merged). `yoloe` needs
+`VISION_YOLO_DIR`, a folder for its weights. How they compare is in
+[DETECTOR2-REPORT.md](DETECTOR2-REPORT.md); Florence-2 boxes the pipette and tip box best but is
+too slow for two cameras, so the default did not change.
+
 `VISION_DEVICE` picks where the detector runs (`cuda`, `mps` or `cpu`); without it the best one
 present is used.
 
@@ -150,6 +156,11 @@ from contact sheets (`$BENCH_PY -m vision.eval.sheet video.mp4 out.jpg --start 0
 --every 0.5`). `score_tips --set '{"tips": null}'` scores the older rules. Results and what was
 tried are in [TIP-REPORT.md](TIP-REPORT.md).
 
+Other detectors: `$BENCH_PY -m vision.eval.recache --detector florence2 --labels` reruns one over the
+same saved frames (hands kept) into `vision/eval/cache-florence2/`; every scorer reads it with
+`VISION_EVAL_CACHE=cache-florence2`. `$BENCH_PY -m vision.eval.compare gdino-tiny florence2`
+scores them side by side and `$BENCH_PY -m vision.eval.speed gdino-tiny florence2` times them.
+
 Both scorers replay through the same `Vision` class (`pipeline.py`) the live part runs, and both
 print chance numbers next to precision and recall. Results are in `REPORT.md`.
 
@@ -207,3 +218,15 @@ Table calibration and tracking use the existing OpenCV and NumPy dependencies be
 - pytest, MIT, https://pytest.org.
 
 All were already in the shared environment; no package was added.
+
+## Detector models
+
+| Model | Where | Licence | Used for |
+| --- | --- | --- | --- |
+| Grounding DINO tiny | https://huggingface.co/IDEA-Research/grounding-dino-tiny | Apache 2.0 | default boxes |
+| Grounding DINO base | https://huggingface.co/IDEA-Research/grounding-dino-base | Apache 2.0 | `--detector gdino-base` |
+| OWLv2 base patch16 ensemble | https://huggingface.co/google/owlv2-base-patch16-ensemble | Apache 2.0 | `--detector owlv2` |
+| Florence-2 base | https://huggingface.co/florence-community/Florence-2-base | MIT | `--detector florence2` (phrase grounding) |
+| YOLOE-26 large | https://github.com/ultralytics/ultralytics | AGPL-3.0 | `--detector yoloe`, measured only; AGPL means a product using it must publish its source or buy a licence |
+
+All load through transformers or ultralytics, both already in the shared environment.

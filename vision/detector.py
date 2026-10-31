@@ -65,14 +65,14 @@ def clean(dets: list, w: int, h: int, max_frac: float = 0.5) -> list:
 class GroundingDino:
     def __init__(self, device: str | None = None, short_side: int = 480, long_side: int = 640,
                  box_threshold: float = 0.25, text_threshold: float = 0.2, raw: bool = False,
-                 prompts: dict | None = None):
+                 prompts: dict | None = None, model_id: str = MODEL_ID):
         import torch
         from transformers import AutoModelForZeroShotObjectDetection, AutoProcessor
         self.torch = torch
         self.device = device or pick_device()
-        self.proc = AutoProcessor.from_pretrained(MODEL_ID)
+        self.proc = AutoProcessor.from_pretrained(model_id)
         self.proc.image_processor.size = {"shortest_edge": short_side, "longest_edge": long_side}
-        self.model = AutoModelForZeroShotObjectDetection.from_pretrained(MODEL_ID).to(self.device).eval()
+        self.model = AutoModelForZeroShotObjectDetection.from_pretrained(model_id).to(self.device).eval()
         self.set_prompts(prompts or PROMPTS)
         self.bt, self.tt, self.raw = box_threshold, text_threshold, raw
 

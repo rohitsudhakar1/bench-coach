@@ -4,9 +4,9 @@ from __future__ import annotations
 from ..core import Det, Hand
 from ..detector import CONTAINER
 from ..pipeline import Vision
-from .cache import load
+from .cache import load, min_score
 
-MIN_SCORE = 0.25  # the live detector's box threshold; the cache keeps boxes from 0.2
+MIN_SCORE = min_score(0.25)  # the live detector's box threshold; the cache keeps boxes from 0.2
 
 
 def frames(rel: str, start: float = 0.0, seconds: float = 1e9) -> list:

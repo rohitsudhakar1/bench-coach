@@ -1,0 +1,81 @@
+{
+ "detector": "florence2",
+ "min_score": 0.0,
+ "files": {
+  "CP-Left-Front-12-27@0": {
+   "frames": 38,
+   "main_ms": 248.9,
+   "containers_ms": 239.8
+  },
+  "CP-Right-Front-12-27@0": {
+   "frames": 38,
+   "main_ms": 262.8,
+   "containers_ms": 264.1
+  },
+  "CP-Left-Front-249-269@0": {
+   "frames": 50,
+   "main_ms": 234.3,
+   "containers_ms": 224.2
+  },
+  "CP-Right-Front-249-269@0": {
+   "frames": 50,
+   "main_ms": 192.3,
+   "containers_ms": 207.5
+  },
+  "CP-Left-Front-414-445@0": {
+   "frames": 78,
+   "main_ms": 289.7,
+   "containers_ms": 286.9
+  },
+  "CP-Right-Front-414-445@0": {
+   "frames": 78,
+   "main_ms": 270.6,
+   "containers_ms": 268.8
+  },
+  "cas9_hood_033@0": {
+   "frames": 150,
+   "main_ms": 252.4,
+   "containers_ms": 249.0
+  },
+  "pcr_105@0": {
+   "frames": 150,
+   "main_ms": 204.8,
+   "containers_ms": 204.6
+  },
+  "cas9_hood_033@60": {
+   "frames": 100,
+   "main_ms": 263.0,
+   "containers_ms": 254.9
+  },
+  "cas9_hood_034@0": {
+   "frames": 150,
+   "main_ms": 245.9,
+   "containers_ms": 240.4
+  },
+  "cas9_hood_034@60": {
+   "frames": 89,
+   "main_ms": 248.3,
+   "containers_ms": 246.1
+  },
+  "cas9_hood_035@0": {
+   "frames": 150,
+   "main_ms": 246.1,
+   "containers_ms": 240.5
+  },
+  "cas9_hood_035@60": {
+   "frames": 23,
+   "main_ms": 249.7,
+   "containers_ms": 249.9
+  },
+  "pcr_105@120": {
+   "frames": 6,
+   "main_ms": 245.3,
+   "containers_ms": 246.3
+  },
+  "pcr_105@60": {
+   "frames": 150,
+   "main_ms": 318.5,
+   "containers_ms": 319.6
+  }
+ }
+}

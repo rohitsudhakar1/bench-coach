@@ -1,0 +1,12 @@
+{
+ "gdino-tiny": {
+  "median_ms": 138.4,
+  "per_cam_two_cams": 3.6,
+  "per_cam_two_cams_with_containers": 1.8
+ },
+ "florence2": {
+  "median_ms": 214.7,
+  "per_cam_two_cams": 2.3,
+  "per_cam_two_cams_with_containers": 1.2
+ }
+}

@@ -1,0 +1,46 @@
+{
+ "detector": "owlv2",
+ "min_score": 0.15,
+ "files": {
+  "CP-Left-Front-12-27@0": {
+   "frames": 38,
+   "main_ms": 253.6,
+   "containers_ms": 249.6
+  },
+  "CP-Right-Front-12-27@0": {
+   "frames": 38,
+   "main_ms": 314.1,
+   "containers_ms": 318.4
+  },
+  "CP-Left-Front-249-269@0": {
+   "frames": 50,
+   "main_ms": 314.0,
+   "containers_ms": 304.3
+  },
+  "CP-Right-Front-249-269@0": {
+   "frames": 50,
+   "main_ms": 323.3,
+   "containers_ms": 305.7
+  },
+  "CP-Left-Front-414-445@0": {
+   "frames": 78,
+   "main_ms": 314.4,
+   "containers_ms": 303.0
+  },
+  "CP-Right-Front-414-445@0": {
+   "frames": 78,
+   "main_ms": 320.7,
+   "containers_ms": 306.1
+  },
+  "cas9_hood_033@0": {
+   "frames": 150,
+   "main_ms": 334.4,
+   "containers_ms": 311.5
+  },
+  "pcr_105@0": {
+   "frames": 150,
+   "main_ms": 321.8,
+   "containers_ms": 318.5
+  }
+ }
+}
