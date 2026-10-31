@@ -4,6 +4,28 @@ Bench Coach uses two cameras and a microphone to follow a pipetting protocol, sh
 
 Built by the team at the MIT ScienceClaw hackathon, October 30 to November 1, 2026, with AI coding agents. Everything in this repository was written during the hackathon.
 
+## Try it in five minutes
+
+You need Python 3.10 to 3.12 (or [uv](https://docs.astral.sh/uv/), which fetches 3.12 for you) and ffmpeg. The install is about 1.3 GB because the vision models need PyTorch.
+
+```sh
+git clone https://github.com/rbei001/bench-coach
+cd bench-coach
+./scripts/setup.sh
+export BENCH_PY="$PWD/.venv/bin/python"
+./scripts/demo.sh --replay app/samples/demo.jsonl --without capture vision angle coach note
+```
+
+Open <http://127.0.0.1:8700> when it prints **Demo ready**. This replays a short recorded session: the step list ticks off, the coach talks, and the camera panels stay empty because no cameras are running. Ctrl-C stops it.
+
+To see the full pipeline, point it at any two video files of someone pipetting (the team's sample clips are not in the repo):
+
+```sh
+./scripts/demo.sh --source left.mp4 right.mp4
+```
+
+Choose **Start run**, wait half a minute, choose **Stop run**, then open **Lab note**. The first run downloads model weights, so give it a few minutes. Run the tests with `"$BENCH_PY" -m pytest -q`; tests that need the sample clips skip themselves.
+
 ## How the parts fit together
 
 ```mermaid

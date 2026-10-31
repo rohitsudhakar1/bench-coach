@@ -1,0 +1,38 @@
+# Everything the parts need, merged from */requirements.txt. scripts/setup.sh installs this.
+# Version limits are the ones the parts set. nvidia's NeMo Data Designer is left out on
+# purpose: it needs its own environment (see nvidia/requirements.txt).
+
+# Shared services
+fastapi
+starlette
+uvicorn
+pydantic>=2
+httpx
+websockets
+pyyaml
+numpy
+pytest
+
+# Video and cameras. The contrib build already contains everything in opencv-python;
+# installing both packages makes them overwrite each other's cv2 files.
+opencv-contrib-python
+sounddevice
+qrcode
+
+# Vision models (weights download on first use)
+torch
+transformers
+mediapipe
+
+# Coach speech
+faster-whisper>=1.2
+google-genai>=2.34      # only for --voice gemini-live
+
+# Note PDF export; needs Pango on the host
+weasyprint>=70,<71
+
+# Optional hosted wording and answers; everything works without a key
+anthropic
+
+# Browser checks in app/tests (run `python -m playwright install chromium` once)
+playwright
