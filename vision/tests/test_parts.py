@@ -97,3 +97,20 @@ def test_cli_runs_alone_on_two_files():
                         "--no-detector", "--seconds", "3"], cwd=ROOT, capture_output=True, text=True, timeout=120)
     assert r.returncode == 0, r.stderr[-2000:]
     assert "# vision done" in r.stdout and "cam 1:" in r.stdout
+
+
+def test_capture_frames_keep_frame_time_and_skip_repeats():
+    import cv2
+    import httpx
+    from vision.sources import HttpSource
+    jpg = cv2.imencode(".jpg", np.zeros((720, 1280, 3), np.uint8))[1].tobytes()
+    times = iter([100.0, 100.0, 100.5])
+
+    def handler(req):
+        assert req.url.path == "/cam/1/frame.jpg"
+        return httpx.Response(200, content=jpg, headers={"X-Frame-Time": str(next(times))})
+    src = HttpSource("http://cap/cam/1/frame.jpg", 1000, 640, client=httpx.Client(transport=httpx.MockTransport(handler)))
+    t1, f1 = src.read()
+    t2, f2 = src.read()
+    assert (t1, t2) == (100.0, 100.5)
+    assert f1.shape == (360, 640, 3) and src.shape[:2] == (720, 1280)

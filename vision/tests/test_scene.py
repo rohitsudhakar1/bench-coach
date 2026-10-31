@@ -19,7 +19,7 @@ def test_still_pipette_dropped_after_three_seconds_moving_one_kept():
 
 def test_big_rack_and_plate_dropped():
     sf = SceneFilter()
-    big = Det("tube rack", (0, 0, 600, 300), 0.4)  # over half the frame
+    big = Det("tube rack", (0, 0, 300, 200), 0.4)  # a fifth of the frame
     small = Det("plate", (0, 0, 100, 100), 0.4)
     assert labels(sf.update(0, [big, small], 640, 480)) == ["plate"]
 
