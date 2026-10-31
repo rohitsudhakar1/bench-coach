@@ -409,8 +409,9 @@ class Brain:
             except (FileNotFoundError, OSError, ValueError, KeyError):
                 pass   # keep the one we have
         now = self.now
-        # nothing has happened since the coach started: don't repeat the first line
-        just_started = self.started_t is not None and all(
+        # the coach started a moment ago and nothing happened since: don't repeat the first line.
+        # Minutes later (the usual demo) the person pressing Start needs to hear it.
+        just_started = self.started_t is not None and now - self.started_t < 5 and all(
             e.get("kind") in ("run", "objects") for e in self.log)
         untouched = all(st in ("pending", "current") for st in self.status)
         self.reset()

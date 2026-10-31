@@ -106,6 +106,13 @@ def test_run_start_resets_and_does_not_repeat_the_first_line():
     assert said(outs) == [] and emitted(outs, "step")
 
 
+def test_start_pressed_long_after_the_coach_started_says_the_first_line():
+    # Rehearsal: the coach said "First" at launch, then stayed silent when Start was clicked 48 s later.
+    b = demo_brain()
+    outs = b.handle(ev("run", 48, source="app", status="start", run="r", protocol="pipetting-demo.yaml"))
+    assert said(outs) == ["First: put a fresh tip."]
+
+
 def test_own_events_are_ignored():
     b = demo_brain()
     assert b.handle({**ev("tip_on", 5), "source": "coach"}) == []
