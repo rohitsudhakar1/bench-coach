@@ -1,0 +1,10 @@
+# The shared .venv needs nothing new: export_tasks, runner and the local synth engine use
+# PyYAML and NumPy, already there. The runner's claude answers use the anthropic SDK, also there.
+#
+# NeMo Data Designer goes in its own environment (nvidia/.venv), because installing it into the
+# shared one would downgrade huggingface-hub 2.4.0 to 1.33.0 under the vision part:
+#   uv venv --python 3.12 nvidia/.venv && uv pip install --python nvidia/.venv/bin/python -r nvidia/requirements.txt
+data-designer==0.9.7
+pyyaml
+numpy
+pytest

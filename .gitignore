@@ -10,3 +10,5 @@ node_modules/
 models/
 .DS_Store
 .pytest_cache/
+nvidia/.venv/
+nvidia/out/

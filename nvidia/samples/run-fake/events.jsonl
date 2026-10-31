@@ -1,0 +1,32 @@
+{"t": 1793400000.0, "source": "app", "kind": "run", "object": null, "hand": null, "step": null, "confidence": null, "detail": {"status": "start", "run": "demo-fake", "protocol": "protocols/pipetting-demo.yaml"}}
+{"t": 1793400000.5, "source": "coach", "kind": "step", "object": null, "hand": null, "step": 0, "confidence": null, "detail": {"index": 0, "status": "current", "text": "Put a fresh tip on the pipette."}}
+{"t": 1793400000.8, "source": "coach", "kind": "speech", "object": null, "hand": null, "step": null, "confidence": null, "detail": {"text": "Hi, I'm Maya. Starting the pipetting demo."}}
+{"t": 1793400000.9, "source": "vision", "kind": "objects", "object": null, "hand": null, "step": null, "confidence": null, "detail": {"cam": 0, "boxes": [{"label": "tube A", "box": [10, 10, 40, 80], "score": 0.9}]}}
+{"t": 1793400002.6, "source": "vision", "kind": "tip_on", "object": null, "hand": "right", "step": null, "confidence": 0.9, "detail": {}}
+{"t": 1793400003.0, "source": "coach", "kind": "step", "object": null, "hand": null, "step": 0, "confidence": 0.9, "detail": {"index": 0, "status": "done", "text": "Put a fresh tip on the pipette."}}
+{"t": 1793400003.1, "source": "coach", "kind": "say", "object": null, "hand": null, "step": null, "confidence": null, "detail": {"text": "Now draw 100 microlitres from tube A."}}
+{"t": 1793400005.0, "source": "coach", "kind": "speech", "object": null, "hand": null, "step": null, "confidence": null, "detail": {"text": "Drawing 100 microlitres of water, lot number W-2231."}}
+{"t": 1793400006.0, "source": "angle", "kind": "angle", "object": null, "hand": null, "step": 1, "confidence": null, "detail": {"deg": 9.5, "ok": true, "limit": 20}}
+{"t": 1793400006.5, "source": "angle", "kind": "angle", "object": null, "hand": null, "step": 1, "confidence": null, "detail": {"deg": 12.1, "ok": true, "limit": 20}}
+{"t": 1793400007.0, "source": "vision", "kind": "draw", "object": "tube A", "hand": "right", "step": 1, "confidence": 0.85, "detail": {"cam": 0}}
+{"t": 1793400007.2, "source": "angle", "kind": "angle", "object": null, "hand": null, "step": 1, "confidence": null, "detail": {"deg": 11.0, "ok": true, "limit": 20}}
+{"t": 1793400007.6, "source": "coach", "kind": "step", "object": null, "hand": null, "step": 1, "confidence": 0.85, "detail": {"index": 1, "status": "done", "text": "Draw 100 microlitres of water from tube A."}}
+{"t": 1793400010.4, "source": "vision", "kind": "dispense", "object": "tube B", "hand": "right", "step": 2, "confidence": 0.8, "detail": {"cam": 1}}
+{"t": 1793400010.8, "source": "coach", "kind": "step", "object": null, "hand": null, "step": 2, "confidence": 0.8, "detail": {"index": 2, "status": "done", "text": "Dispense it into tube B."}}
+{"t": 1793400013.5, "source": "vision", "kind": "draw", "object": "tube C", "hand": "right", "step": 5, "confidence": 0.75, "detail": {"cam": 0}}
+{"t": 1793400013.6, "source": "angle", "kind": "angle", "object": null, "hand": null, "step": 5, "confidence": null, "detail": {"deg": 18.0, "ok": true, "limit": 20}}
+{"t": 1793400014.0, "source": "angle", "kind": "angle", "object": null, "hand": null, "step": 5, "confidence": null, "detail": {"deg": 27.4, "ok": false, "limit": 20}}
+{"t": 1793400014.1, "source": "angle", "kind": "warning", "object": null, "hand": null, "step": 5, "confidence": null, "detail": {"text": "Pipette tilted too far, hold it upright."}}
+{"t": 1793400014.2, "source": "coach", "kind": "step", "object": null, "hand": null, "step": 3, "confidence": null, "detail": {"index": 3, "status": "skipped", "text": "Eject the tip."}}
+{"t": 1793400014.2, "source": "coach", "kind": "step", "object": null, "hand": null, "step": 4, "confidence": null, "detail": {"index": 4, "status": "skipped", "text": "Put a fresh tip on the pipette."}}
+{"t": 1793400014.3, "source": "coach", "kind": "warning", "object": null, "hand": null, "step": 5, "confidence": null, "detail": {"text": "Same tip as tube A. Use a fresh tip."}}
+{"t": 1793400014.6, "source": "angle", "kind": "angle", "object": null, "hand": null, "step": 5, "confidence": null, "detail": {"deg": 15.0, "ok": true, "limit": 20}}
+{"t": 1793400015.0, "source": "coach", "kind": "step", "object": null, "hand": null, "step": 5, "confidence": 0.75, "detail": {"index": 5, "status": "done", "text": "Draw 100 microlitres of dye from tube C."}}
+{"t": 1793400017.5, "source": "vision", "kind": "dispense", "object": "tube B", "hand": "right", "step": 6, "confidence": 0.4, "detail": {"cam": 1}}
+{"t": 1793400018.4, "source": "coach", "kind": "speech", "object": null, "hand": null, "step": null, "confidence": null, "detail": {"text": "Okay, it turned light blue, a few bubbles at the top."}}
+{"t": 1793400019.0, "source": "coach", "kind": "step", "object": null, "hand": null, "step": 6, "confidence": 0.4, "detail": {"index": 6, "status": "unsure", "text": "Dispense it into tube B and mix by pipetting up and down three times."}}
+{"t": 1793400019.1, "source": "coach", "kind": "warning", "object": null, "hand": null, "step": 6, "confidence": null, "detail": {"text": "Did you mix three times?"}}
+{"t": 1793400019.3, "source": "coach", "kind": "speech", "object": null, "hand": null, "step": null, "confidence": null, "detail": {"text": "what's next"}}
+{"t": 1793400022.0, "source": "vision", "kind": "tip_off", "object": null, "hand": "right", "step": 7, "confidence": 0.9, "detail": {}}
+{"t": 1793400022.4, "source": "coach", "kind": "step", "object": null, "hand": null, "step": 7, "confidence": 0.9, "detail": {"index": 7, "status": "done", "text": "Eject the tip."}}
+{"t": 1793400024.0, "source": "app", "kind": "run", "object": null, "hand": null, "step": null, "confidence": null, "detail": {"status": "stop", "run": "demo-fake"}}
