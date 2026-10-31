@@ -52,6 +52,10 @@ class Entry:
     hand: str | None = None
     upright: float = 99.0
     pre_speed: float = 0.0
+    thumb: tuple = ()  # thumb ratio minus its rest value, first and last while in (empty: no finger points)
+    thumb_min: float | None = None
+    rise: float = 0.0  # how far the tip end went up in the gap after leaving, in frame heights
+    lean: float = 0.0  # pipette box width / height while in (0 upright, bigger leaning)
 
     @property
     def score(self) -> float:
@@ -80,6 +84,7 @@ class DipTracker:
         self.rest: dict = {}
         self.frame_h = 1.0
         self.debug: dict = {}
+        self.thumb_rel = None
 
     def set_containers(self, t, dets, w, h, tipboxes=()):
         r = self.r
@@ -114,9 +119,11 @@ class DipTracker:
 
     def _pressed(self, hand) -> bool:
         if hand is None or not hand.pts:
+            self.thumb_rel = None
             return False
         ratio = hand.thumb_ratio()
         rest = self.rest.get(hand.side, ratio)
+        self.thumb_rel = ratio - rest
         if ratio < rest - self.r.thumb_drop:
             return True
         self.rest[hand.side] = rest + 0.05 * (ratio - rest)
@@ -144,12 +151,20 @@ class DipTracker:
                             "down": bool(recent_y) and pt[1] - min(recent_y) >= r.down_px,
                             "pressed": pressed, "hand": hand.side if hand else None,
                             "shape": [upright(pip_box)],
-                            "pre": [q for s, q in self.hist if t - r.pre_win <= s <= t]}
+                            "pre": [q for s, q in self.hist if t - r.pre_win <= s <= t],
+                            "thumb": [self.thumb_rel] if self.thumb_rel is not None else [],
+                            "y_in": pt[1], "y_min_after": None}
             else:
                 c["t1"] = t
                 c["pressed"] = c["pressed"] or pressed
                 c["shape"].append(upright(pip_box))
-        elif c is not None and t - c["t1"] > r.gap:
+                c["y_in"] = pt[1]
+                c["y_min_after"] = None
+                if self.thumb_rel is not None:
+                    c["thumb"].append(self.thumb_rel)
+        elif c is not None and pt is not None:
+            c["y_min_after"] = pt[1] if c["y_min_after"] is None else min(c["y_min_after"], pt[1])
+        if c is not None and cont is None and self.cur is not None and t - c["t1"] > r.gap:
             out += self._close(c)
             self.cur = None
         return out
@@ -161,8 +176,14 @@ class DipTracker:
         sh = sorted(c["shape"])
         pre = c["pre"]
         speed = sum(dist(a, b) for a, b in zip(pre, pre[1:])) / max(r.pre_win, 1e-3) / self.frame_h if len(pre) > 1 else 0.0
+        th = c.get("thumb") or []
+        ya = c.get("y_min_after")
+        up = sh[len(sh) // 2]
         e = Entry(self.cam, c["t0"], c["t1"], c["label"], c["xy"], c["size"], c["down"], c["pressed"], c["hand"],
-                  round(sh[len(sh) // 2], 2), round(speed, 3))
+                  round(up, 2), round(speed, 3),
+                  (round(th[0], 3), round(th[-1], 3)) if th else (), round(min(th), 3) if th else None,
+                  round((c.get("y_in", 0) - ya) / self.frame_h, 3) if ya is not None else 0.0,
+                  round(1.0 / max(up, 1e-3), 3))
         if e.label != TIP_BOX:
             if r.min_upright and e.upright < r.min_upright:
                 return []  # pipette lying down, or the whole hand side on
