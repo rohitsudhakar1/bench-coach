@@ -1,0 +1,242 @@
+# Source: https://www.addgene.org/protocols/pcr/
+# Seven reactions with the same template; 10% excess. Primers are preloaded separately.
+# Water arithmetic corrected to 283.36 microlitres; total mix 346.5 microlitres.
+# Setup only; cycling conditions depend on the primers and polymerase.
+name: PCR master mix setup
+steps:
+- text: Keep reagents and a labelled master mix tube on ice.
+  expect:
+  - kind: speech
+- text: Check seven preloaded PCR tubes each contain 2.5 microlitres of each 10 micromolar primer.
+  expect:
+  - kind: speech
+- text: Fit a fresh tip.
+  expect:
+  - kind: tip_on
+- text: Draw 283.36 microlitres from sterile water.
+  expect:
+  - kind: draw
+    object: sterile water
+  technique:
+    angle_max_deg: 20
+- text: Dispense into master mix tube.
+  expect:
+  - kind: dispense
+    object: master mix tube
+  technique:
+    angle_max_deg: 20
+- text: Eject the tip.
+  expect:
+  - kind: tip_off
+- text: Fit a fresh tip.
+  expect:
+  - kind: tip_on
+- text: Draw 38.5 microlitres from 10x Taq buffer with magnesium.
+  expect:
+  - kind: draw
+    object: 10x Taq buffer with magnesium
+  technique:
+    angle_max_deg: 20
+- text: Dispense into master mix tube.
+  expect:
+  - kind: dispense
+    object: master mix tube
+  technique:
+    angle_max_deg: 20
+- text: Eject the tip.
+  expect:
+  - kind: tip_off
+- text: Fit a fresh tip.
+  expect:
+  - kind: tip_on
+- text: Draw 7.7 microlitres from 10 mM each dNTP mix.
+  expect:
+  - kind: draw
+    object: 10 mM each dNTP mix
+  technique:
+    angle_max_deg: 20
+- text: Dispense into master mix tube.
+  expect:
+  - kind: dispense
+    object: master mix tube
+  technique:
+    angle_max_deg: 20
+- text: Eject the tip.
+  expect:
+  - kind: tip_off
+- text: Fit a fresh tip.
+  expect:
+  - kind: tip_on
+- text: Draw 15.4 microlitres from template DNA.
+  expect:
+  - kind: draw
+    object: template DNA
+  technique:
+    angle_max_deg: 20
+- text: Dispense into master mix tube.
+  expect:
+  - kind: dispense
+    object: master mix tube
+  technique:
+    angle_max_deg: 20
+- text: Eject the tip.
+  expect:
+  - kind: tip_off
+- text: Fit a fresh tip.
+  expect:
+  - kind: tip_on
+- text: Draw 1.54 microlitres from 5 units per microlitre Taq.
+  expect:
+  - kind: draw
+    object: 5 units per microlitre Taq
+  technique:
+    angle_max_deg: 20
+- text: Dispense into master mix tube.
+  expect:
+  - kind: dispense
+    object: master mix tube
+  technique:
+    angle_max_deg: 20
+- text: Eject the tip.
+  expect:
+  - kind: tip_off
+- text: Fit a fresh tip.
+  expect:
+  - kind: tip_on
+- text: Gently pipette the master mix several times; confirm when mixed.
+  expect:
+  - kind: speech
+  technique:
+    angle_max_deg: 20
+- text: Eject the tip.
+  expect:
+  - kind: tip_off
+- text: Fit a fresh tip.
+  expect:
+  - kind: tip_on
+- text: Draw 45 microlitres from master mix tube.
+  expect:
+  - kind: draw
+    object: master mix tube
+  technique:
+    angle_max_deg: 20
+- text: Dispense into PCR tube 1.
+  expect:
+  - kind: dispense
+    object: PCR tube 1
+  technique:
+    angle_max_deg: 20
+- text: Eject the tip.
+  expect:
+  - kind: tip_off
+- text: Fit a fresh tip.
+  expect:
+  - kind: tip_on
+- text: Draw 45 microlitres from master mix tube.
+  expect:
+  - kind: draw
+    object: master mix tube
+  technique:
+    angle_max_deg: 20
+- text: Dispense into PCR tube 2.
+  expect:
+  - kind: dispense
+    object: PCR tube 2
+  technique:
+    angle_max_deg: 20
+- text: Eject the tip.
+  expect:
+  - kind: tip_off
+- text: Fit a fresh tip.
+  expect:
+  - kind: tip_on
+- text: Draw 45 microlitres from master mix tube.
+  expect:
+  - kind: draw
+    object: master mix tube
+  technique:
+    angle_max_deg: 20
+- text: Dispense into PCR tube 3.
+  expect:
+  - kind: dispense
+    object: PCR tube 3
+  technique:
+    angle_max_deg: 20
+- text: Eject the tip.
+  expect:
+  - kind: tip_off
+- text: Fit a fresh tip.
+  expect:
+  - kind: tip_on
+- text: Draw 45 microlitres from master mix tube.
+  expect:
+  - kind: draw
+    object: master mix tube
+  technique:
+    angle_max_deg: 20
+- text: Dispense into PCR tube 4.
+  expect:
+  - kind: dispense
+    object: PCR tube 4
+  technique:
+    angle_max_deg: 20
+- text: Eject the tip.
+  expect:
+  - kind: tip_off
+- text: Fit a fresh tip.
+  expect:
+  - kind: tip_on
+- text: Draw 45 microlitres from master mix tube.
+  expect:
+  - kind: draw
+    object: master mix tube
+  technique:
+    angle_max_deg: 20
+- text: Dispense into PCR tube 5.
+  expect:
+  - kind: dispense
+    object: PCR tube 5
+  technique:
+    angle_max_deg: 20
+- text: Eject the tip.
+  expect:
+  - kind: tip_off
+- text: Fit a fresh tip.
+  expect:
+  - kind: tip_on
+- text: Draw 45 microlitres from master mix tube.
+  expect:
+  - kind: draw
+    object: master mix tube
+  technique:
+    angle_max_deg: 20
+- text: Dispense into PCR tube 6.
+  expect:
+  - kind: dispense
+    object: PCR tube 6
+  technique:
+    angle_max_deg: 20
+- text: Eject the tip.
+  expect:
+  - kind: tip_off
+- text: Fit a fresh tip.
+  expect:
+  - kind: tip_on
+- text: Draw 45 microlitres from master mix tube.
+  expect:
+  - kind: draw
+    object: master mix tube
+  technique:
+    angle_max_deg: 20
+- text: Dispense into PCR tube 7.
+  expect:
+  - kind: dispense
+    object: PCR tube 7
+  technique:
+    angle_max_deg: 20
+- text: Eject the tip.
+  expect:
+  - kind: tip_off
+- text: Cap the seven 50 microlitre reactions and keep on ice until cycling.
+  expect:
+  - kind: speech

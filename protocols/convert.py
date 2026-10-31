@@ -18,7 +18,7 @@ class Model(BaseModel):
 
 
 class Evidence(Model):
-    kind: Literal['tip_on', 'tip_off', 'draw', 'dispense', 'hand_touch']
+    kind: Literal['tip_on', 'tip_off', 'draw', 'dispense', 'hand_touch', 'speech']
     object: str | None = None
 
 

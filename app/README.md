@@ -173,3 +173,18 @@ node --check app/static/trainer.js
 
 The browser check uses three temporary fake folders, no server, no camera and no audio.
 It needs permission to launch Chromium. See `TRAINER-REPORT.md` for this run's results.
+
+## Phone step view
+
+Open `/step` on the hub for a large current instruction, the next step, the latest
+warning and a Done button. Done sends an app speech event containing “done”; the
+coach marks the step with said evidence. The page follows websocket updates and
+reloads state on reconnect. It disables confirmation until a current step is
+available and while waiting for the coach to handle a tap. See
+[the protocol library](../protocols/README.md) for selection, phone access and limits.
+
+```sh
+$BENCH_PY -m pytest app/tests/test_step.py protocols/tests -q -p no:cacheprovider
+node --test app/tests/step.test.cjs
+$BENCH_PY app/tests/step_browser.py  # optional browser layout check
+```

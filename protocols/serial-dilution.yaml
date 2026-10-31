@@ -1,0 +1,92 @@
+# Source: https://rothlab.ucdavis.edu/protocols/M04.shtml
+# Teaching adaptation: dye in water, scaled to microlitres; final dilution 1:10000.
+# Prefill is a manual check. Speech evidence means done, not any utterance.
+name: Serial dilution 1:10 x4
+steps:
+- text: Check tubes D1 to D4 each contain 900 microlitres of water.
+  expect:
+  - kind: speech
+- text: Fit a fresh tip.
+  expect:
+  - kind: tip_on
+- text: Draw 100 microlitres from stock dye.
+  expect:
+  - kind: draw
+    object: stock dye
+  technique:
+    angle_max_deg: 20
+- text: Dispense into tube D1.
+  expect:
+  - kind: dispense
+    object: tube D1
+  technique:
+    angle_max_deg: 20
+- text: Eject the tip.
+  expect:
+  - kind: tip_off
+- text: Cap and mix tube D1 thoroughly; confirm when mixed.
+  expect:
+  - kind: speech
+- text: Fit a fresh tip.
+  expect:
+  - kind: tip_on
+- text: Draw 100 microlitres from tube D1.
+  expect:
+  - kind: draw
+    object: tube D1
+  technique:
+    angle_max_deg: 20
+- text: Dispense into tube D2.
+  expect:
+  - kind: dispense
+    object: tube D2
+  technique:
+    angle_max_deg: 20
+- text: Eject the tip.
+  expect:
+  - kind: tip_off
+- text: Cap and mix tube D2 thoroughly; confirm when mixed.
+  expect:
+  - kind: speech
+- text: Fit a fresh tip.
+  expect:
+  - kind: tip_on
+- text: Draw 100 microlitres from tube D2.
+  expect:
+  - kind: draw
+    object: tube D2
+  technique:
+    angle_max_deg: 20
+- text: Dispense into tube D3.
+  expect:
+  - kind: dispense
+    object: tube D3
+  technique:
+    angle_max_deg: 20
+- text: Eject the tip.
+  expect:
+  - kind: tip_off
+- text: Cap and mix tube D3 thoroughly; confirm when mixed.
+  expect:
+  - kind: speech
+- text: Fit a fresh tip.
+  expect:
+  - kind: tip_on
+- text: Draw 100 microlitres from tube D3.
+  expect:
+  - kind: draw
+    object: tube D3
+  technique:
+    angle_max_deg: 20
+- text: Dispense into tube D4.
+  expect:
+  - kind: dispense
+    object: tube D4
+  technique:
+    angle_max_deg: 20
+- text: Eject the tip.
+  expect:
+  - kind: tip_off
+- text: Cap and mix tube D4 thoroughly; confirm when mixed.
+  expect:
+  - kind: speech

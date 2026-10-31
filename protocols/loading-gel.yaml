@@ -1,0 +1,72 @@
+# Source: https://www.addgene.org/protocols/gel-electrophoresis/
+# Loading only: prepared gel, 6x dye, ready-to-load ladder and one DNA sample.
+# 10 microlitres is the teaching example; verify well capacity and sample concentration.
+# 20 degrees is the demo technique threshold, not a validated gel-loading limit.
+name: Loading an agarose gel
+steps:
+- text: With power disconnected, cover the prepared gel with its matching 1x running buffer.
+  expect:
+  - kind: speech
+- text: Check the lane plan and recommended ladder volume.
+  expect:
+  - kind: speech
+- text: Fit a fresh tip.
+  expect:
+  - kind: tip_on
+- text: Draw 5 microlitres from 6x loading dye.
+  expect:
+  - kind: draw
+    object: 6x loading dye
+  technique:
+    angle_max_deg: 20
+- text: Dispense into 25 microlitre DNA sample.
+  expect:
+  - kind: dispense
+    object: 25 microlitre DNA sample
+  technique:
+    angle_max_deg: 20
+- text: Eject the tip.
+  expect:
+  - kind: tip_off
+- text: Mix the sample with its loading dye; confirm when mixed.
+  expect:
+  - kind: speech
+- text: Fit a fresh tip.
+  expect:
+  - kind: tip_on
+- text: Draw the recommended volume from the ready-to-load ladder.
+  expect:
+  - kind: draw
+    object: ladder tube
+  technique:
+    angle_max_deg: 20
+- text: Slowly load the ladder into well 1 without piercing the gel.
+  expect:
+  - kind: dispense
+    object: gel well 1
+  technique:
+    angle_max_deg: 20
+- text: Eject the tip.
+  expect:
+  - kind: tip_off
+- text: Fit a fresh tip.
+  expect:
+  - kind: tip_on
+- text: Draw 10 microlitres from the mixed DNA sample.
+  expect:
+  - kind: draw
+    object: DNA sample tube
+  technique:
+    angle_max_deg: 20
+- text: Slowly load the sample into well 2 without piercing the gel.
+  expect:
+  - kind: dispense
+    object: gel well 2
+  technique:
+    angle_max_deg: 20
+- text: Eject the tip.
+  expect:
+  - kind: tip_off
+- text: Record the lane identities before setting up the gel run.
+  expect:
+  - kind: speech
