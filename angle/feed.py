@@ -22,6 +22,7 @@ class FeedState:
         self.step = None
         self.step_time = -math.inf
         self.run_time = -math.inf
+        self.running = None
 
     def accept(self, event, now=None):
         now = time.time() if now is None else now
@@ -35,10 +36,13 @@ class FeedState:
             if stamp < self.run_time:
                 return
             if source == 'app' and kind == 'run' and detail.get('status') in ('start', 'stop'):
+                self.running = detail['status'] == 'start'
                 self.boxes.clear()
                 self.activity = None
                 self.step = None
                 self.step_time = self.run_time = stamp
+            elif source == 'vision' and self.running is False:
+                return
             elif source == 'vision' and kind == 'objects':
                 cam, boxes = detail.get('cam'), detail.get('boxes')
                 if type(cam) is not int or cam < 0 or not isinstance(boxes, list):

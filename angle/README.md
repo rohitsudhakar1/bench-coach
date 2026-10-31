@@ -2,8 +2,9 @@
 
 Measures pipette lean from vertical, with a warning strictly above 20 degrees. The service
 uses OpenCV LSD inside the latest vision pipette box for each camera. A hand-selected
-shaft crop is the fallback, followed by CSRT tracking. A lost track returns to the selected
-box on the next frame. No API keys, model weights, or other Bench Coach services are needed
+shaft crop and CSRT tracking are available for standalone checks with `--always`. A lost
+track returns to the selected box on the next frame. Estimates above 45 degrees are logged
+as probable mis-detections and produce neither an angle event nor a warning. No API keys, model weights, or other Bench Coach services are needed
 for file replay.
 
 Calibrated two-view measurement intersects the planes defined by the two image lines and
@@ -58,24 +59,29 @@ live timestamps and stereo.
 
 `--hub` defaults to `http://127.0.0.1:8700`. The reconnecting `/ws` subscriber accepts
 vision `objects`, `draw`, `dispense`, coach `step`, and app `run` events. The highest-score
-valid label containing “pipette” wins per camera. Coordinates are original-image
+valid label containing “pipette” with boolean `held:true` wins per camera. Missing, false,
+numeric or string held values are rejected. Coordinates are original-image
 `[x1,y1,x2,y2]` pixels, clipped to the image. Boxes expire at one second; empty updates
 clear them. Future, malformed and out-of-order events cannot refresh the cache. One
 `--cam` per source maps nonstandard camera IDs; defaults are 0 then 1.
 
 A fresh vision crop takes priority over manual tracking. If it contains no shaft, the
 service abstains instead of silently switching to another region. Manual trackers keep
-following while idle. With neither vision nor manual crop, a full-image central-line
-fallback remains available, always marked rough with `crop_sources:["local"]`. It has
+following while idle. Normal operation requires a fresh held vision crop for each measured
+view; a manual crop cannot bypass that rule. With `--always` and neither vision nor manual
+crop, a full-image central-line fallback remains available, always marked rough with
+`crop_sources:["local"]`. It has
 no pipette identity and can pick a bench edge; choose a manual crop for useful standalone
 measurement. Two views are not associated by identity, so multiple pipettes are a limit.
 
 Measurement runs only within two seconds of a vision draw/dispense unless `--always` is
-set. A vision hint can open that window, but remains `activity_hint:true`; checking a
+set for a standalone diagnostic. `--always` bypasses both activity and held-box requirements,
+but still rejects angles above 45 degrees. The demo launcher never sets it. A vision hint can open that window, but remains `activity_hint:true`; checking a
 possible technique error does not establish that a transfer happened. The latest coach
 `status:current` supplies the step index. Done/skipped clears that same current step;
 a done/skipped event for another step cannot steal it. Run start/stop clears cached
-observations and step state. This corrects the earlier draft's tagging of every step status
+observations and step state. After Stop, vision observations are ignored until the next Start.
+Before the first run event, standalone hub-fed checks remain available. This corrects the earlier draft's tagging of every step status
 as current. There is no history fetch after reconnect; a new current-step event is needed.
 
 `angle` details include the contract's `deg`, `ok`, `limit`, plus `rough`, `method`, `views`,
@@ -163,3 +169,9 @@ were read only as test data. Python standard-library code is under PSF-2.0.
 | [HTTPX](https://github.com/encode/httpx) | 0.28.1 | BSD-3-Clause | Capture JPEG reads and event delivery |
 | [websockets](https://github.com/python-websockets/websockets) | 17.4 | BSD-3-Clause | Hub subscription |
 | [pytest](https://github.com/pytest-dev/pytest) | 9.2.0 | MIT | Automated checks |
+
+## Hint sweep regression
+
+See [TILTFIX-REPORT.md](TILTFIX-REPORT.md) for the saved sweep replay and smoke check.
+The 45-degree ceiling is a conservative suppression rule, not a physical angle validation.
+A wrong object marked held can still produce an estimate at or below 45 degrees.

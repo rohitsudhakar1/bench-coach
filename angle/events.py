@@ -1,8 +1,22 @@
 """Contract events, throttling and hub delivery with a stdout fallback."""
 import json
 import math
+import logging
 import time
 import httpx
+
+
+MAX_PIPETTING_TILT = 45.
+logger = logging.getLogger(__name__)
+
+
+def plausible(result):
+    """Reject likely wrong edges before they reach either the UI or the coach."""
+    if result is not None and result[0] > MAX_PIPETTING_TILT:
+        logger.warning('Probable mis-detection: rejected pipette tilt %.2f degrees (maximum %.0f)',
+                       result[0], MAX_PIPETTING_TILT)
+        return False
+    return True
 
 
 class EventGate:
@@ -18,6 +32,8 @@ class EventGate:
         deg, confidence, detail = result
         if not math.isfinite(deg) or not 0 <= deg <= 90 or not 0 <= confidence <= 1:
             raise ValueError('Invalid angle or confidence')
+        if not plausible(result):
+            return []
         now = time.monotonic() if now is None else now
         if now - self.last_angle < self.period:
             return []
