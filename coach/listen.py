@@ -23,7 +23,10 @@ class Gate:
 
     It tracks the background level all the time (falls fast, rises over a few seconds). A sound
     opens the gate when it is `start_ratio` times the background, above `min_level`, for `onset`
-    seconds in a row. It closes after `end_silence` seconds back near the background.
+    seconds in a row. It closes after `end_silence` seconds of quiet, judged on a 150 ms
+    average: quiet means near the background, or under `end_drop` of the speech's own level.
+    That second rule stops bench clatter right after a question from holding the gate open
+    (it held "What's next?" open for 3 s; now 0.4 s).
 
     The room: in the first `room_time` seconds it notes how loud the room is (90th percentile of
     the quiet frames). After that a sound must also be `room_margin` times that level, so chatter
@@ -38,12 +41,13 @@ class Gate:
 
     def __init__(self, rate=RATE, start_ratio=4.0, end_ratio=2.0, min_level=0.03, onset=0.12,
                  end_silence=0.6, min_voiced=0.25, max_len=8.0, warmup=0.3, preroll=0.15,
-                 room_time=2.0, room_margin=2.5):
+                 room_time=2.0, room_margin=2.5, end_drop=0.4):
         self.rate = rate
         self.start_ratio, self.end_ratio = start_ratio, end_ratio
         self.min_level, self.onset = min_level, onset
         self.end_silence, self.min_voiced, self.max_len = end_silence, min_voiced, max_len
         self.warmup, self.room_time, self.room_margin = warmup, room_time, room_margin
+        self.end_drop = end_drop
         self.pre_frames = max(1, round(preroll / (self.FRAME / rate)))
         self.floor = None
         self.heard = 0.0
@@ -61,6 +65,7 @@ class Gate:
         self.voiced = 0.0
         self.quiet_for = 0.0
         self.run: list[tuple[np.ndarray, float]] = []
+        self.levels: list[float] = []
 
     def room_bar(self) -> float:
         if self.room is not None:
@@ -112,12 +117,17 @@ class Gate:
                     continue
                 self.t0 = self.run[0][1]
                 self.buf = self.pre + [g for g, _ in self.run]
+                self.levels = [float(np.sqrt(np.mean(g * g))) for g, _ in self.run]
                 self.voiced = len(self.run) * dur
                 self.run, self.pre, self.quiet_for = [], [], 0.0
                 continue
             self.buf.append(f)
             self._follow(level, True)
-            if level > max(self.min_level, floor * self.end_ratio):
+            self.levels.append(level)
+            # judge the end on a 150 ms average, so single clunks after the speech don't hold it open
+            recent = float(np.mean(self.levels[-5:]))
+            speech = float(np.percentile(self.levels, 90))
+            if recent > max(self.min_level, floor * self.end_ratio, self.end_drop * speech):
                 self.voiced += dur
                 self.quiet_for = 0.0
             else:
@@ -158,7 +168,7 @@ class Whisper:
             from faster_whisper import WhisperModel
             self.model = WhisperModel(self.name, device="cpu", compute_type="int8")
             warm = np.random.default_rng(0).normal(0, 0.01, RATE).astype(np.float32)
-            list(self.model.transcribe(warm, language="en", beam_size=1)[0])   # pay the first-call cost now
+            list(self.model.transcribe(warm, language="en", beam_size=1, vad_filter=True)[0])  # pay first-call costs now
         return self
 
     def transcribe(self, audio: np.ndarray) -> str:
@@ -211,7 +221,8 @@ async def local_chunks(stream_factory=None, clock=time.time):
     q: asyncio.Queue = asyncio.Queue()
 
     def cb(indata, frames, tinfo, status):
-        loop.call_soon_threadsafe(q.put_nowait, (indata[:, 0].copy(), clock() - frames / RATE))
+        item = None if indata is None else (indata[:, 0].copy(), clock() - frames / RATE)
+        loop.call_soon_threadsafe(q.put_nowait, item)   # None ends the stream (test stand-ins)
 
     with stream_factory(samplerate=RATE, channels=1, dtype="int16", blocksize=MIC_BLOCK, callback=cb):
         print("coach: listening on the laptop mic", file=sys.stderr)
