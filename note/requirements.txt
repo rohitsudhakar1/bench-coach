@@ -1,0 +1,12 @@
+# All already in the shared environment ($BENCH_PY).
+fastapi
+uvicorn
+httpx
+websockets
+pydantic
+pyyaml
+opencv-python
+numpy
+weasyprint>=70,<71   # PDF; needs Pango on the host
+anthropic            # optional, only for the wording pass
+pytest
