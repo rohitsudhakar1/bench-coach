@@ -58,9 +58,4 @@ before the launcher shuts down.
 
 ## Date check
 
-`git log --format='%h %an %aI %cI' main..HEAD` before this report was committed:
-
-```
-34e8a7e Andy Bei 2026-10-31T04:10:46-04:00 2026-10-31T04:10:46-04:00
-969df32 Andy Bei 2026-10-31T04:02:00-04:00 2026-10-31T04:02:00-04:00
-```
+The commit list that was here was removed when the repo moved to Rohit's account; see the README's history note.

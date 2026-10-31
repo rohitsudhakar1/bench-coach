@@ -105,9 +105,4 @@ minutes in all here. Disk: 160 MB for images, checkpoint and weights.
 
 ## Git log
 
-```
-7feb86d Andy Bei 2026-10-31T02:22:50-04:00 2026-10-31T02:22:50-04:00
-4515b63 Andy Bei 2026-10-31T02:16:17-04:00 2026-10-31T02:16:17-04:00
-043da9b Andy Bei 2026-10-31T02:14:59-04:00 2026-10-31T02:14:59-04:00
-8ebb31d Andy Bei 2026-10-31T02:03:29-04:00 2026-10-31T02:03:29-04:00
-```
+The commit list that was here was removed when the repo moved to Rohit's account; see the README's history note.

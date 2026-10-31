@@ -77,15 +77,7 @@ All choices were made on the tuning clips, then checked on held-out.
 
 ## Date check
 
-`git log --format='%h %an %aI %cI' main..HEAD` before this report was committed:
-
-```
-b40e9c8 Andy Bei 2026-10-30T22:39:56-04:00 2026-10-30T22:39:56-04:00
-46925ab Andy Bei 2026-10-30T22:39:06-04:00 2026-10-30T22:39:06-04:00
-c71b7d6 Andy Bei 2026-10-30T22:37:54-04:00 2026-10-30T22:37:54-04:00
-d3a9a3e Andy Bei 2026-10-30T22:37:29-04:00 2026-10-30T22:37:29-04:00
-287e1a6 Andy Bei 2026-10-30T22:32:22-04:00 2026-10-30T22:32:22-04:00
-```
+The commit list that was here was removed when the repo moved to Rohit's account; see the README's history note.
 
 Real times, author from the repo config, no rewritten history. No sound played, no server
 started, no package added.

@@ -92,9 +92,5 @@ tests stub the model check so they stay fast and need no models. Full suite: 492
 ## Git log
 
 ```
-9b426e8 Andy Bei 2026-10-31T05:14:52-04:00 2026-10-31T05:14:52-04:00
-14f0d1c Andy Bei 2026-10-31T05:11:07-04:00 2026-10-31T05:11:07-04:00
-33f3f88 Andy Bei 2026-10-31T05:08:58-04:00 2026-10-31T05:08:58-04:00
-2ff8f72 Andy Bei 2026-10-31T05:04:46-04:00 2026-10-31T05:04:46-04:00
 (this last commit adds the log itself)
 ```

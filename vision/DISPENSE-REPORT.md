@@ -138,9 +138,4 @@ BENCH_SAMPLES=<sample video folder> $BENCH_PY scripts/scorecard.py
 
 ## Date check
 
-`git log --format='%h %an %aI %cI' main..HEAD` before this report was committed:
-
-```
-3fd1903 Andy Bei 2026-10-30T22:36:28-04:00 2026-10-30T22:36:28-04:00
-137a1cc Andy Bei 2026-10-30T22:29:05-04:00 2026-10-30T22:29:05-04:00
-```
+The commit list that was here was removed when the repo moved to Rohit's account; see the README's history note.

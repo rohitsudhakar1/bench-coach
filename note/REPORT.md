@@ -80,10 +80,4 @@ The original build report and its historical audit follow below.
 
 ## Git log
 
-`git log --format='%h %an %aI %cI' main..HEAD` before this report's own commit:
-
-```
-928fac6 Andy Bei 2026-10-30T20:18:49-04:00 2026-10-30T20:18:49-04:00
-9a74345 Andy Bei 2026-10-30T20:17:55-04:00 2026-10-30T20:17:55-04:00
-367976d Andy Bei 2026-10-30T20:15:57-04:00 2026-10-30T20:15:57-04:00
-```
+The commit list that was here was removed when the repo moved to Rohit's account; see the README's history note.

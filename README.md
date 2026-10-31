@@ -212,3 +212,7 @@ Neither camera mode proves liquid transfer, volume, reagent identity or sterilit
 ```sh
 "${BENCH_PY:-python3}" -m pytest tests/test_modes_smoke.py -q -p no:cacheprovider
 ```
+
+## History
+
+This repository was first pushed to Andy Bei's GitHub account and moved here on October 31. The move changed the author name on every commit to Rohit and kept every commit's date and time as it was.

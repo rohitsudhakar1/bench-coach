@@ -87,14 +87,7 @@ draft's measured setting) they are 3. So the default is a tenth; `SceneRules.max
 
 ## Date check
 
-`git log --format='%h %an %aI %cI' main..HEAD` before this report was committed:
-
-```
-2784f10 Andy Bei 2026-10-30T20:27:08-04:00 2026-10-30T20:27:08-04:00
-832bfc4 Andy Bei 2026-10-30T20:22:24-04:00 2026-10-30T20:22:24-04:00
-0622562 Andy Bei 2026-10-30T20:20:15-04:00 2026-10-30T20:20:15-04:00
-3ae94a8 Andy Bei 2026-10-30T20:18:01-04:00 2026-10-30T20:18:01-04:00
-```
+The commit list that was here was removed when the repo moved to Rohit's account; see the README's history note.
 
 Real times, no rewritten history, author from the repo config. No sound played, no package
 added, only ports 8810 and 8811 used for checks, nothing left running.

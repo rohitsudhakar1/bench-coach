@@ -45,8 +45,4 @@ No change to docs/EVENTS.md proposed.
 
 ## Git log
 
-`git log --format='%h %an %aI %cI' main..HEAD` before this report's commit:
-
-```
-65e3bf3 Andy Bei 2026-10-30T20:37:09-04:00 2026-10-30T20:37:09-04:00
-```
+The commit list that was here was removed when the repo moved to Rohit's account; see the README's history note.

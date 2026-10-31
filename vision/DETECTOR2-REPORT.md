@@ -101,10 +101,4 @@ VISION_EVAL_CACHE=cache-florence2 VISION_EVAL_MIN_SCORE=0 $BENCH_PY -m vision.ev
 
 ## Date check
 
-`git log --format='%h %an %aI %cI' main..HEAD` before this report was committed:
-
-```
-e4cdd4f Andy Bei 2026-10-31T02:34:28-04:00 2026-10-31T02:34:28-04:00
-427185c Andy Bei 2026-10-31T02:08:53-04:00 2026-10-31T02:08:53-04:00
-13f6097 Andy Bei 2026-10-31T02:06:57-04:00 2026-10-31T02:06:57-04:00
-```
+The commit list that was here was removed when the repo moved to Rohit's account; see the README's history note.

@@ -73,12 +73,4 @@ changed. App, launcher and rehearsal tests: 104 passed, 1 skipped. Coach tests: 
 
 ## Git log check
 
-Run before this file was added: `git log --format='%h %an %aI %cI' main..HEAD`
-
-```
-bb1e915 Andy Bei 2026-10-31T03:18:12-04:00 2026-10-31T03:18:12-04:00
-e583aef Andy Bei 2026-10-31T03:16:42-04:00 2026-10-31T03:16:42-04:00
-e221403 Andy Bei 2026-10-31T03:11:23-04:00 2026-10-31T03:11:23-04:00
-706c74b Andy Bei 2026-10-31T03:10:08-04:00 2026-10-31T03:10:08-04:00
-95df2a3 Andy Bei 2026-10-31T03:04:31-04:00 2026-10-31T03:04:31-04:00
-```
+The commit list that was here was removed when the repo moved to Rohit's account; see the README's history note.

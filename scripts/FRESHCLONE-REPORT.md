@@ -4,7 +4,7 @@ Goal: a judge clones the public repo and gets the demo running without help.
 
 ## What I tried, in a throwaway folder outside the project
 
-1. `git clone https://github.com/rbei001/bench-coach` (main at e64228a).
+1. `git clone` of this repo.
 2. Setup. Before this branch there was no setup script and no single requirements file; a judge had to read seven part folders and install each list by hand. Two of those lists ask for `opencv-python` and two for `opencv-contrib-python`, and installing both makes them overwrite each other's `cv2`.
 3. Replay demo on a check port: hub came up, page loaded, steps ticked off and the coach lines showed. The only browser console errors were the camera feeds, which is expected with capture left out.
 4. Full sample-video demo (all six parts) from the clone's own venv: every part reported ready, Start run, Stop run and the lab note all worked, and the run folder held both videos, the mic file, events and the note.
@@ -26,9 +26,5 @@ Goal: a judge clones the public repo and gets the demo running without help.
 
 ## Git log
 
-```
-83bcecb Andy Bei 2026-10-30T23:09:52-04:00 2026-10-30T23:09:52-04:00
-3f191b2 Andy Bei 2026-10-30T23:05:26-04:00 2026-10-30T23:05:26-04:00
-79ecafb Andy Bei 2026-10-30T22:57:09-04:00 2026-10-30T22:57:09-04:00
-```
+The commit list that was here was removed when the repo moved to Rohit's account; see the README's history note.
 (plus the commit that adds this report)
