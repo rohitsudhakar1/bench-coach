@@ -36,3 +36,4 @@ anthropic
 
 # Browser checks in app/tests (run `python -m playwright install chromium` once)
 playwright
+psutil  # capture's leak probe and scripts/soak.py (BSD-3-Clause)
