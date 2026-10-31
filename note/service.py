@@ -7,6 +7,7 @@ import os
 import sys
 import threading
 import time
+import weakref
 from pathlib import Path
 
 import httpx
@@ -19,7 +20,19 @@ from .runfolder import RUNS_DIR, load_run, read_jsonl
 from .wording import polish
 
 HUB = os.environ.get("BENCH_HUB", "http://127.0.0.1:8700")
-_locks: dict[str, threading.Lock] = {}
+# Keep a shared lock while a builder or waiter owns it, then release the run key.
+_locks = weakref.WeakValueDictionary()
+_locks_guard = threading.Lock()
+
+
+def _build_lock(out: Path):
+    key = str(out.resolve())
+    with _locks_guard:
+        lock = _locks.get(key)
+        if lock is None:
+            lock = threading.Lock()
+            _locks[key] = lock
+        return lock
 
 
 def make_note(run_dir: str | Path, use_claude: bool | None = None, frames: bool = True,
@@ -30,7 +43,7 @@ def make_note(run_dir: str | Path, use_claude: bool | None = None, frames: bool 
     run_dir = Path(run_dir)
     out = Path(out_dir) if out_dir else run_dir
     out.mkdir(parents=True, exist_ok=True)
-    lock = _locks.setdefault(str(out.resolve()), threading.Lock())
+    lock = _build_lock(out)
     with lock:
         run = load_run(run_dir, sources=sources, events_file=events_file)
         note = build_note(run)
@@ -108,7 +121,6 @@ def create_app(runs_dir: Path = RUNS_DIR, hub: str | None = HUB, watch: bool = T
     app = FastAPI(title="Bench Coach note", lifespan=lifespan)
     app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
     runs_dir = Path(runs_dir)
-    app.state.built = []
 
     class NoteRequest(BaseModel):
         run: str | None = None
@@ -130,7 +142,6 @@ def create_app(runs_dir: Path = RUNS_DIR, hub: str | None = HUB, watch: bool = T
         event = note_event(folder.name, base_url)
         if announce:
             post_event(event, hub)
-        app.state.built.append(folder.name)
         return {"run": folder.name, "path": event["detail"]["path"], "url": event["detail"]["url"],
                 "summary": res["note"]["summary"], "wording": res["note"]["wording"]}
 

@@ -207,3 +207,55 @@ Per-bench calibrations saved in the classroom UI are loaded from
 Shared table calibration/ROI flags are unchanged; configure appropriate geometry before
 using them on physically different benches. This check uses scripted actions, not measured
 recognition on the sample videos.
+
+## Ten-minute soak
+
+```sh
+"${BENCH_PY:-python3}" scripts/soak.py --base-port 8840
+```
+
+Set `BENCH_SAMPLES` to the sample folder first. The default pair is
+`lsv_mv/CP-{Left,Right}-Front-414-445.mp4`; `--source LEFT RIGHT` selects another pair.
+`--seconds` defaults to 600, `--run-seconds` to 120, and `--sample-seconds` to 5.
+All six ports must be within 8800–8899. The output directory must be new and under
+this worktree's `runs/`; `--output runs/my-soak` chooses its name.
+
+The script launches `scripts/demo.sh` with real vision, hints, angle and note,
+looped video and silent microphone. It removes hosted-service keys from the child
+environment and uses cached model weights only. Prepare the models beforehand.
+The measured interval begins after all services and the hub websocket are ready.
+It stops and starts recording every two minutes, stops the final recording, gives
+the final note up to 30 seconds to finish, and shuts down the launcher.
+
+Outputs are `samples.csv`, `summary.json`, `summary.txt`, `launcher.log`,
+`processes.jsonl`, and the recordings/logs beneath `recordings/`. These are ignored
+runtime artifacts. The launcher's optional `--process-log FILE` appends only part,
+PID and start timestamp for every start, including replacements; it needs an existing
+parent directory. It avoids global process enumeration in restricted environments.
+
+CPU is the change in each service process's user+system CPU time divided by elapsed
+wall time; 100% means one core. RSS is resident process memory in MiB, not total GPU
+allocation, and excludes subprocesses. Missing measurements stay blank, including
+the first CPU/rate sample. Camera rates are differences in capture sequence counters,
+not the camera's advertised FPS. Detector rates are differences in vision's consumed
+result counters per camera: these count completed detection results seen by the
+pipeline, not every internal model forward pass or superseded asynchronous result.
+Hub event rate counts messages received on `/ws`; reconnects are reported and can
+lose events. Disk size is logical file bytes under the entire worktree's `runs/`.
+
+Progress counters are probed roughly every half second to record gaps over three
+seconds, including gaps still open at shutdown. HTTP calls have two-second timeouts;
+gap timing has polling/network uncertainty and is not an exact latency trace. Quiet
+hub or detector intervals are reported as gaps, not automatically diagnosed as hangs.
+Angle and coach can legitimately be quiet, and note runs only on stop. This checks
+stream progress, not every thread's liveness or recognition accuracy.
+
+Memory summaries give start/peak/end RSS and a least-squares slope over the second
+half. “Steady growth” means three increasing median blocks in that half and a slope
+over 1 MiB/min. This heuristic does not prove a leak; allocator warmup, caches and
+bounded history can grow too. On macOS, memory pressure is checked every sample;
+under 40% free the script halts the soak and cleans up. No speaker is opened.
+
+The soak adds [psutil](https://github.com/giampaolo/psutil) (BSD-3-Clause) for direct
+PID CPU/RSS reads, listed in `scripts/requirements.txt`. HTTPX, websockets and pytest
+are already listed above. No package was installed for the measured run.
