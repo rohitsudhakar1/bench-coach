@@ -52,8 +52,13 @@ real video is skipped when `BENCH_SAMPLES` is not set.
   missing metadata is rejected too. Manual angle ROIs remain a separate explicit input.
 - `hand_touch`: a fingertip of a hand with finger points stays on a tip box, tube, rack, plate or
   waste for 0.3 s. The same hand on the same thing fires again only after 3 s away.
-- `tip_on`: the tip end stays in the tip box 0.4 s and then leaves. `tip_off`: it stays over
-  the waste 0.3 s.
+- `tip_on` (`tips.py`): only a tip box boxed in about the same place on at least 3 detector runs
+  counts (a one-off box on a phone does not). Its region reaches half its height further down,
+  because the detector often boxes the lid and the tips sit below. The lower end of an upright
+  pipette box goes in, and a later run sees it out or higher up; that fires `tip_on`, at most
+  once in 5 s. `Vision(tips=None)` brings back the older rule. Draw and dispense naming still
+  follows the older rule's tip_on, so those scores did not move.
+- `tip_off`: the tip end stays over the waste 0.3 s (older rule; nothing tried did better).
 - `objects`: at most 2 a second per camera.
 - `draw` / `dispense`, default rule (conservative): the thumb presses the plunger while the tip
   end is in a tube, rack or plate box, or with no finger points the tip end stays 0.8 s in one.
@@ -117,7 +122,13 @@ needs no model:
 $BENCH_PY -m vision.eval.cache --all          # models over every labelled video (needs BENCH_SAMPLES)
 $BENCH_PY -m vision.eval.score                # boxes, pipette found, touches, tips, presses
 $BENCH_PY -m vision.eval.score_actions --per-clip   # draw and dispense, both rules
+$BENCH_PY -m vision.eval.score_tips           # tip on, tip off, touches against tips.json
 ```
+
+`vision/eval/tips.json` holds 30 tip pick-ups, 22 tip ejects and 51 hand touches marked by eye
+from contact sheets (`$BENCH_PY -m vision.eval.sheet video.mp4 out.jpg --start 0 --end 24
+--every 0.5`). `score_tips --set '{"tips": null}'` scores the older rules. Results and what was
+tried are in [TIP-REPORT.md](TIP-REPORT.md).
 
 Both scorers replay through the same `Vision` class (`pipeline.py`) the live part runs, and both
 print chance numbers next to precision and recall. Results are in `REPORT.md`.
