@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bench Coach live</title><link rel="icon" href="/static/favicon.svg"><link rel="stylesheet" href="/static/live.css"><script src="/static/live.js" defer></script></head>
+<body>
+<header><span class="brand">BENCH<span class="muted"> / </span>COACH <small>live view</small></span><span id="rates" class="chips"><span class="chip" id="fps-picture">picture — fps</span><span class="chip" id="fps-detect">detections —/s</span><span class="chip" id="source">source —</span></span></header>
+<main>
+<section class="stage"><img id="picture" alt="Live camera with detected objects outlined and hands drawn"><p id="nopicture" class="empty" hidden>Waiting for the camera…</p><div id="legend" class="legend" aria-label="Objects seen"></div></section>
+<aside>
+<div class="card now"><div class="label">NOW</div><h1 id="current">Waiting for the hub</h1><p id="question" hidden></p></div>
+<div id="warning" role="alert" hidden></div>
+<div class="card"><div class="label">STEPS <span id="protocol" class="muted"></span></div><ol id="steps"><li class="muted">Start the hub to see the protocol.</li></ol></div>
+<div class="card"><div class="label">COACH</div><div id="coach"><p class="muted">Coach lines appear here.</p></div></div>
+</aside>
+</main>
+</body></html>

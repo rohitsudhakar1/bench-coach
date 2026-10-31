@@ -17,7 +17,7 @@ import httpx
 import uvicorn
 import yaml
 from fastapi import FastAPI, HTTPException, Query, WebSocket, WebSocketDisconnect
-from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse, Response
 from fastapi.exceptions import RequestValidationError
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -425,6 +425,11 @@ def create_app(runs_dir=None, capture_url=None, note_service_url=None, protocols
     @app.get('/')
     async def index():
         return FileResponse(ROOT / 'static/index.html', headers={'Cache-Control': 'no-cache'})
+
+    @app.get('/live')
+    async def live_page():
+        # The live view runs in its own process (python -m app.live), next to the camera models.
+        return RedirectResponse(os.environ.get('LIVE_URL', 'http://127.0.0.1:8706/'), status_code=307)
 
     @app.get('/step')
     async def phone_step():
