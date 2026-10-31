@@ -472,6 +472,11 @@ def draw_feed(state: L.PanelState, rect: L.Rect, current_text: str | None) -> np
             d.text((pad, 68 + 40 * k), line, font=f, fill=TEXT)
     else:
         d.text((pad, 30), "ALL STEPS FINISHED", font=font(18, "bold"), fill=GREEN)
+    nxt = next((st for st in state.steps if st.status == "pending"), None)
+    if nxt is not None and not state.live_warning:
+        f = font(22)
+        line = L.wrap(f"Next: {nxt.text}", width, measure(f))[0]
+        d.text((pad, rect.h - 52), line, font=f, fill=MUTED)
     return to_bgr(img)
 
 
@@ -631,11 +636,16 @@ def render(out: Path, videos, names, analysis, log, protocol, note, credits, cod
                 last[i] = f
                 next_pos[i] += 1.0 / vfps[i]
             r = lay.cams[i]
+            # draw on the camera's own picture so nothing spills into the next one
+            here = L.Rect(0, 0, r.w, r.h)
             if last[i] is not None:
-                canvas[r.y:r.y2, r.x:r.x2] = cv2.resize(last[i], (r.w, r.h), interpolation=cv2.INTER_AREA)
-            draw_objects(canvas, L.boxes_at(snaps[i], s), sizes[i], r, sprites)
-            draw_hands(canvas, L.hands_at(hands[i], s), sizes[i], r, sprites)
-            sprites.blit(canvas, cam_tag(i, names[i], sprites), r.x + 14, r.y + 14, r)
+                view = cv2.resize(last[i], (r.w, r.h), interpolation=cv2.INTER_AREA)
+            else:
+                view = np.zeros((r.h, r.w, 3), np.uint8)
+            draw_objects(view, L.boxes_at(snaps[i], s), sizes[i], here, sprites)
+            draw_hands(view, L.hands_at(hands[i], s), sizes[i], here, sprites)
+            sprites.blit(view, cam_tag(i, names[i], sprites), 14, 14, here)
+            canvas[r.y:r.y2, r.x:r.x2] = view
         state = timeline.at(s)
         key = state.key()
         if key != panel_key:
