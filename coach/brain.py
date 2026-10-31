@@ -99,6 +99,7 @@ class Brain:
         self.closed_at: dict[int, float] = {}
         self.reminded: set[int] = set()
         self.last_asked = float("-inf")
+        self.started_t = getattr(self, "started_t", None)
         if n:
             self.status[0] = "current"
 
@@ -185,6 +186,7 @@ class Brain:
     def start(self) -> list[Out]:
         if not self.protocol.steps:
             return []
+        self.started_t = self.now
         self.started_at[0] = self.now
         return [self._step_event(0, "current"),
                 self._say(phrases.step_line(self.protocol.steps[0], "First:"), PRI_STEP, "step")]
@@ -407,9 +409,16 @@ class Brain:
             except (FileNotFoundError, OSError, ValueError, KeyError):
                 pass   # keep the one we have
         now = self.now
+        # nothing has happened since the coach started: don't repeat the first line
+        just_started = self.started_t is not None and all(
+            e.get("kind") in ("run", "objects") for e in self.log)
+        untouched = all(st in ("pending", "current") for st in self.status)
         self.reset()
         self.now = now
-        return self.start()
+        outs = self.start()
+        if just_started and untouched:
+            outs = [o for o in outs if o.kind == "emit"]   # the first line was just said
+        return outs
 
     def _on_angle(self, ev: dict) -> list[Out]:
         d = ev.get("detail") or {}
