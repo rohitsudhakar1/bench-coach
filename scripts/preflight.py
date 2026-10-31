@@ -81,12 +81,18 @@ def caps(image, path):
     config = validate(json.loads(path.read_text()))
     if tuple(config['size']) != (image.shape[1], image.shape[0]):
         raise ValueError('table resolution changed')
+    if 'colour_calibration' in config:
+        from vision.table_colour import quality
+        score, issues = quality(image, config)
+        if score < 70 or issues:
+            raise ValueError(f'setup quality {score}/100: ' + '; '.join(issues))
+        return f'caps match saved colours and regions; setup quality {score}/100'
     for name in ('tube A', 'tube B', 'tube C'):
         blob = colour_blob(image, name)
         x, y, radius = config['regions'][name]
         if blob is None or math.hypot(blob[0] - x, blob[1] - y) > radius:
             raise ValueError('cap not in saved region')
-    return 'red A, blue B, yellow C caps match saved regions'
+    return 'red A, blue B, yellow C caps match saved regions; setup quality unavailable (rerun setup)'
 
 
 def calibration(path, images):
@@ -222,11 +228,14 @@ async def run(args):
             await check('table caps', cap_check, 'Install the vision table part; close red A, blue B, yellow C caps in the saved positions, or rerun python -m vision.table setup with matching --config.')
             async def band_check():
                 _, marker_tip, _ = table_tools()
+                from vision.table_colour import BandTracker
+                config = json.loads(args.table_config.read_text())
+                band = BandTracker(config.get('colour_calibration')) if 'colour_calibration' in config else None
                 print('Hold the magenta tip band in the overhead view now (5 seconds).', flush=True)
                 end = time.monotonic() + 5
                 while time.monotonic() < end:
                     _, image = await frame(client, args.table_url)
-                    if marker_tip(image) is not None:
+                    if (band.update(image, time.time()) if band else marker_tip(image)) is not None:
                         return 'magenta tip band visible'
                     await asyncio.sleep(.1)
                 raise ValueError('no magenta band')

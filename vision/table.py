@@ -28,6 +28,7 @@ import numpy as np
 
 from .core import event
 from .sink import Sink
+from .table_colour import BandTracker, learn, propose_caps, quality
 
 CONFIG = Path(__file__).with_name("table.json")
 TUBES = ("tube A", "tube B", "tube C")
@@ -52,17 +53,15 @@ def colour_blob(frame, name, min_area=30):
 
 
 def find_caps(frame) -> dict:
-    out = {}
-    for name in TUBES:
-        b = colour_blob(frame, name)
-        if b:
-            out[name] = [b[0], b[1], max(12.0, 1.4 * b[2])]
-    return out
+    return propose_caps(frame)
 
 
 def marker(frame):
-    b = colour_blob(frame, "marker", min_area=8)
-    return (b[0], b[1]) if b else None
+    return BandTracker().update(frame, 0.)
+
+
+# Compatibility with preflight's public detector boundary.
+marker_tip = marker
 
 
 def validate(cfg: dict) -> dict:
@@ -211,6 +210,10 @@ def setup(a):
         finally:
             cv2.destroyAllWindows()
     cfg = validate({"size": [frame.shape[1], frame.shape[0]], "regions": regs})
+    cfg["colour_calibration"] = learn(frame, regs)
+    score, issues = quality(frame, cfg)
+    cfg["setup_quality"] = score
+    print(f"# setup quality {score}/100" + (": " + "; ".join(issues) if issues else ""), file=sys.stderr)
     Path(a.config).write_text(json.dumps(cfg, indent=1) + "\n")
     print(f"# saved {a.config}", file=sys.stderr)
 
@@ -227,6 +230,7 @@ def run(a):
     src = None if a.follow_runs else Source(a.source)
     sink = Sink(None if a.hub == "none" else a.hub, a.log)
     trk = TableTracker(cfg["regions"])
+    band = BandTracker(cfg.get("colour_calibration"))
     start, i = time.time(), 0
     active_run, finished_run, next_poll = None, None, 0.0
     try:
@@ -245,6 +249,7 @@ def run(a):
                     if run_id and run_id != finished_run:
                         src = Source(a.source)
                         trk = TableTracker(cfg["regions"])
+                        band = BandTracker(cfg.get("colour_calibration"))
                         start, i = time.time(), 0
                 next_poll = time.monotonic() + 0.1
             if src is None:
@@ -267,7 +272,7 @@ def run(a):
                 break
             if a.realtime and not src.live:
                 time.sleep(max(0.0, t - time.time()))
-            pt = marker(frame)
+            pt = band.update(frame, t)
             sink.send(trk.update(t, pt))
             i += 1
             stats["frames"] += 1
