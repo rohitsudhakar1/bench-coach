@@ -1,0 +1,4 @@
+#!/bin/sh
+set -eu
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+exec "${BENCH_PY:-python3}" "$SCRIPT_DIR/run_demo.py" "$@"
