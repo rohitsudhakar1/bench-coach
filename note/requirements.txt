@@ -10,3 +10,4 @@ numpy
 weasyprint>=70,<71   # PDF; needs Pango on the host
 anthropic            # optional, only for the wording pass
 pytest
+psutil              # memory regression probe only

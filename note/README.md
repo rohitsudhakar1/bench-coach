@@ -150,3 +150,40 @@ No dependencies were added. Python's [standard library](https://docs.python.org/
 licensed; no third-party implementation was copied.
 
 Run the export checks with `$BENCH_PY -m pytest note/tests/test_elnexport.py -q`.
+
+## Memory between runs
+
+Each note build and each PDF export uses one fresh Python worker. It exits before
+returning the result, releasing OpenCV decoder buffers, decoded frames, WeasyPrint
+documents and native font caches. The service keeps only the returned note or PDF
+for its current request; saved notes and HTML live on disk. Per-run locks remain
+weakly held. Metadata captures now release even if reading a property fails.
+
+One native job runs at a time per service process. Each worker has a 180-second
+execution timeout and is killed and reaped on timeout. Failed builds raise an
+error; failed PDF workers return the existing HTTP 503 export response. There is
+no automatic retry or reusable worker pool. Process startup adds latency (about
+0.38 seconds for build plus PDF in the sample comparison). A timed-out build can
+leave partial output files; rebuild the run to replace them.
+
+Run the memory regressions with `$BENCH_PY -m pytest note/tests/test_memory.py -q`.
+They build ten distinct fake runs and PDFs, check six JPEGs per run, bound current
+RSS after the first two runs, sample combined parent/worker memory, and require
+all workers to have exited. Synthetic clips always run; the real sample check
+skips unless both clips exist under `BENCH_SAMPLES`. Tests also exercise timeout
+cleanup and metadata-read failure. No hosted model or sound is used.
+
+For a standalone comparison:
+
+```sh
+"$BENCH_PY" -m note.memory_probe note/.leak/probe --prepare
+"$BENCH_PY" -m note.memory_probe note/.leak/probe --pdf
+"$BENCH_PY" -m capture.note_leak_probe note/.leak/probe 1
+```
+
+Add `--samples` to preparation to link the two sample clips. The capture probe
+replaces fixture events with one warning, so prepare again before rerunning the
+six-frame build/PDF probe. Measurements and fixtures stay ignored in `.leak/`.
+[psutil](https://github.com/giampaolo/psutil) (BSD-3-Clause) reads current RSS for
+tests only; Python's standard library (PSF-2.0) owns and reaps worker processes.
+See `LEAK-REPORT.md` for before/after measurements and limits.

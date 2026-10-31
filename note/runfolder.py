@@ -174,10 +174,12 @@ def video_info(path: Path) -> tuple[float, int]:
     try:
         import cv2
         cap = cv2.VideoCapture(str(path))
-        fps = float(cap.get(cv2.CAP_PROP_FPS) or 0.0)
-        n = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
-        cap.release()
-        return fps, n
+        try:
+            fps = float(cap.get(cv2.CAP_PROP_FPS) or 0.0)
+            n = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
+            return fps, n
+        finally:
+            cap.release()
     except Exception:
         return 0.0, 0
 
