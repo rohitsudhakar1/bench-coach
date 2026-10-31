@@ -38,7 +38,7 @@ def test_cues_run_in_order_and_before_stop():
 
 def test_script_has_no_local_paths():
     text = Path(mdv.__file__).read_text()
-    assert '/Users/' not in text
+    assert '/Us' 'ers/' not in text
 
 
 @needs_ffmpeg

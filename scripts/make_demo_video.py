@@ -44,6 +44,8 @@ RUN_CUES = [
     (43.0, 'And the second dispense into tube B never happens.'),
 ]
 STOP_AT = 53.0
+PROBLEM_TIMES = ('xpath=//h2[normalize-space()="What went wrong"]/following-sibling::ul[1]'
+                 '/li/a[contains(concat(" ", @class, " "), " ts ")][1]')
 
 # Captions drawn over the page. Coach lines come from the hub's websocket (kinds `say` and
 # `warning`); presenter lines are set by this script; the tag marks the recording as staged.
@@ -101,8 +103,8 @@ body{margin:0;width:1920px;height:1080px;display:flex;flex-direction:column;just
 align-items:center;background:#0b1520;color:#fff;font-family:-apple-system,"Helvetica Neue",Arial,sans-serif}
 .mark{width:120px;height:120px;border-radius:28px;background:#2f9be0;display:flex;align-items:center;
 justify-content:center;font-size:64px;font-weight:800;margin-bottom:40px}
-h1{font-size:120px;margin:0;letter-spacing:-2px} p{font-size:44px;color:#c9d6e2;margin:28px 0 0;
-max-width:1500px;text-align:center} small{position:absolute;bottom:80px;font-size:32px;color:#7fd3ff;
+h1{font-size:120px;margin:0;letter-spacing:-2px} p{font-size:42px;color:#c9d6e2;margin:28px 0 0;
+max-width:1800px;text-align:center} small{position:absolute;bottom:80px;font-size:32px;color:#7fd3ff;
 letter-spacing:.08em}</style></head><body><div class="mark">B</div><h1>Bench Coach</h1><p>{line}</p>
 <small>Built at MIT ScienceClaw 2026</small></body></html>"""
 
@@ -272,16 +274,14 @@ def record(app, runs, raw):
                                timeout=20000)
         say('The full note sits beside both camera recordings.')
         page.wait_for_timeout(4500)
-        stamps = page.locator('a.ts[data-off]')
-        problem = page.locator('ul a.ts[data-off]')
-        target = problem if problem.count() else stamps
+        # The first time of each item under What went wrong: the tilt, then the reused tip.
+        target = page.locator(PROBLEM_TIMES)
         if target.count() == 0:
-            raise RuntimeError('the note has no clickable times')
+            raise RuntimeError('the note has no clickable times under What went wrong')
         times = "[...document.querySelectorAll('video')].map(v => Math.round(v.currentTime * 10) / 10)"
         checks['before'] = page.evaluate(times)
         checks['after'] = []
-        picks = list(range(target.count()))[-2:] if target.count() > 1 else [0]
-        for n, i in enumerate(picks):
+        for n, i in enumerate(range(min(2, target.count()))):
             stamp = target.nth(i)
             stamp.scroll_into_view_if_needed()
             if n == 0:
@@ -316,7 +316,8 @@ def record(app, runs, raw):
         say('')
         page.set_content(PDF_PAGE.replace('{img}', 'data:image/png;base64,' + __import__('base64').b64encode(png.read_bytes()).decode())
                          .replace('{name}', pdf.name).replace('{size}', f'{pdf.stat().st_size // 1024} KB, built from the run'))
-        page.wait_for_timeout(6000)
+        # Playwright's video runs a little behind the page; hold long enough that it lands.
+        page.wait_for_timeout(9000)
         checks['pdf_href'] = pdf_href
         video = page.video
         ctx.close()
