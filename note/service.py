@@ -95,7 +95,16 @@ def create_app(runs_dir: Path = RUNS_DIR, hub: str | None = HUB, watch: bool = T
 
     from .export import print_html, render_pdf, run_zip
 
-    app = FastAPI(title="Bench Coach note")
+    from contextlib import asynccontextmanager
+
+    @asynccontextmanager
+    async def lifespan(app):
+        task = asyncio.create_task(watch_hub()) if watch and hub else None
+        yield
+        if task:
+            task.cancel()
+
+    app = FastAPI(title="Bench Coach note", lifespan=lifespan)
     app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
     runs_dir = Path(runs_dir)
     app.state.built = []
@@ -226,13 +235,4 @@ def create_app(runs_dir: Path = RUNS_DIR, hub: str | None = HUB, watch: bool = T
                 await asyncio.sleep(2.0)
 
     app.state.on_stop = on_stop
-    if watch and hub:
-        @app.on_event("startup")
-        async def start_watch():
-            app.state.watch_task = asyncio.create_task(watch_hub())
-
-        @app.on_event("shutdown")
-        async def stop_watch():
-            app.state.watch_task.cancel()
-
     return app

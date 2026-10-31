@@ -9,9 +9,10 @@ import sys
 
 MODEL = os.environ.get("BENCH_NOTE_MODEL", "claude-opus-5-5")
 NUM = re.compile(r"\d+(?:\.\d+)?")
-CAP = re.compile(r"\b[A-Z][a-zA-Z]+\b")
+CAP = re.compile(r"\b[A-Z][a-zA-Z]*\b")
+WORD = re.compile(r"[A-Za-z]+")
 # Sentence-start words a rewrite may add without adding a fact.
-ALLOWED = {"Step", "Steps", "The", "A", "An", "Pipette", "Coach", "Same", "Fresh", "No", "Nothing",
+ALLOWED = {"Step", "Steps", "The", "An", "Pipette", "Coach", "Same", "Fresh", "No", "Nothing",
            "Drew", "Tip", "Run", "It", "This", "During", "Over", "Highest", "Angle", "Tube", "There", "One"}
 
 PROMPT = """You tidy the wording of a lab note that a program wrote from a recorded bench run.
@@ -29,8 +30,14 @@ def safe_rewrite(original: str, new, allowed: set[str] = ALLOWED) -> bool:
         return False
     if sorted(NUM.findall(new)) != sorted(NUM.findall(original)):
         return False
-    low = original.lower()
-    return all(w.lower() in low or w in allowed for w in CAP.findall(new))
+    words = set(WORD.findall(original))
+    lower = {w.lower() for w in words if len(w) > 1}
+    for w in CAP.findall(new):
+        if w in words or w in allowed:
+            continue
+        if len(w) == 1 or w.lower() not in lower:  # single letters are tube names: exact match only
+            return False
+    return True
 
 
 def lines_of(note: dict) -> dict[str, str]:
