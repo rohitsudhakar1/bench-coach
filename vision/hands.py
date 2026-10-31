@@ -18,11 +18,28 @@ MODEL_URL = ("https://storage.googleapis.com/mediapipe-models/hand_landmarker/"
              "hand_landmarker/float16/latest/hand_landmarker.task")
 
 
+FETCH_HINT = "run scripts/fetch_models.py --download while online"
+
+
+def offline() -> bool:
+    import os
+    return any(os.environ.get(k, "").strip().lower() in ("1", "true", "yes", "on")
+               for k in ("HF_HUB_OFFLINE", "TRANSFORMERS_OFFLINE"))
+
+
 def ensure_model() -> Path:
-    if not MODEL.exists():
-        import urllib.request
-        MODEL.parent.mkdir(parents=True, exist_ok=True)
-        urllib.request.urlretrieve(MODEL_URL, MODEL)  # about 7.5 MB
+    if MODEL.is_file() and MODEL.stat().st_size:
+        return MODEL
+    if offline():
+        raise RuntimeError(f"hand model {MODEL.name} is missing and the offline flags are set; {FETCH_HINT}")
+    import urllib.request
+    MODEL.parent.mkdir(parents=True, exist_ok=True)
+    part = MODEL.with_suffix(".part")
+    try:
+        urllib.request.urlretrieve(MODEL_URL, part)  # about 7.5 MB
+    except OSError as exc:
+        raise RuntimeError(f"could not download the hand model ({type(exc).__name__}); {FETCH_HINT}") from exc
+    part.replace(MODEL)  # a broken download never leaves a half file under the real name
     return MODEL
 
 

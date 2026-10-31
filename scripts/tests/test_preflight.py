@@ -10,6 +10,16 @@ import pytest
 
 from scripts import preflight as p
 
+REAL_OFFLINE_READY = p.offline_ready
+
+
+@pytest.fixture(autouse=True)
+def models_on_disk(monkeypatch):
+    """Keep these tests off the real model check; test_offline_line covers it."""
+    async def ready():
+        return 'stub'
+    monkeypatch.setattr(p, 'offline_ready', ready)
+
 
 @pytest.fixture
 def scene(tmp_path, monkeypatch):
@@ -106,9 +116,12 @@ def test_failure_continues_and_no_false_passes(scene, monkeypatch, capsys, tmp_p
     real_client = httpx.AsyncClient
     monkeypatch.setattr(p.httpx, 'AsyncClient', lambda **kwargs: real_client(transport=httpx.MockTransport(Fake(scene[0], 'down'))))
     monkeypatch.setattr(p.shutil, 'disk_usage', lambda _: SimpleNamespace(free=2_000_000_000))
+    async def not_ready():
+        raise ValueError('not offline ready')
+    monkeypatch.setattr(p, 'offline_ready', not_ready)
     assert p.main(['--no-mic', '--protocol', str(tmp_path / 'missing')]) == 1
     output = capsys.readouterr().out
-    for name in ('cameras', 'table caps', 'tip band', 'calibration', 'hub parts', 'disk', 'protocol'):
+    for name in ('cameras', 'table caps', 'tip band', 'calibration', 'hub parts', 'offline ready', 'disk', 'protocol'):
         assert f'FIX {name}:' in output
     assert 'PASS ' not in output
 
@@ -214,3 +227,44 @@ def test_missing_table_reports_fix_and_continues(scene, monkeypatch, capsys):
     output = capsys.readouterr().out
     assert 'FIX table caps:' in output and 'FIX tip band:' in output
     assert 'PASS hub parts:' in output and 'PASS protocol:' in output
+
+
+@pytest.mark.parametrize('ok', [True, False])
+def test_offline_line(scene, ok, monkeypatch, capsys):
+    real_client = httpx.AsyncClient
+    monkeypatch.setattr(p.httpx, 'AsyncClient', lambda **kwargs: real_client(transport=httpx.MockTransport(Fake(scene[0]))))
+    async def ready():
+        if not ok:
+            raise ValueError('not offline ready: gdino-tiny')
+        return 'loads offline'
+    monkeypatch.setattr(p, 'offline_ready', ready)
+    assert p.main(['--no-table', '--no-angle', '--no-mic']) == (0 if ok else 1)
+    out = capsys.readouterr().out
+    assert ('PASS offline ready:' if ok else 'FIX offline ready: Run scripts/fetch_models.py --download') in out
+    assert p.main(['--no-table', '--no-angle', '--no-mic', '--no-offline']) == 0
+    assert 'offline ready' not in capsys.readouterr().out
+
+
+def test_offline_ready_reads_fetch_models_output(monkeypatch):
+    class Child:
+        returncode = None
+        def __init__(self, code, out):
+            self.code, self.out = code, out
+        async def communicate(self):
+            self.returncode = self.code
+            return self.out, b''
+        def kill(self):
+            pass
+        async def wait(self):
+            return self.returncode
+    for code, out, good in [(0, b'ok      gdino-tiny  loads\noffline ready\n', True),
+                            (1, b'FAILED  hand-landmarker   missing\n', False)]:
+        async def spawn(*args, **kwargs):
+            assert args[1].endswith('fetch_models.py') and args[2] == '--check'
+            return Child(code, out)
+        monkeypatch.setattr(p.asyncio, 'create_subprocess_exec', spawn)
+        if good:
+            assert 'Wi-Fi off' in asyncio.run(REAL_OFFLINE_READY())
+        else:
+            with pytest.raises(ValueError, match='hand-landmarker'):
+                asyncio.run(REAL_OFFLINE_READY())

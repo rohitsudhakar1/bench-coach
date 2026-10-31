@@ -63,6 +63,36 @@ run events, is retained; referenced recordings or note links must still exist.
 This does not call capture recording endpoints. The hub remains open after playback.
 Keep live producers excluded for a replay-only presentation.
 
+## Models and Wi-Fi off
+
+`fetch_models.py` lists every model the default demo loads, with its size and licence:
+Grounding DINO tiny (690 MB, Apache-2.0) and the MediaPipe hand landmarker (8 MB,
+Apache-2.0) for vision, faster-whisper small.en (486 MB, MIT) for the coach and the
+preflight microphone, and the Silero VAD file (2 MB, MIT) that ships inside
+faster-whisper. `--with florence2 gdino-base owlv2` adds the optional detectors.
+
+```sh
+"$BENCH_PY" scripts/fetch_models.py               # what is here and what is missing
+"$BENCH_PY" scripts/fetch_models.py --download    # fetch the missing ones, then check
+"$BENCH_PY" scripts/fetch_models.py --check       # load each with the network blocked
+```
+
+Hugging Face models go to the normal Hugging Face cache (`HF_HOME` or `HF_HUB_CACHE`
+move it); the hand model goes to `vision/models/`. `--check` sets `HF_HUB_OFFLINE=1`
+and `TRANSFORMERS_OFFLINE=1`, refuses every DNS lookup and connection that is not to
+this machine, loads each model in its own process and runs it once on a blank input.
+It fails if a file is missing, a load fails, or anything tried the network.
+
+When every model the started parts need is on disk, the launcher sets those two flags
+for the parts and prints `models: all on disk, parts start offline`. Without them a
+cached Grounding DINO still loads with Wi-Fi off, but only after about 70 seconds of
+retries, past the startup deadline. A flag you set yourself is kept. If a model is
+missing the launcher says so and the part downloads it on first start. With the flags
+set, vision's hand loader refuses to download and names the fix. Preflight runs the
+same check as its `offline ready` line (`--no-offline` skips it). YOLOE and the
+unadopted tip model are not covered. Hosted wording and answers need a key and the
+network; without either they fall back to the rule-based text.
+
 ## Table day
 
 Use a fixed overhead camera, red/blue/yellow tube caps, and a matte magenta band above
@@ -154,9 +184,12 @@ No packages were added. Existing dependencies used here:
 | websockets | https://websockets.readthedocs.io | BSD-3-Clause | Capture mic stream |
 | faster-whisper | https://github.com/SYSTRAN/faster-whisper | MIT | Optional cached local speech check |
 | pytest | https://docs.pytest.org | MIT | Tests |
+| huggingface_hub | https://github.com/huggingface/huggingface_hub | Apache-2.0 | fetch_models cache lookups and downloads |
+| Transformers | https://github.com/huggingface/transformers | Apache-2.0 | fetch_models offline load of the detectors |
+| MediaPipe | https://github.com/google-ai-edge/mediapipe | Apache-2.0 | fetch_models offline load of the hand model |
 
 Services retain their own dependency and model licence lists. The launcher uses the
-standard library alone; preflight uses the libraries above and the parts' table and
+standard library, plus fetch_models' file lookups when vision or coach start; preflight uses the libraries above and the parts' table and
 calibration helpers. No third-party source was copied into this directory.
 
 ## Table end-to-end regression
