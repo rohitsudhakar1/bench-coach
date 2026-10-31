@@ -63,6 +63,7 @@ def parse_args(argv=None):
     p.add_argument('--base-port', type=int, default=8700)
     p.add_argument('--runs', type=Path, default=ROOT / 'runs')
     p.add_argument('--timeout', type=float, default=60)
+    p.add_argument('--process-log', type=Path, help='append owned service PIDs as JSON lines')
     p.add_argument('--hints', action='store_true')
     p.add_argument('--fake-vision', action='store_true', help='scripted vision stand-in (scripts/fake_vision.py)')
     p.add_argument('--fake-speed', type=float, default=1.0)
@@ -280,9 +281,10 @@ def signal_group(process, sig):
 
 
 class Supervisor:
-    def __init__(self, root=ROOT, logs=None, timeout=60, env=None):
+    def __init__(self, root=ROOT, logs=None, timeout=60, env=None, process_log=None):
         self.root, self.logs = root, Path(logs or root / 'runs/logs')
         self.timeout, self.env = timeout, env
+        self.process_log = process_log
         self.children = {}
         self.restarted = set()
         self.pending = {}
@@ -295,6 +297,9 @@ class Supervisor:
                                        stderr=subprocess.STDOUT, start_new_session=True)
         self.children[part.name] = (part, process)
         self.history.append(process)
+        if self.process_log:
+            with Path(self.process_log).open('a') as stream:
+                stream.write(json.dumps(dict(part=part.name, pid=process.pid, t=time.time())) + "\n")
         self.pending[part.name] = time.monotonic() + self.timeout
 
     def check(self):
@@ -365,7 +370,7 @@ def main(argv=None):
     args = parse_args(argv)
     env = dict(os.environ)
     env.update({name.upper() + '_URL': f'http://127.0.0.1:{args.base_port + offset}' for name, offset in OFFSETS.items()})
-    supervisor = Supervisor(logs=args.runs / 'logs', timeout=args.timeout, env=env)
+    supervisor = Supervisor(logs=args.runs / 'logs', timeout=args.timeout, env=env, process_log=args.process_log)
     old = {}
     def interrupt(*_):
         raise KeyboardInterrupt
