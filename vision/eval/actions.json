@@ -1,0 +1,1014 @@
+{
+ "about": "Real draw, dispense and mix actions in the sample clips, found by looking at frames (contact sheets from vision/eval/sheet.py at 1 s, then 0.1-0.3 s around each tip entry). start = tip end enters the container, end = it leaves. Draw vs dispense comes from the order of steps (first entry after a fresh tip is a draw); the plunger is rarely readable. Clip splits are in vision/eval/actclips.py.",
+ "clips": {
+  "mv414L": {
+   "path": "lsv_mv/CP-Left-Front-414-445.mp4",
+   "seconds": 31,
+   "tip_on": [
+    6.5
+   ],
+   "notes": "Tip box lid opened ~3.2-3.8, pipette pressed into tip box 4.5-6.4, lifted with tip ~6.5. Trypsin bottle picked up 8.8 and uncapped 9.5-14.4 (tip stays well above, no entry). Draw1 15.9-19.6, flask (T-flask, held tilted in left hand, blue cap on bench) dispense 23.1-24.0, draw2 25.2-28.0, second flask dispense 29.2-30.2 (not in the written protocol for this clip but clearly happens). Flask entries: tip end partly hidden by glove/flask neck; protocol says dispense without touching, so 'enters mouth' is approximate (tip goes into the neck region).",
+   "split": "hold"
+  },
+  "mv414R": {
+   "path": "lsv_mv/CP-Right-Front-414-445.mp4",
+   "seconds": 31,
+   "tip_on": [
+    6.5
+   ],
+   "notes": "Same events as mv414L, times agree within ~0.1-0.2 s. Tip seating 4.5-6.3 on pink tip box, pipette lifted with tip 6.5-6.8. Bottle entries reasonably visible; flask entries happen behind the left hand, tip end hidden, only the thumb pressing the plunger (~23.3-23.9) and arm pose show it.",
+   "split": "hold"
+  },
+  "mv12R": {
+   "path": "lsv_mv/CP-Right-Front-12-27.mp4",
+   "seconds": 15,
+   "tip_on": [],
+   "notes": "Hand disinfection/rubbing only, no pipette in view. No draw or dispense (1 s overview).",
+   "split": "hold"
+  },
+  "mv249R": {
+   "path": "lsv_mv/CP-Right-Front-249-269.mp4",
+   "seconds": 20,
+   "tip_on": [],
+   "notes": "Serological pipette fitted to pipette aid 0-~10 s, then red media bottle uncapped ~11-17.5 with the pipette held low, tip pointing at the bench away from the bottle; lifted at 18.5-19.5 but no entry before clip end. No draw or dispense (checked 1 s overview plus 0.5 s zoom of 11-19.5).",
+   "split": "hold"
+  },
+  "serial52": {
+   "path": "lsv_dji/serial_xm052.mp4",
+   "seconds": 78,
+   "tip_on": [
+    8.2,
+    32.7
+   ],
+   "tip_off": [
+    31.2,
+    71.1
+   ],
+   "notes": "Full mock serial dilution with one tip for water and one tip for sample+all transfers. Water: H2O tube picked from green rack ~15.5 and held in left hand; strip sits in the light-cyan rack; 4 draw/dispense pairs 16-30.3 s. Tip ejected over waste ~31.2, new tip ~32.7. Sample tube S held in hand, drawn 34.9-36.9. Pipette held aside 37-42 while hand swaps S for the strip. 42.5-70.4 tip works continuously in the hand-held strip: tube1 42.5-51.0, tube2 51.4-57.6, tube3 58.1-64.2, tube4 64.7-70.4. Plunger never readable; the dispense/mix/draw split inside each tube is inferred from protocol, not seen. tip_on 8.2 seen only at 0.5 s steps (pipette pressed into purple tip box). tip_off 71.1 is over the waste beaker with heavy motion blur, unsure. Boundaries 16-31 s from 0.25 s frames (about +/-0.2 s); strip hand-offs checked at 0.1 s.",
+   "split": "tune"
+  },
+  "serial55": {
+   "path": "lsv_dji/serial_xm055.mp4",
+   "seconds": 57,
+   "tip_on": [
+    8.3,
+    31.0
+   ],
+   "tip_off": [
+    27.9
+   ],
+   "notes": "Same layout as serial52, done faster. Pipette pressed into the purple tip box at ~8.3 and again at ~12.3 (unclear whether the second is a re-seat or a real pickup; tip_on lists 8.3). Water 14.2-27.3 (4 draw/dispense pairs, H2O tube held in left hand, strip in cyan rack). Tip ejected into waste beaker ~27.9, new tip ~31.0. S tube drawn 32.0-33.3. Strip picked up 37.5; tip works in strip 38.0-48.6. Tube 1 entry at 38.0 is clear; the only clear lift inside the strip run is ~43.3-43.7. Hand-offs between tubes 1-2 (~41.3) and 3-4 (~46.2) are guesses from tip position, not seen lifts. No final tip eject seen; pipette laid down ~49.2 and the clip ends with the hands at the cyan rack.",
+   "split": "hold"
+  },
+  "pcr48": {
+   "path": "lsv_dji/pcr_xm048.mp4",
+   "seconds": 60,
+   "tip_on": [
+    4.0,
+    13.2,
+    23.8,
+    33.4
+   ],
+   "tip_off": [
+    12.3,
+    22.4,
+    32.3,
+    44.5
+   ],
+   "notes": "Bench, head-mounted. Four reagent transfers, new tip each: tube from green strip rack -> PCR tube from teal rack. Tip ejects happen off-frame top right (waste), times +-0.5 s; tip pick-ups at tip box +-0.5 s. Flick 45.5-49.5, centrifuge 51-55.5, thermocycler 56-60. No mixing seen.",
+   "split": "tune"
+  },
+  "pcr49": {
+   "path": "lsv_dji/pcr_xm049.mp4",
+   "seconds": 54,
+   "tip_on": [
+    1.5,
+    10.6,
+    20.0,
+    29.0
+   ],
+   "tip_off": [
+    9.8,
+    19.2,
+    28.2,
+    36.8
+   ],
+   "notes": "Same setup and pattern as pcr48, faster. Tip eject off-frame top right, times +-0.5 s. Flick ~37.5-40.5, centrifuge 42-46.5, thermocycler 48-54. No mixing seen.",
+   "split": "hold"
+  },
+  "pcr50": {
+   "path": "lsv_dji/pcr_xm050.mp4",
+   "seconds": 48,
+   "tip_on": [
+    0.8,
+    9.6,
+    20.6
+   ],
+   "tip_off": [
+    8.5,
+    19.3,
+    30.0
+   ],
+   "notes": "Three reagent cycles (tip on at tip box, draw from a small tube picked up and held in left hand, dispense into a PCR tube held by left hand at the green rack). Only 3 additions, so the clip probably starts after Master Mix (likely F, R, T) but reagent labels are not readable; container names are by role. Tip-on times are the press into the tip box (+/-0.4 s). Tip-off times are approximate: the pipette swings out of frame right after each dispense and the eject itself is not seen (third one near the waste beaker ~30.0). 31-34 s closing/flicking tube, 35-39 s mini centrifuge, 40+ s thermocycler.",
+   "split": "tune"
+  },
+  "pcr51": {
+   "path": "lsv_dji/pcr_xm051.mp4",
+   "seconds": 47,
+   "tip_on": [
+    1.0,
+    10.1,
+    19.0,
+    29.0
+   ],
+   "tip_off": [
+    9.0,
+    18.0,
+    27.6,
+    37.0
+   ],
+   "notes": "Four reagent cycles, consistent with M, F, R, T in protocol order (labels not readable, order assumed). Same pattern as pcr50: draw from a tube held in left hand, dispense into PCR tube held at the rack. Tip-on is the press into the tip box (+/-0.5 s, several presses ~0.5-2.0 and ~28.2-29.8). Tip-off approximate, eject happens out of frame right. 38-39 s tube handling, 40+ s walk to thermocycler.",
+   "split": "hold"
+  },
+  "pcr105": {
+   "path": "lsv_dji/pcr_105.mp4",
+   "seconds": 122,
+   "tip_on": [
+    4.1,
+    19.1,
+    35.0,
+    44.9,
+    60.8
+   ],
+   "tip_off": [],
+   "notes": "Chest camera. Five tip-on / reagent-tube / PCR-tube cycles (5 additions: master mix, primers, template, water). Left hand lifts a tube from the ice box, holds it up near the top edge of the frame and the pipette goes in above the frame, so nearly every entry is hidden. Hidden actions are timed from the window where the tube is held up with the right arm in reach, not from a seen tip entry, so start/end may be off by up to ~1 s. Only the 63.9 draw is seen directly. Tip ejects are never seen (happen off-frame right). 72-81 tube carried/flicked, 101-122 thermocycler.",
+   "split": "tune"
+  },
+  "hood033": {
+   "path": "lsv_hood/cas9_hood_033.mp4",
+   "seconds": 100,
+   "tip_on": [
+    17.8,
+    69.0
+   ],
+   "tip_off": [
+    13.8,
+    61.5
+   ],
+   "notes": "Hood camera. Small pipette: tip on at 17.8 (pressed into clear tip box), three draw/dispense pairs with the same tip, tube held in the left fist with the pipette nearly horizontal; the tip end is behind the fingers, pipette shaft visible. Left hand returns a tube to the orange rack between each entry. Tip ejected into the waste beaker at 61.5. 13.8 is the pipette tip going into the waste beaker before any use (looks like an eject, unsure). Second, larger pipette picked up at 65.2, tip on ~68-70, then mix in the EP tube 71.6-78.4, dropwise dispense 81.8-87.9, dish rocked 88.8-97.",
+   "split": "hold"
+  }
+ },
+ "actions": [
+  {
+   "clip": "hood033",
+   "kind": "draw",
+   "start": 20.6,
+   "end": 26.6,
+   "container": "reagent 1 tube (left hand)",
+   "visible": false,
+   "sure": false,
+   "note": "tip behind fingers; first entry after tip_on; long, may include lid handling"
+  },
+  {
+   "clip": "hood033",
+   "kind": "dispense",
+   "start": 31.3,
+   "end": 34.4,
+   "container": "1.5 mL EP tube",
+   "visible": false,
+   "sure": false,
+   "note": "tip behind fingers"
+  },
+  {
+   "clip": "hood033",
+   "kind": "draw",
+   "start": 38.6,
+   "end": 41.9,
+   "container": "reagent 2 tube",
+   "visible": false,
+   "sure": false,
+   "note": "tip behind fingers; same tip"
+  },
+  {
+   "clip": "hood033",
+   "kind": "dispense",
+   "start": 45.6,
+   "end": 48.6,
+   "container": "1.5 mL EP tube",
+   "visible": false,
+   "sure": false,
+   "note": "tip behind fingers"
+  },
+  {
+   "clip": "hood033",
+   "kind": "draw",
+   "start": 51.8,
+   "end": 54.9,
+   "container": "reagent 3 tube",
+   "visible": false,
+   "sure": false,
+   "note": "tip behind fingers"
+  },
+  {
+   "clip": "hood033",
+   "kind": "dispense",
+   "start": 57.9,
+   "end": 60.6,
+   "container": "1.5 mL EP tube",
+   "visible": false,
+   "sure": false,
+   "note": "tip behind fingers; tip ejected right after at 61.5"
+  },
+  {
+   "clip": "hood033",
+   "kind": "mix",
+   "start": 71.6,
+   "end": 78.4,
+   "container": "1.5 mL EP tube",
+   "visible": true,
+   "sure": false,
+   "note": "larger pipette, new tip; tip at tube mouth visible, plunger strokes not resolvable; probably mix then draw of the mixture"
+  },
+  {
+   "clip": "hood033",
+   "kind": "dispense",
+   "start": 81.8,
+   "end": 87.9,
+   "container": "10 cm dish (dropwise)",
+   "visible": true,
+   "sure": false,
+   "note": "pipette vertical, tip end near the dish under the left hand by the orange rack; could be a tube in the rack instead"
+  },
+  {
+   "clip": "mv414L",
+   "kind": "draw",
+   "start": 15.9,
+   "end": 19.6,
+   "container": "trypsin bottle",
+   "visible": true,
+   "sure": true,
+   "note": "Bottle lifted and tilted in left hand; tip seen going into the mouth. Plunger release not visible, draw by protocol context (1st entry after tip on)."
+  },
+  {
+   "clip": "mv414L",
+   "kind": "dispense",
+   "start": 23.1,
+   "end": 24.0,
+   "container": "T-flask",
+   "visible": false,
+   "sure": true,
+   "note": "Flask held tilted in left hand; tip end in neck region partly hidden by glove. Edges +-0.2 s."
+  },
+  {
+   "clip": "mv414L",
+   "kind": "draw",
+   "start": 25.2,
+   "end": 28.0,
+   "container": "trypsin bottle",
+   "visible": true,
+   "sure": true,
+   "note": "2nd 750 uL collection."
+  },
+  {
+   "clip": "mv414L",
+   "kind": "dispense",
+   "start": 29.2,
+   "end": 30.2,
+   "container": "T-flask",
+   "visible": false,
+   "sure": true,
+   "note": "Not in the written protocol for this clip but the same flask move as 23.1-24.0 repeats; tip end hidden. Edges +-0.2 s."
+  },
+  {
+   "clip": "mv414R",
+   "kind": "draw",
+   "start": 16.0,
+   "end": 19.7,
+   "container": "trypsin bottle",
+   "visible": true,
+   "sure": true,
+   "note": "Tip at mouth 15.9, inside 16.0; out by 19.8."
+  },
+  {
+   "clip": "mv414R",
+   "kind": "dispense",
+   "start": 23.0,
+   "end": 24.1,
+   "container": "T-flask",
+   "visible": false,
+   "sure": true,
+   "note": "Tip end behind left hand/flask; thumb visibly presses plunger ~23.3-23.9."
+  },
+  {
+   "clip": "mv414R",
+   "kind": "draw",
+   "start": 25.4,
+   "end": 28.0,
+   "container": "trypsin bottle",
+   "visible": true,
+   "sure": true,
+   "note": "Tip at mouth 25.3-25.4."
+  },
+  {
+   "clip": "mv414R",
+   "kind": "dispense",
+   "start": 29.2,
+   "end": 30.3,
+   "container": "T-flask",
+   "visible": false,
+   "sure": true,
+   "note": "Tip end hidden; left hand leaves with flask 30.4."
+  },
+  {
+   "clip": "pcr105",
+   "kind": "draw",
+   "start": 9.4,
+   "end": 11.2,
+   "container": "reagent tube from ice (master mix?)",
+   "visible": false,
+   "sure": false,
+   "note": "tube held up out of frame; pipette arm at right; timing from tube-held window"
+  },
+  {
+   "clip": "pcr105",
+   "kind": "dispense",
+   "start": 14.4,
+   "end": 17.5,
+   "container": "0.2 mL PCR tube from yellow rack",
+   "visible": false,
+   "sure": false,
+   "note": "tube held up out of frame"
+  },
+  {
+   "clip": "pcr105",
+   "kind": "draw",
+   "start": 23.4,
+   "end": 29.4,
+   "container": "reagent tube from ice",
+   "visible": false,
+   "sure": false,
+   "note": "long hold, arm dips at 25.8-26.2; may include lid opening"
+  },
+  {
+   "clip": "pcr105",
+   "kind": "dispense",
+   "start": 31.6,
+   "end": 33.7,
+   "container": "0.2 mL PCR tube",
+   "visible": false,
+   "sure": false,
+   "note": "out of frame"
+  },
+  {
+   "clip": "pcr105",
+   "kind": "draw",
+   "start": 37.0,
+   "end": 38.8,
+   "container": "reagent tube from ice",
+   "visible": false,
+   "sure": false,
+   "note": "out of frame"
+  },
+  {
+   "clip": "pcr105",
+   "kind": "dispense",
+   "start": 41.8,
+   "end": 43.6,
+   "container": "0.2 mL PCR tube",
+   "visible": false,
+   "sure": false,
+   "note": "out of frame"
+  },
+  {
+   "clip": "pcr105",
+   "kind": "draw",
+   "start": 47.3,
+   "end": 51.8,
+   "container": "reagent tube from ice",
+   "visible": false,
+   "sure": false,
+   "note": "out of frame; arm dips ~50.0-50.5"
+  },
+  {
+   "clip": "pcr105",
+   "kind": "dispense",
+   "start": 54.2,
+   "end": 56.0,
+   "container": "0.2 mL PCR tube",
+   "visible": false,
+   "sure": false,
+   "note": "out of frame"
+  },
+  {
+   "clip": "pcr105",
+   "kind": "draw",
+   "start": 63.9,
+   "end": 65.1,
+   "container": "reagent tube held tilted in left hand",
+   "visible": true,
+   "sure": true,
+   "note": "tip seen entering the tube, first entry after tip_on 60.8"
+  },
+  {
+   "clip": "pcr105",
+   "kind": "dispense",
+   "start": 68.3,
+   "end": 71.5,
+   "container": "0.2 mL PCR tube",
+   "visible": false,
+   "sure": false,
+   "note": "out of frame; last addition, may include mixing"
+  },
+  {
+   "clip": "pcr48",
+   "kind": "draw",
+   "start": 6.2,
+   "end": 7.4,
+   "container": "M tube (presumed, label unreadable)",
+   "visible": true,
+   "sure": true,
+   "note": "tube lifted from green rack and opened in left hand; tip enters it; plunger not resolvable, draw by protocol order (first entry after new tip). Reagent identity assumed from protocol order."
+  },
+  {
+   "clip": "pcr48",
+   "kind": "dispense",
+   "start": 9.8,
+   "end": 11.6,
+   "container": "PCR tube (0.2 mL, from teal rack)",
+   "visible": true,
+   "sure": true,
+   "note": "PCR tube lifted from teal rack, held in left hand; tip enters; dispense by protocol order (next entry after draw)."
+  },
+  {
+   "clip": "pcr48",
+   "kind": "draw",
+   "start": 15.6,
+   "end": 17.3,
+   "container": "F tube (presumed, label unreadable)",
+   "visible": true,
+   "sure": true,
+   "note": "tube lifted from green rack and opened in left hand; tip enters it; plunger not resolvable, draw by protocol order (first entry after new tip). Reagent identity assumed from protocol order."
+  },
+  {
+   "clip": "pcr48",
+   "kind": "dispense",
+   "start": 20.2,
+   "end": 21.9,
+   "container": "PCR tube (0.2 mL, from teal rack)",
+   "visible": true,
+   "sure": true,
+   "note": "PCR tube lifted from teal rack, held in left hand; tip enters; dispense by protocol order (next entry after draw)."
+  },
+  {
+   "clip": "pcr48",
+   "kind": "draw",
+   "start": 26.2,
+   "end": 28.1,
+   "container": "R tube (presumed, label unreadable)",
+   "visible": true,
+   "sure": true,
+   "note": "tube lifted from green rack and opened in left hand; tip enters it; plunger not resolvable, draw by protocol order (first entry after new tip). Reagent identity assumed from protocol order."
+  },
+  {
+   "clip": "pcr48",
+   "kind": "dispense",
+   "start": 30.3,
+   "end": 31.7,
+   "container": "PCR tube (0.2 mL, from teal rack)",
+   "visible": true,
+   "sure": true,
+   "note": "PCR tube lifted from teal rack, held in left hand; tip enters; dispense by protocol order (next entry after draw)."
+  },
+  {
+   "clip": "pcr48",
+   "kind": "draw",
+   "start": 36.8,
+   "end": 38.4,
+   "container": "T tube (presumed, label unreadable)",
+   "visible": true,
+   "sure": true,
+   "note": "tube lifted from green rack and opened in left hand; tip enters it; plunger not resolvable, draw by protocol order (first entry after new tip). Reagent identity assumed from protocol order."
+  },
+  {
+   "clip": "pcr48",
+   "kind": "dispense",
+   "start": 42.0,
+   "end": 43.9,
+   "container": "PCR tube (0.2 mL, from teal rack)",
+   "visible": true,
+   "sure": true,
+   "note": "PCR tube lifted from teal rack, held in left hand; tip enters; dispense by protocol order (next entry after draw)."
+  },
+  {
+   "clip": "pcr49",
+   "kind": "draw",
+   "start": 3.8,
+   "end": 5.4,
+   "container": "M tube (presumed, label unreadable)",
+   "visible": true,
+   "sure": true,
+   "note": "tube lifted from green rack and opened in left hand; tip enters it; plunger not resolvable, draw by protocol order (first entry after new tip). Reagent identity assumed from protocol order."
+  },
+  {
+   "clip": "pcr49",
+   "kind": "dispense",
+   "start": 7.7,
+   "end": 9.3,
+   "container": "PCR tube (0.2 mL, from teal rack)",
+   "visible": true,
+   "sure": true,
+   "note": "PCR tube lifted from teal rack, held in left hand; tip enters; dispense by protocol order (next entry after draw)."
+  },
+  {
+   "clip": "pcr49",
+   "kind": "draw",
+   "start": 13.2,
+   "end": 14.5,
+   "container": "F tube (presumed, label unreadable)",
+   "visible": true,
+   "sure": true,
+   "note": "tube lifted from green rack and opened in left hand; tip enters it; plunger not resolvable, draw by protocol order (first entry after new tip). Reagent identity assumed from protocol order."
+  },
+  {
+   "clip": "pcr49",
+   "kind": "dispense",
+   "start": 17.3,
+   "end": 18.7,
+   "container": "PCR tube (0.2 mL, from teal rack)",
+   "visible": true,
+   "sure": true,
+   "note": "PCR tube lifted from teal rack, held in left hand; tip enters; dispense by protocol order (next entry after draw)."
+  },
+  {
+   "clip": "pcr49",
+   "kind": "draw",
+   "start": 22.2,
+   "end": 23.9,
+   "container": "R tube (presumed, label unreadable)",
+   "visible": true,
+   "sure": true,
+   "note": "tube lifted from green rack and opened in left hand; tip enters it; plunger not resolvable, draw by protocol order (first entry after new tip). Reagent identity assumed from protocol order."
+  },
+  {
+   "clip": "pcr49",
+   "kind": "dispense",
+   "start": 26.1,
+   "end": 27.5,
+   "container": "PCR tube (0.2 mL, from teal rack)",
+   "visible": true,
+   "sure": true,
+   "note": "PCR tube lifted from teal rack, held in left hand; tip enters; dispense by protocol order (next entry after draw)."
+  },
+  {
+   "clip": "pcr49",
+   "kind": "draw",
+   "start": 31.5,
+   "end": 33.1,
+   "container": "T tube (presumed, label unreadable)",
+   "visible": true,
+   "sure": true,
+   "note": "tube lifted from green rack and opened in left hand; tip enters it; plunger not resolvable, draw by protocol order (first entry after new tip). Reagent identity assumed from protocol order."
+  },
+  {
+   "clip": "pcr49",
+   "kind": "dispense",
+   "start": 35.1,
+   "end": 36.4,
+   "container": "PCR tube (0.2 mL, from teal rack)",
+   "visible": true,
+   "sure": true,
+   "note": "PCR tube lifted from teal rack, held in left hand; tip enters; dispense by protocol order (next entry after draw)."
+  },
+  {
+   "clip": "pcr50",
+   "kind": "draw",
+   "start": 3.1,
+   "end": 4.35,
+   "container": "reagent tube (held in hand; likely F)",
+   "visible": true,
+   "sure": true,
+   "note": "first entry after tip on"
+  },
+  {
+   "clip": "pcr50",
+   "kind": "dispense",
+   "start": 6.7,
+   "end": 8.1,
+   "container": "PCR tube at rack",
+   "visible": true,
+   "sure": true,
+   "note": ""
+  },
+  {
+   "clip": "pcr50",
+   "kind": "draw",
+   "start": 11.8,
+   "end": 13.6,
+   "container": "reagent tube (held in hand; likely R)",
+   "visible": true,
+   "sure": true,
+   "note": ""
+  },
+  {
+   "clip": "pcr50",
+   "kind": "dispense",
+   "start": 16.65,
+   "end": 18.9,
+   "container": "PCR tube at rack",
+   "visible": true,
+   "sure": true,
+   "note": ""
+  },
+  {
+   "clip": "pcr50",
+   "kind": "draw",
+   "start": 23.7,
+   "end": 25.3,
+   "container": "reagent tube (held in hand; likely T)",
+   "visible": true,
+   "sure": true,
+   "note": ""
+  },
+  {
+   "clip": "pcr50",
+   "kind": "dispense",
+   "start": 27.7,
+   "end": 29.5,
+   "container": "PCR tube at rack",
+   "visible": true,
+   "sure": true,
+   "note": ""
+  },
+  {
+   "clip": "pcr51",
+   "kind": "draw",
+   "start": 3.3,
+   "end": 4.8,
+   "container": "reagent tube (held in hand; likely M)",
+   "visible": true,
+   "sure": true,
+   "note": ""
+  },
+  {
+   "clip": "pcr51",
+   "kind": "dispense",
+   "start": 7.45,
+   "end": 8.8,
+   "container": "PCR tube at rack",
+   "visible": true,
+   "sure": true,
+   "note": ""
+  },
+  {
+   "clip": "pcr51",
+   "kind": "draw",
+   "start": 12.1,
+   "end": 13.7,
+   "container": "reagent tube (held in hand; likely F)",
+   "visible": true,
+   "sure": true,
+   "note": ""
+  },
+  {
+   "clip": "pcr51",
+   "kind": "dispense",
+   "start": 16.3,
+   "end": 17.8,
+   "container": "PCR tube at rack",
+   "visible": true,
+   "sure": true,
+   "note": ""
+  },
+  {
+   "clip": "pcr51",
+   "kind": "draw",
+   "start": 22.2,
+   "end": 23.6,
+   "container": "reagent tube (held in hand; likely R)",
+   "visible": true,
+   "sure": true,
+   "note": ""
+  },
+  {
+   "clip": "pcr51",
+   "kind": "dispense",
+   "start": 25.8,
+   "end": 27.4,
+   "container": "PCR tube at rack",
+   "visible": true,
+   "sure": true,
+   "note": ""
+  },
+  {
+   "clip": "pcr51",
+   "kind": "draw",
+   "start": 31.1,
+   "end": 32.8,
+   "container": "reagent tube (held in hand; likely T)",
+   "visible": true,
+   "sure": true,
+   "note": ""
+  },
+  {
+   "clip": "pcr51",
+   "kind": "dispense",
+   "start": 35.4,
+   "end": 36.9,
+   "container": "PCR tube at rack",
+   "visible": true,
+   "sure": true,
+   "note": "pipette swings away fast at 36.9, end +/-0.1"
+  },
+  {
+   "clip": "serial52",
+   "kind": "draw",
+   "start": 16.2,
+   "end": 18.0,
+   "container": "H2O tube (held in left hand)",
+   "visible": true,
+   "sure": true,
+   "note": "first entry after tip_on"
+  },
+  {
+   "clip": "serial52",
+   "kind": "dispense",
+   "start": 18.5,
+   "end": 20.1,
+   "container": "strip tube 1 in cyan rack",
+   "visible": true,
+   "sure": true,
+   "note": "which strip tube is not readable; order assumed 1-4"
+  },
+  {
+   "clip": "serial52",
+   "kind": "draw",
+   "start": 20.5,
+   "end": 22.3,
+   "container": "H2O tube (held)",
+   "visible": true,
+   "sure": true,
+   "note": ""
+  },
+  {
+   "clip": "serial52",
+   "kind": "dispense",
+   "start": 22.5,
+   "end": 23.9,
+   "container": "strip tube 2 in cyan rack",
+   "visible": true,
+   "sure": true,
+   "note": ""
+  },
+  {
+   "clip": "serial52",
+   "kind": "draw",
+   "start": 24.1,
+   "end": 25.3,
+   "container": "H2O tube (held)",
+   "visible": true,
+   "sure": true,
+   "note": ""
+  },
+  {
+   "clip": "serial52",
+   "kind": "dispense",
+   "start": 25.7,
+   "end": 27.0,
+   "container": "strip tube 3 in cyan rack",
+   "visible": true,
+   "sure": true,
+   "note": ""
+  },
+  {
+   "clip": "serial52",
+   "kind": "draw",
+   "start": 27.4,
+   "end": 28.9,
+   "container": "H2O tube (held)",
+   "visible": true,
+   "sure": true,
+   "note": ""
+  },
+  {
+   "clip": "serial52",
+   "kind": "dispense",
+   "start": 29.1,
+   "end": 30.3,
+   "container": "strip tube 4 in cyan rack",
+   "visible": true,
+   "sure": true,
+   "note": "end approximate, camera swings away at 30.5"
+  },
+  {
+   "clip": "serial52",
+   "kind": "draw",
+   "start": 34.9,
+   "end": 36.9,
+   "container": "S tube (held in left hand)",
+   "visible": true,
+   "sure": true,
+   "note": "first entry after new tip"
+  },
+  {
+   "clip": "serial52",
+   "kind": "dispense",
+   "start": 42.5,
+   "end": 51.0,
+   "container": "strip tube 1 (held)",
+   "visible": true,
+   "sure": true,
+   "note": "tip did not leave tube 1 for ~8.5 s; this span covers dispense + mixing + the transfer draw, cannot separate"
+  },
+  {
+   "clip": "serial52",
+   "kind": "draw",
+   "start": 50.3,
+   "end": 51.0,
+   "container": "strip tube 1 (held)",
+   "visible": true,
+   "sure": false,
+   "note": "inferred final aspiration for 1->2 transfer, nested in the span above; start is a guess"
+  },
+  {
+   "clip": "serial52",
+   "kind": "dispense",
+   "start": 51.4,
+   "end": 57.6,
+   "container": "strip tube 2 (held)",
+   "visible": true,
+   "sure": false,
+   "note": "covers dispense + mixing + transfer draw; tube identity from tip shifting one tube right at 51.1-51.4"
+  },
+  {
+   "clip": "serial52",
+   "kind": "draw",
+   "start": 57.0,
+   "end": 57.6,
+   "container": "strip tube 2 (held)",
+   "visible": true,
+   "sure": false,
+   "note": "inferred 2->3 transfer draw; start a guess"
+  },
+  {
+   "clip": "serial52",
+   "kind": "dispense",
+   "start": 58.1,
+   "end": 64.2,
+   "container": "strip tube 3 (held)",
+   "visible": true,
+   "sure": false,
+   "note": "covers dispense + mixing + transfer draw"
+  },
+  {
+   "clip": "serial52",
+   "kind": "draw",
+   "start": 63.6,
+   "end": 64.2,
+   "container": "strip tube 3 (held)",
+   "visible": true,
+   "sure": false,
+   "note": "inferred 3->4 transfer draw; start a guess"
+  },
+  {
+   "clip": "serial52",
+   "kind": "dispense",
+   "start": 64.7,
+   "end": 70.4,
+   "container": "strip tube 4 (held)",
+   "visible": true,
+   "sure": false,
+   "note": "covers dispense + mixing; tip lifted ~69.9-70.4"
+  },
+  {
+   "clip": "serial55",
+   "kind": "draw",
+   "start": 14.2,
+   "end": 16.0,
+   "container": "H2O tube (held in left hand)",
+   "visible": true,
+   "sure": true,
+   "note": "0.25 s frames, +/-0.2 s"
+  },
+  {
+   "clip": "serial55",
+   "kind": "dispense",
+   "start": 16.5,
+   "end": 18.0,
+   "container": "strip tube 1 in cyan rack",
+   "visible": true,
+   "sure": true,
+   "note": ""
+  },
+  {
+   "clip": "serial55",
+   "kind": "draw",
+   "start": 18.4,
+   "end": 19.6,
+   "container": "H2O tube (held)",
+   "visible": true,
+   "sure": true,
+   "note": ""
+  },
+  {
+   "clip": "serial55",
+   "kind": "dispense",
+   "start": 19.8,
+   "end": 21.2,
+   "container": "strip tube 2 in cyan rack",
+   "visible": true,
+   "sure": true,
+   "note": ""
+  },
+  {
+   "clip": "serial55",
+   "kind": "draw",
+   "start": 21.5,
+   "end": 22.6,
+   "container": "H2O tube (held)",
+   "visible": true,
+   "sure": true,
+   "note": ""
+  },
+  {
+   "clip": "serial55",
+   "kind": "dispense",
+   "start": 23.0,
+   "end": 24.2,
+   "container": "strip tube 3 in cyan rack",
+   "visible": true,
+   "sure": true,
+   "note": ""
+  },
+  {
+   "clip": "serial55",
+   "kind": "draw",
+   "start": 24.7,
+   "end": 25.9,
+   "container": "H2O tube (held)",
+   "visible": true,
+   "sure": true,
+   "note": ""
+  },
+  {
+   "clip": "serial55",
+   "kind": "dispense",
+   "start": 26.2,
+   "end": 27.3,
+   "container": "strip tube 4 in cyan rack",
+   "visible": true,
+   "sure": true,
+   "note": ""
+  },
+  {
+   "clip": "serial55",
+   "kind": "draw",
+   "start": 32.0,
+   "end": 33.3,
+   "container": "S tube (held in left hand)",
+   "visible": true,
+   "sure": true,
+   "note": ""
+  },
+  {
+   "clip": "serial55",
+   "kind": "dispense",
+   "start": 38.0,
+   "end": 41.3,
+   "container": "strip tube 1 (held)",
+   "visible": true,
+   "sure": false,
+   "note": "entry sure; end is a guess (tip slides to next tube without a clear lift). Covers dispense + mixing + transfer draw"
+  },
+  {
+   "clip": "serial55",
+   "kind": "dispense",
+   "start": 41.4,
+   "end": 43.3,
+   "container": "strip tube 2 (held)",
+   "visible": true,
+   "sure": false,
+   "note": "start a guess; clear lift at 43.3-43.7. Covers dispense + mix + transfer draw"
+  },
+  {
+   "clip": "serial55",
+   "kind": "dispense",
+   "start": 43.8,
+   "end": 46.2,
+   "container": "strip tube 3 (held)",
+   "visible": true,
+   "sure": false,
+   "note": "end a guess"
+  },
+  {
+   "clip": "serial55",
+   "kind": "dispense",
+   "start": 46.3,
+   "end": 48.6,
+   "container": "strip tube 4 (held)",
+   "visible": true,
+   "sure": false,
+   "note": "start a guess; tip leaves ~48.6 as camera swings"
+  }
+ ]
+}

@@ -1,0 +1,146 @@
+{
+ "tune": {
+  "seconds": 90.0,
+  "boxes": {
+   "pipette": {
+    "right": 2,
+    "wrong": 6
+   },
+   "pipette tip": {
+    "right": 36,
+    "wrong": 30
+   },
+   "tip box": {
+    "right": 38,
+    "wrong": 17
+   },
+   "waste": {
+    "right": 0,
+    "wrong": 53
+   }
+  },
+  "pipette_found": [
+   33,
+   43
+  ],
+  "events": {
+   "hand_touch": {
+    "fired": 3,
+    "right": 1,
+    "scored": 3,
+    "runs": 2,
+    "found": 1,
+    "precision": 0.33,
+    "recall": 0.5,
+    "chance_precision": 0.07,
+    "chance_recall": 0.1
+   },
+   "tip_on": {
+    "fired": 1,
+    "right": 0,
+    "scored": 1,
+    "runs": 1,
+    "found": 0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "chance_precision": 0.1,
+    "chance_recall": 0.1
+   },
+   "tip_off": {
+    "fired": 0,
+    "right": 0,
+    "scored": 0,
+    "runs": 0,
+    "found": 0,
+    "precision": null,
+    "recall": null,
+    "chance_precision": null,
+    "chance_recall": null
+   },
+   "press": {
+    "fired": 0,
+    "right": 0,
+    "scored": 0,
+    "runs": 2,
+    "found": 0,
+    "precision": null,
+    "recall": 0.0,
+    "chance_precision": null,
+    "chance_recall": 0.0
+   }
+  },
+  "wrong_box_rate": 0.58
+ },
+ "hold": {
+  "seconds": 90.0,
+  "boxes": {
+   "pipette": {
+    "right": 7,
+    "wrong": 5
+   },
+   "pipette tip": {
+    "right": 39,
+    "wrong": 25
+   },
+   "tip box": {
+    "right": 23,
+    "wrong": 66
+   },
+   "waste": {
+    "right": 0,
+    "wrong": 34
+   }
+  },
+  "pipette_found": [
+   38,
+   58
+  ],
+  "events": {
+   "hand_touch": {
+    "fired": 3,
+    "right": 0,
+    "scored": 3,
+    "runs": 4,
+    "found": 0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "chance_precision": 0.0,
+    "chance_recall": 0.0
+   },
+   "tip_on": {
+    "fired": 0,
+    "right": 0,
+    "scored": 0,
+    "runs": 1,
+    "found": 0,
+    "precision": null,
+    "recall": 0.0,
+    "chance_precision": null,
+    "chance_recall": 0.0
+   },
+   "tip_off": {
+    "fired": 1,
+    "right": 0,
+    "scored": 0,
+    "runs": 0,
+    "found": 0,
+    "precision": null,
+    "recall": null,
+    "chance_precision": 0.0,
+    "chance_recall": null
+   },
+   "press": {
+    "fired": 0,
+    "right": 0,
+    "scored": 0,
+    "runs": 3,
+    "found": 0,
+    "precision": null,
+    "recall": 0.0,
+    "chance_precision": null,
+    "chance_recall": 0.0
+   }
+  },
+  "wrong_box_rate": 0.65
+ }
+}

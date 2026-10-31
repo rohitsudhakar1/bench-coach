@@ -1,0 +1,2213 @@
+{
+ "about": "Write vision/eval/labels.json from the hand labels below.",
+ "clips": {
+  "mv12L": {
+   "path": "lsv_mv/CP-Left-Front-12-27.mp4",
+   "start": 0.0,
+   "seconds": 15.0,
+   "every": 1.0,
+   "split": "tune",
+   "scene": {
+    "tip box": [
+     [
+      25,
+      260,
+      150,
+      360
+     ]
+    ],
+    "waste": [],
+    "not": [
+     [
+      10,
+      155,
+      85,
+      255
+     ],
+     [
+      50,
+      115,
+      90,
+      150
+     ],
+     [
+      315,
+      160,
+      360,
+      240
+     ],
+     [
+      215,
+      210,
+      250,
+      250
+     ],
+     [
+      595,
+      225,
+      640,
+      300
+     ]
+    ]
+   }
+  },
+  "mv12R": {
+   "path": "lsv_mv/CP-Right-Front-12-27.mp4",
+   "start": 0.0,
+   "seconds": 15.0,
+   "every": 1.0,
+   "split": "hold",
+   "scene": {
+    "tip box": [
+     [
+      440,
+      180,
+      515,
+      240
+     ],
+     [
+      410,
+      230,
+      500,
+      360
+     ],
+     [
+      490,
+      190,
+      610,
+      360
+     ],
+     [
+      340,
+      230,
+      440,
+      320
+     ]
+    ],
+    "waste": [],
+    "not": [
+     [
+      470,
+      85,
+      615,
+      200
+     ],
+     [
+      0,
+      190,
+      125,
+      300
+     ]
+    ]
+   }
+  },
+  "mv249L": {
+   "path": "lsv_mv/CP-Left-Front-249-269.mp4",
+   "start": 0.0,
+   "seconds": 20.0,
+   "every": 1.0,
+   "split": "hold",
+   "scene": {
+    "tip box": [
+     [
+      25,
+      260,
+      150,
+      360
+     ]
+    ],
+    "waste": [],
+    "not": [
+     [
+      10,
+      155,
+      85,
+      255
+     ],
+     [
+      50,
+      115,
+      90,
+      150
+     ],
+     [
+      210,
+      180,
+      245,
+      230
+     ],
+     [
+      595,
+      225,
+      640,
+      300
+     ],
+     [
+      100,
+      335,
+      160,
+      360
+     ]
+    ]
+   }
+  },
+  "mv249R": {
+   "path": "lsv_mv/CP-Right-Front-249-269.mp4",
+   "start": 0.0,
+   "seconds": 20.0,
+   "every": 1.0,
+   "split": "tune",
+   "scene": {
+    "tip box": [
+     [
+      440,
+      165,
+      515,
+      240
+     ],
+     [
+      410,
+      225,
+      495,
+      335
+     ],
+     [
+      485,
+      180,
+      600,
+      340
+     ],
+     [
+      340,
+      215,
+      420,
+      300
+     ]
+    ],
+    "waste": [],
+    "not": [
+     [
+      0,
+      195,
+      90,
+      270
+     ],
+     [
+      480,
+      80,
+      615,
+      200
+     ]
+    ]
+   }
+  },
+  "mv414L": {
+   "path": "lsv_mv/CP-Left-Front-414-445.mp4",
+   "start": 0.0,
+   "seconds": 31.0,
+   "every": 1.5,
+   "split": "hold",
+   "scene": {
+    "tip box": [
+     [
+      0,
+      265,
+      160,
+      360
+     ]
+    ],
+    "waste": [],
+    "not": [
+     [
+      15,
+      155,
+      90,
+      255
+     ],
+     [
+      55,
+      115,
+      90,
+      150
+     ],
+     [
+      0,
+      120,
+      20,
+      175
+     ],
+     [
+      90,
+      240,
+      170,
+      330
+     ],
+     [
+      275,
+      325,
+      355,
+      360
+     ],
+     [
+      530,
+      140,
+      600,
+      200
+     ],
+     [
+      310,
+      0,
+      400,
+      80
+     ]
+    ]
+   }
+  },
+  "mv414R": {
+   "path": "lsv_mv/CP-Right-Front-414-445.mp4",
+   "start": 0.0,
+   "seconds": 31.0,
+   "every": 1.5,
+   "split": "tune",
+   "scene": {
+    "tip box": [
+     [
+      430,
+      190,
+      520,
+      330
+     ],
+     [
+      490,
+      190,
+      600,
+      335
+     ]
+    ],
+    "waste": [],
+    "not": [
+     [
+      475,
+      80,
+      615,
+      200
+     ],
+     [
+      0,
+      190,
+      125,
+      270
+     ],
+     [
+      270,
+      210,
+      420,
+      330
+     ],
+     [
+      360,
+      185,
+      390,
+      215
+     ]
+    ]
+   }
+  },
+  "hood033": {
+   "path": "lsv_hood/cas9_hood_033.mp4",
+   "start": 20.0,
+   "seconds": 24.0,
+   "every": 3.0,
+   "split": "hold",
+   "scene": {
+    "tip box": [],
+    "waste": [],
+    "not": [
+     [
+      95,
+      0,
+      170,
+      170
+     ],
+     [
+      245,
+      5,
+      600,
+      65
+     ],
+     [
+      25,
+      80,
+      100,
+      175
+     ],
+     [
+      480,
+      230,
+      640,
+      360
+     ]
+    ]
+   }
+  },
+  "dji105": {
+   "path": "lsv_dji/pcr_105.mp4",
+   "start": 10.0,
+   "seconds": 24.0,
+   "every": 3.0,
+   "split": "tune",
+   "scene": {
+    "tip box": [
+     [
+      470,
+      95,
+      585,
+      185
+     ]
+    ],
+    "waste": [],
+    "not": [
+     [
+      130,
+      110,
+      310,
+      310
+     ],
+     [
+      345,
+      25,
+      395,
+      110
+     ],
+     [
+      555,
+      35,
+      640,
+      170
+     ]
+    ]
+   }
+  }
+ },
+ "frames": [
+  {
+   "id": "mv12L_000.50",
+   "clip": "mv12L",
+   "t": 0.5,
+   "pipette": [
+    455,
+    225,
+    545,
+    280
+   ],
+   "tip": "off",
+   "touch": [],
+   "act": null,
+   "note": "holds the pipette aid, no pipette on it yet"
+  },
+  {
+   "id": "mv12L_001.50",
+   "clip": "mv12L",
+   "t": 1.5,
+   "pipette": "?",
+   "tip": "off",
+   "touch": [],
+   "act": null,
+   "note": "reaching right"
+  },
+  {
+   "id": "mv12L_002.50",
+   "clip": "mv12L",
+   "t": 2.5,
+   "pipette": "?",
+   "tip": "off",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv12L_003.50",
+   "clip": "mv12L",
+   "t": 3.5,
+   "pipette": "?",
+   "tip": "off",
+   "touch": [],
+   "act": null,
+   "note": "leaning out of view"
+  },
+  {
+   "id": "mv12L_004.50",
+   "clip": "mv12L",
+   "t": 4.5,
+   "pipette": "?",
+   "tip": "off",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv12L_005.50",
+   "clip": "mv12L",
+   "t": 5.5,
+   "pipette": "?",
+   "tip": "off",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv12L_006.50",
+   "clip": "mv12L",
+   "t": 6.5,
+   "pipette": "?",
+   "tip": "off",
+   "touch": [],
+   "act": null,
+   "note": "small dark thing in both hands"
+  },
+  {
+   "id": "mv12L_007.50",
+   "clip": "mv12L",
+   "t": 7.5,
+   "pipette": "?",
+   "tip": "off",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv12L_008.50",
+   "clip": "mv12L",
+   "t": 8.5,
+   "pipette": "?",
+   "tip": "off",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv12L_009.50",
+   "clip": "mv12L",
+   "t": 9.5,
+   "pipette": "?",
+   "tip": "off",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv12L_010.50",
+   "clip": "mv12L",
+   "t": 10.5,
+   "pipette": "?",
+   "tip": "off",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv12L_011.50",
+   "clip": "mv12L",
+   "t": 11.5,
+   "pipette": "?",
+   "tip": "off",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv12L_012.50",
+   "clip": "mv12L",
+   "t": 12.5,
+   "pipette": "?",
+   "tip": "?",
+   "touch": [],
+   "act": null,
+   "note": "long serological pipette going on"
+  },
+  {
+   "id": "mv12L_013.50",
+   "clip": "mv12L",
+   "t": 13.5,
+   "pipette": [
+    355,
+    220,
+    410,
+    260
+   ],
+   "tip": "?",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv12L_014.50",
+   "clip": "mv12L",
+   "t": 14.5,
+   "pipette": [
+    405,
+    235,
+    470,
+    290
+   ],
+   "tip": "?",
+   "touch": [],
+   "act": null,
+   "note": "opening the media bottle"
+  },
+  {
+   "id": "mv12R_000.50",
+   "clip": "mv12R",
+   "t": 0.5,
+   "pipette": "?",
+   "tip": "off",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv12R_001.50",
+   "clip": "mv12R",
+   "t": 1.5,
+   "pipette": "?",
+   "tip": "off",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv12R_002.50",
+   "clip": "mv12R",
+   "t": 2.5,
+   "pipette": "?",
+   "tip": "off",
+   "touch": [],
+   "act": null,
+   "note": "reaching back"
+  },
+  {
+   "id": "mv12R_003.50",
+   "clip": "mv12R",
+   "t": 3.5,
+   "pipette": "?",
+   "tip": "off",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv12R_004.50",
+   "clip": "mv12R",
+   "t": 4.5,
+   "pipette": [
+    175,
+    165,
+    240,
+    215
+   ],
+   "tip": "off",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv12R_005.50",
+   "clip": "mv12R",
+   "t": 5.5,
+   "pipette": [
+    175,
+    150,
+    240,
+    200
+   ],
+   "tip": "off",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv12R_006.50",
+   "clip": "mv12R",
+   "t": 6.5,
+   "pipette": [
+    100,
+    160,
+    170,
+    200
+   ],
+   "tip": "off",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv12R_007.50",
+   "clip": "mv12R",
+   "t": 7.5,
+   "pipette": [
+    130,
+    150,
+    200,
+    195
+   ],
+   "tip": "off",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv12R_008.50",
+   "clip": "mv12R",
+   "t": 8.5,
+   "pipette": [
+    170,
+    160,
+    215,
+    200
+   ],
+   "tip": "off",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv12R_009.50",
+   "clip": "mv12R",
+   "t": 9.5,
+   "pipette": "?",
+   "tip": "off",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv12R_010.50",
+   "clip": "mv12R",
+   "t": 10.5,
+   "pipette": [
+    225,
+    150,
+    285,
+    185
+   ],
+   "tip": "off",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv12R_011.50",
+   "clip": "mv12R",
+   "t": 11.5,
+   "pipette": [
+    200,
+    160,
+    250,
+    195
+   ],
+   "tip": "off",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv12R_012.50",
+   "clip": "mv12R",
+   "t": 12.5,
+   "pipette": [
+    110,
+    160,
+    235,
+    210
+   ],
+   "tip": "?",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv12R_013.50",
+   "clip": "mv12R",
+   "t": 13.5,
+   "pipette": [
+    135,
+    155,
+    235,
+    205
+   ],
+   "tip": "?",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv12R_014.50",
+   "clip": "mv12R",
+   "t": 14.5,
+   "pipette": [
+    250,
+    200,
+    330,
+    240
+   ],
+   "tip": "?",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249L_000.50",
+   "clip": "mv249L",
+   "t": 0.5,
+   "pipette": [
+    180,
+    135,
+    270,
+    245
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": "serological pipette on the pipette aid, setting it up"
+  },
+  {
+   "id": "mv249L_001.50",
+   "clip": "mv249L",
+   "t": 1.5,
+   "pipette": [
+    185,
+    135,
+    275,
+    240
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249L_002.50",
+   "clip": "mv249L",
+   "t": 2.5,
+   "pipette": [
+    195,
+    145,
+    275,
+    235
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249L_003.50",
+   "clip": "mv249L",
+   "t": 3.5,
+   "pipette": [
+    165,
+    135,
+    245,
+    235
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249L_004.50",
+   "clip": "mv249L",
+   "t": 4.5,
+   "pipette": [
+    145,
+    130,
+    240,
+    230
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249L_005.50",
+   "clip": "mv249L",
+   "t": 5.5,
+   "pipette": [
+    145,
+    130,
+    240,
+    220
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249L_006.50",
+   "clip": "mv249L",
+   "t": 6.5,
+   "pipette": [
+    145,
+    120,
+    220,
+    220
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249L_007.50",
+   "clip": "mv249L",
+   "t": 7.5,
+   "pipette": [
+    135,
+    115,
+    220,
+    220
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249L_008.50",
+   "clip": "mv249L",
+   "t": 8.5,
+   "pipette": [
+    145,
+    120,
+    220,
+    220
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249L_009.50",
+   "clip": "mv249L",
+   "t": 9.5,
+   "pipette": [
+    135,
+    120,
+    220,
+    220
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249L_010.50",
+   "clip": "mv249L",
+   "t": 10.5,
+   "pipette": [
+    140,
+    115,
+    220,
+    220
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249L_011.50",
+   "clip": "mv249L",
+   "t": 11.5,
+   "pipette": [
+    250,
+    100,
+    305,
+    185
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249L_012.50",
+   "clip": "mv249L",
+   "t": 12.5,
+   "pipette": [
+    235,
+    245,
+    305,
+    345
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": "pipette parked in its stand"
+  },
+  {
+   "id": "mv249L_013.50",
+   "clip": "mv249L",
+   "t": 13.5,
+   "pipette": [
+    235,
+    245,
+    305,
+    345
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": "opening the red bottle"
+  },
+  {
+   "id": "mv249L_014.50",
+   "clip": "mv249L",
+   "t": 14.5,
+   "pipette": [
+    235,
+    245,
+    305,
+    345
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249L_015.50",
+   "clip": "mv249L",
+   "t": 15.5,
+   "pipette": [
+    235,
+    245,
+    305,
+    345
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249L_016.50",
+   "clip": "mv249L",
+   "t": 16.5,
+   "pipette": [
+    235,
+    245,
+    305,
+    345
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249L_017.50",
+   "clip": "mv249L",
+   "t": 17.5,
+   "pipette": [
+    235,
+    245,
+    305,
+    345
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249L_018.50",
+   "clip": "mv249L",
+   "t": 18.5,
+   "pipette": [
+    215,
+    80,
+    290,
+    215
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": "picked up again"
+  },
+  {
+   "id": "mv249L_019.50",
+   "clip": "mv249L",
+   "t": 19.5,
+   "pipette": [
+    170,
+    100,
+    250,
+    225
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249R_000.50",
+   "clip": "mv249R",
+   "t": 0.5,
+   "pipette": [
+    250,
+    45,
+    355,
+    155
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249R_001.50",
+   "clip": "mv249R",
+   "t": 1.5,
+   "pipette": [
+    255,
+    40,
+    360,
+    155
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249R_002.50",
+   "clip": "mv249R",
+   "t": 2.5,
+   "pipette": [
+    260,
+    50,
+    365,
+    160
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249R_003.50",
+   "clip": "mv249R",
+   "t": 3.5,
+   "pipette": [
+    285,
+    35,
+    350,
+    170
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249R_004.50",
+   "clip": "mv249R",
+   "t": 4.5,
+   "pipette": [
+    205,
+    40,
+    335,
+    195
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249R_005.50",
+   "clip": "mv249R",
+   "t": 5.5,
+   "pipette": [
+    210,
+    15,
+    325,
+    155
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249R_006.50",
+   "clip": "mv249R",
+   "t": 6.5,
+   "pipette": [
+    195,
+    15,
+    315,
+    175
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249R_007.50",
+   "clip": "mv249R",
+   "t": 7.5,
+   "pipette": [
+    205,
+    15,
+    325,
+    170
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": "other hand on the bottle"
+  },
+  {
+   "id": "mv249R_008.50",
+   "clip": "mv249R",
+   "t": 8.5,
+   "pipette": [
+    200,
+    20,
+    325,
+    170
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249R_009.50",
+   "clip": "mv249R",
+   "t": 9.5,
+   "pipette": [
+    190,
+    20,
+    335,
+    175
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249R_010.50",
+   "clip": "mv249R",
+   "t": 10.5,
+   "pipette": [
+    185,
+    5,
+    320,
+    170
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249R_011.50",
+   "clip": "mv249R",
+   "t": 11.5,
+   "pipette": [
+    180,
+    15,
+    330,
+    135
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249R_012.50",
+   "clip": "mv249R",
+   "t": 12.5,
+   "pipette": [
+    320,
+    140,
+    375,
+    235
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": "in the stand"
+  },
+  {
+   "id": "mv249R_013.50",
+   "clip": "mv249R",
+   "t": 13.5,
+   "pipette": [
+    320,
+    140,
+    375,
+    235
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249R_014.50",
+   "clip": "mv249R",
+   "t": 14.5,
+   "pipette": [
+    320,
+    140,
+    375,
+    235
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249R_015.50",
+   "clip": "mv249R",
+   "t": 15.5,
+   "pipette": [
+    320,
+    140,
+    375,
+    235
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249R_016.50",
+   "clip": "mv249R",
+   "t": 16.5,
+   "pipette": [
+    320,
+    140,
+    375,
+    235
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249R_017.50",
+   "clip": "mv249R",
+   "t": 17.5,
+   "pipette": [
+    320,
+    140,
+    375,
+    235
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249R_018.50",
+   "clip": "mv249R",
+   "t": 18.5,
+   "pipette": [
+    235,
+    0,
+    490,
+    140
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv249R_019.50",
+   "clip": "mv249R",
+   "t": 19.5,
+   "pipette": [
+    200,
+    5,
+    325,
+    125
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv414L_000.80",
+   "clip": "mv414L",
+   "t": 0.8,
+   "pipette": "?",
+   "tip": "off",
+   "touch": [],
+   "act": null,
+   "note": "setting the volume"
+  },
+  {
+   "id": "mv414L_002.20",
+   "clip": "mv414L",
+   "t": 2.2,
+   "pipette": [
+    205,
+    95,
+    245,
+    220
+   ],
+   "tip": "off",
+   "touch": [
+    "tip box"
+   ],
+   "act": null,
+   "note": "other hand opens the tip box"
+  },
+  {
+   "id": "mv414L_003.80",
+   "clip": "mv414L",
+   "t": 3.8,
+   "pipette": [
+    180,
+    85,
+    235,
+    230
+   ],
+   "tip": "off",
+   "touch": [
+    "tip box"
+   ],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv414L_005.20",
+   "clip": "mv414L",
+   "t": 5.2,
+   "pipette": [
+    100,
+    130,
+    175,
+    265
+   ],
+   "tip": "?",
+   "touch": [
+    "tip box"
+   ],
+   "act": "tip_on",
+   "note": "pressing into the tip box"
+  },
+  {
+   "id": "mv414L_006.80",
+   "clip": "mv414L",
+   "t": 6.8,
+   "pipette": [
+    125,
+    55,
+    185,
+    175
+   ],
+   "tip": "on",
+   "touch": [
+    "tip box"
+   ],
+   "act": null,
+   "note": "lifted with a tip"
+  },
+  {
+   "id": "mv414L_008.20",
+   "clip": "mv414L",
+   "t": 8.2,
+   "pipette": [
+    170,
+    105,
+    215,
+    205
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv414L_009.80",
+   "clip": "mv414L",
+   "t": 9.8,
+   "pipette": [
+    200,
+    110,
+    240,
+    220
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": "picks up the trypsin bottle"
+  },
+  {
+   "id": "mv414L_011.20",
+   "clip": "mv414L",
+   "t": 11.2,
+   "pipette": [
+    205,
+    105,
+    240,
+    215
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv414L_012.80",
+   "clip": "mv414L",
+   "t": 12.8,
+   "pipette": [
+    200,
+    100,
+    250,
+    195
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv414L_014.20",
+   "clip": "mv414L",
+   "t": 14.2,
+   "pipette": [
+    205,
+    95,
+    245,
+    245
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": "?",
+   "note": "tip going to the bottle"
+  },
+  {
+   "id": "mv414L_015.80",
+   "clip": "mv414L",
+   "t": 15.8,
+   "pipette": [
+    200,
+    120,
+    245,
+    225
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": "draw",
+   "note": "first 750 uL"
+  },
+  {
+   "id": "mv414L_017.20",
+   "clip": "mv414L",
+   "t": 17.2,
+   "pipette": [
+    205,
+    130,
+    250,
+    240
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": "draw",
+   "note": ""
+  },
+  {
+   "id": "mv414L_018.80",
+   "clip": "mv414L",
+   "t": 18.8,
+   "pipette": [
+    200,
+    135,
+    245,
+    235
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": "draw",
+   "note": ""
+  },
+  {
+   "id": "mv414L_020.20",
+   "clip": "mv414L",
+   "t": 20.2,
+   "pipette": [
+    205,
+    130,
+    245,
+    210
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv414L_021.80",
+   "clip": "mv414L",
+   "t": 21.8,
+   "pipette": [
+    195,
+    120,
+    245,
+    255
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": "vessel",
+   "note": ""
+  },
+  {
+   "id": "mv414L_023.20",
+   "clip": "mv414L",
+   "t": 23.2,
+   "pipette": [
+    205,
+    115,
+    245,
+    225
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv414L_024.80",
+   "clip": "mv414L",
+   "t": 24.8,
+   "pipette": [
+    205,
+    125,
+    250,
+    205
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv414L_026.20",
+   "clip": "mv414L",
+   "t": 26.2,
+   "pipette": [
+    205,
+    140,
+    240,
+    235
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": "vessel",
+   "note": ""
+  },
+  {
+   "id": "mv414L_027.80",
+   "clip": "mv414L",
+   "t": 27.8,
+   "pipette": [
+    205,
+    130,
+    245,
+    255
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": "vessel",
+   "note": ""
+  },
+  {
+   "id": "mv414L_029.20",
+   "clip": "mv414L",
+   "t": 29.2,
+   "pipette": [
+    210,
+    125,
+    250,
+    240
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": "vessel",
+   "note": ""
+  },
+  {
+   "id": "mv414L_030.80",
+   "clip": "mv414L",
+   "t": 30.8,
+   "pipette": [
+    215,
+    125,
+    260,
+    210
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv414R_000.80",
+   "clip": "mv414R",
+   "t": 0.8,
+   "pipette": "?",
+   "tip": "off",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv414R_002.20",
+   "clip": "mv414R",
+   "t": 2.2,
+   "pipette": [
+    330,
+    0,
+    400,
+    150
+   ],
+   "tip": "off",
+   "touch": [
+    "tip box"
+   ],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv414R_003.80",
+   "clip": "mv414R",
+   "t": 3.8,
+   "pipette": [
+    370,
+    40,
+    415,
+    155
+   ],
+   "tip": "off",
+   "touch": [
+    "tip box"
+   ],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv414R_005.20",
+   "clip": "mv414R",
+   "t": 5.2,
+   "pipette": [
+    400,
+    100,
+    475,
+    240
+   ],
+   "tip": "?",
+   "touch": [
+    "tip box"
+   ],
+   "act": "tip_on",
+   "note": ""
+  },
+  {
+   "id": "mv414R_006.80",
+   "clip": "mv414R",
+   "t": 6.8,
+   "pipette": [
+    420,
+    0,
+    520,
+    200
+   ],
+   "tip": "?",
+   "touch": [
+    "tip box"
+   ],
+   "act": "tip_on",
+   "note": ""
+  },
+  {
+   "id": "mv414R_008.20",
+   "clip": "mv414R",
+   "t": 8.2,
+   "pipette": [
+    190,
+    0,
+    320,
+    95
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv414R_009.80",
+   "clip": "mv414R",
+   "t": 9.8,
+   "pipette": [
+    160,
+    0,
+    300,
+    120
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv414R_011.20",
+   "clip": "mv414R",
+   "t": 11.2,
+   "pipette": [
+    160,
+    0,
+    300,
+    110
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv414R_012.80",
+   "clip": "mv414R",
+   "t": 12.8,
+   "pipette": [
+    165,
+    0,
+    280,
+    110
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv414R_014.20",
+   "clip": "mv414R",
+   "t": 14.2,
+   "pipette": [
+    160,
+    0,
+    260,
+    100
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv414R_015.80",
+   "clip": "mv414R",
+   "t": 15.8,
+   "pipette": [
+    160,
+    0,
+    340,
+    175
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": "draw",
+   "note": ""
+  },
+  {
+   "id": "mv414R_017.20",
+   "clip": "mv414R",
+   "t": 17.2,
+   "pipette": [
+    250,
+    20,
+    335,
+    180
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": "draw",
+   "note": ""
+  },
+  {
+   "id": "mv414R_018.80",
+   "clip": "mv414R",
+   "t": 18.8,
+   "pipette": [
+    230,
+    10,
+    340,
+    190
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": "draw",
+   "note": ""
+  },
+  {
+   "id": "mv414R_020.20",
+   "clip": "mv414R",
+   "t": 20.2,
+   "pipette": [
+    165,
+    0,
+    330,
+    200
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": "vessel",
+   "note": ""
+  },
+  {
+   "id": "mv414R_021.80",
+   "clip": "mv414R",
+   "t": 21.8,
+   "pipette": [
+    175,
+    10,
+    340,
+    175
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": "vessel",
+   "note": ""
+  },
+  {
+   "id": "mv414R_023.20",
+   "clip": "mv414R",
+   "t": 23.2,
+   "pipette": [
+    200,
+    0,
+    340,
+    175
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": "vessel",
+   "note": ""
+  },
+  {
+   "id": "mv414R_024.80",
+   "clip": "mv414R",
+   "t": 24.8,
+   "pipette": [
+    170,
+    0,
+    330,
+    130
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "mv414R_026.20",
+   "clip": "mv414R",
+   "t": 26.2,
+   "pipette": [
+    210,
+    40,
+    330,
+    180
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": "vessel",
+   "note": ""
+  },
+  {
+   "id": "mv414R_027.80",
+   "clip": "mv414R",
+   "t": 27.8,
+   "pipette": [
+    220,
+    30,
+    320,
+    170
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": "vessel",
+   "note": ""
+  },
+  {
+   "id": "mv414R_029.20",
+   "clip": "mv414R",
+   "t": 29.2,
+   "pipette": [
+    200,
+    0,
+    330,
+    160
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": "vessel",
+   "note": ""
+  },
+  {
+   "id": "mv414R_030.80",
+   "clip": "mv414R",
+   "t": 30.8,
+   "pipette": [
+    180,
+    0,
+    320,
+    130
+   ],
+   "tip": "on",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "hood033_021.50",
+   "clip": "hood033",
+   "t": 21.5,
+   "pipette": [
+    390,
+    40,
+    610,
+    170
+   ],
+   "tip": "on",
+   "touch": [
+    "tube"
+   ],
+   "act": "?",
+   "note": "tip moving to the tube in the other hand"
+  },
+  {
+   "id": "hood033_024.50",
+   "clip": "hood033",
+   "t": 24.5,
+   "pipette": [
+    420,
+    70,
+    610,
+    180
+   ],
+   "tip": "on",
+   "touch": [
+    "tube"
+   ],
+   "act": "?",
+   "note": ""
+  },
+  {
+   "id": "hood033_027.50",
+   "clip": "hood033",
+   "t": 27.5,
+   "pipette": [
+    390,
+    80,
+    630,
+    180
+   ],
+   "tip": "on",
+   "touch": [
+    "tube"
+   ],
+   "act": "?",
+   "note": ""
+  },
+  {
+   "id": "hood033_030.50",
+   "clip": "hood033",
+   "t": 30.5,
+   "pipette": [
+    440,
+    70,
+    640,
+    170
+   ],
+   "tip": "on",
+   "touch": [
+    "tube"
+   ],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "hood033_033.50",
+   "clip": "hood033",
+   "t": 33.5,
+   "pipette": [
+    390,
+    60,
+    620,
+    170
+   ],
+   "tip": "on",
+   "touch": [
+    "tube"
+   ],
+   "act": "?",
+   "note": ""
+  },
+  {
+   "id": "hood033_036.50",
+   "clip": "hood033",
+   "t": 36.5,
+   "pipette": [
+    410,
+    80,
+    620,
+    170
+   ],
+   "tip": "on",
+   "touch": [
+    "tube rack"
+   ],
+   "act": null,
+   "note": "putting a tube in the blue rack"
+  },
+  {
+   "id": "hood033_039.50",
+   "clip": "hood033",
+   "t": 39.5,
+   "pipette": [
+    390,
+    60,
+    630,
+    190
+   ],
+   "tip": "on",
+   "touch": [
+    "tube"
+   ],
+   "act": "?",
+   "note": ""
+  },
+  {
+   "id": "hood033_042.50",
+   "clip": "hood033",
+   "t": 42.5,
+   "pipette": [
+    410,
+    70,
+    640,
+    190
+   ],
+   "tip": "on",
+   "touch": [
+    "tube"
+   ],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "dji105_011.50",
+   "clip": "dji105",
+   "t": 11.5,
+   "pipette": null,
+   "tip": "?",
+   "touch": [],
+   "act": null,
+   "note": "hand in the ice bucket"
+  },
+  {
+   "id": "dji105_014.50",
+   "clip": "dji105",
+   "t": 14.5,
+   "pipette": null,
+   "tip": "?",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "dji105_017.50",
+   "clip": "dji105",
+   "t": 17.5,
+   "pipette": null,
+   "tip": "?",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "dji105_020.50",
+   "clip": "dji105",
+   "t": 20.5,
+   "pipette": null,
+   "tip": "?",
+   "touch": [
+    "tube rack"
+   ],
+   "act": null,
+   "note": "hand on the yellow rack"
+  },
+  {
+   "id": "dji105_023.50",
+   "clip": "dji105",
+   "t": 23.5,
+   "pipette": null,
+   "tip": "?",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "dji105_026.50",
+   "clip": "dji105",
+   "t": 26.5,
+   "pipette": null,
+   "tip": "?",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "dji105_029.50",
+   "clip": "dji105",
+   "t": 29.5,
+   "pipette": null,
+   "tip": "?",
+   "touch": [],
+   "act": null,
+   "note": ""
+  },
+  {
+   "id": "dji105_032.50",
+   "clip": "dji105",
+   "t": 32.5,
+   "pipette": null,
+   "tip": "?",
+   "touch": [],
+   "act": null,
+   "note": ""
+  }
+ ]
+}

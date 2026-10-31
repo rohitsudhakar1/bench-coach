@@ -1,0 +1,11 @@
+# All already in the shared environment; nothing was added.
+mediapipe
+torch
+transformers
+opencv-python
+numpy
+httpx
+fastapi
+uvicorn
+anthropic
+pytest
