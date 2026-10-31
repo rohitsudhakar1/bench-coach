@@ -10,6 +10,7 @@ import time
 from pathlib import Path
 
 import httpx
+from starlette.requests import Request
 
 from .build import build_note
 from .frames import FRAME_DIR, attach_offsets, save_key_frames
@@ -173,6 +174,23 @@ def create_app(runs_dir: Path = RUNS_DIR, hub: str | None = HUB, watch: bool = T
     @app.get("/note/{run_id}.zip")
     def get_zip(run_id: str):
         return export(run_id, archive=True)
+
+    @app.get("/note/{run_id}.benchling")
+    @app.get("/note/{run_id}.eln")
+    @app.get("/note/{run_id}.csv")
+    def get_notebook_export(run_id: str, request: Request):
+        from .elnexport import entry_html, eln_archive, steps_csv
+
+        folder, note = saved(run_id)
+        format = request.url.path.rsplit(".", 1)[-1]
+        if format == "eln":
+            content, mime, name = eln_archive(note, folder), "application/vnd.eln+zip", "lab-note.eln"
+        elif format == "csv":
+            content, mime, name = steps_csv(note), "text/csv", "steps.csv"
+        else:
+            content, mime, name = entry_html(note, folder), "text/html", "benchling-entry.html"
+        return Response(content, media_type=mime, headers={
+            "Content-Disposition": f'attachment; filename="{name}"', "Cache-Control": "no-store"})
 
     @app.get("/note/{run_id}")
     def get_note(run_id: str, format: str = "html"):

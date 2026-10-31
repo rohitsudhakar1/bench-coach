@@ -121,14 +121,14 @@ function transient() {
 async function renderNote() {
   const attempt = ++noteAttempt, run = state.run, note = state.note;
   $('note-badge').hidden = !note;
-  for (const id of ['full-note','pdf','zip']) $(id).hidden = true;
+  for (const id of ['full-note','pdf','zip','benchling','eln','csv']) $(id).hidden = true;
   $('note-content').replaceChildren();
   const message = text => { const p = document.createElement('p'); p.className = 'empty'; p.textContent = text; $('note-content').append(p); };
   if (!note) { message(run && !state.recording ? 'Waiting for the note service to finish this run…' : 'Stop a run to prepare its lab note.'); return; }
   const inline = note.text || note.markdown || note.content;
   if (typeof inline === 'string' && !note.url && !note.path) { const pre = document.createElement('pre'); pre.textContent = inline; $('note-content').append(pre); return; }
   const base = `/lab-note/${encodeURIComponent(run)}`;
-  for (const [id,format] of [['full-note','html'],['pdf','pdf'],['zip','zip']]) { $(id).hidden = false; $(id).href = base + '?format=' + format; }
+  for (const [id,format] of [['full-note','html'],['pdf','pdf'],['zip','zip'],['benchling','benchling'],['eln','eln'],['csv','csv']]) { $(id).hidden = false; $(id).href = base + '?format=' + format; }
   message('Loading the lab note…');
   try {
     const response = await fetch(base + '?format=html', {cache:'no-store'});

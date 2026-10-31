@@ -354,7 +354,7 @@ def create_app(runs_dir=None, capture_url=None, note_service_url=None, protocols
 
     @app.get('/lab-note/{run}')
     async def lab_note(run: str, format: str = 'md'):
-        if not SAFE_ID.fullmatch(run) or format not in ('md', 'html', 'pdf', 'zip'):
+        if not SAFE_ID.fullmatch(run) or format not in ('md', 'html', 'pdf', 'zip', 'benchling', 'eln', 'csv'):
             raise HTTPException(400, 'Invalid run or note format.')
         detail = hub.state['note'] or {}
         url = detail.get('url') if detail.get('run') == run else None
@@ -363,18 +363,21 @@ def create_app(runs_dir=None, capture_url=None, note_service_url=None, protocols
         parsed = urlsplit(url) if isinstance(url, str) else None
         if not parsed or (parsed.scheme, parsed.netloc) != (origin.scheme, origin.netloc):
             parsed = urlsplit(note + '/note/' + run)
-        target = urlunsplit((parsed.scheme, parsed.netloc, parsed.path + ('.' + format if format in ('pdf', 'zip') else ''),
-                            '' if format in ('pdf', 'zip') else 'format=' + format, ''))
+        target = urlunsplit((parsed.scheme, parsed.netloc, parsed.path + ('.' + format if format in ('pdf', 'zip', 'benchling', 'eln', 'csv') else ''),
+                            '' if format in ('pdf', 'zip', 'benchling', 'eln', 'csv') else 'format=' + format, ''))
         try:
-            async with httpx.AsyncClient(timeout=60 if format in ('pdf', 'zip') else 5, trust_env=False) as client:
+            async with httpx.AsyncClient(timeout=60 if format in ('pdf', 'zip', 'benchling', 'eln', 'csv') else 5, trust_env=False) as client:
                 response = await client.get(target)
                 response.raise_for_status()
         except httpx.HTTPError:
             raise HTTPException(503, 'The note is not available yet. Try again shortly.') from None
         headers = {'Cache-Control': 'no-store'}
-        if format in ('pdf', 'zip'):
-            headers['Content-Disposition'] = f'attachment; filename="bench-coach-{run}.{format}"'
-            return Response(response.content, media_type='application/pdf' if format == 'pdf' else 'application/zip', headers=headers)
+        if format in ('pdf', 'zip', 'benchling', 'eln', 'csv'):
+            extension = 'html' if format == 'benchling' else format
+            headers['Content-Disposition'] = f'attachment; filename="bench-coach-{run}.{extension}"'
+            mime = {'pdf': 'application/pdf', 'zip': 'application/zip', 'benchling': 'text/html',
+                    'eln': 'application/vnd.eln+zip', 'csv': 'text/csv'}
+            return Response(response.content, media_type=mime[format], headers=headers)
         if format == 'html':
             base = '<base href="' + html.escape(str(response.url), quote=True) + '">'
             content = re.sub(r'<head\b[^>]*>', lambda m: m[0] + base, response.text, count=1, flags=re.I)

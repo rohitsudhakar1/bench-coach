@@ -107,3 +107,46 @@ The design follows the earlier draft's note part; the code was written fresh her
 Typed student names from the app's start event (`detail.student`) take precedence over
 spoken names in the note header. Blank names keep the existing spoken-name fallback.
 Rebuild an older note to update its header; the trainer view does not rewrite notes.
+
+## Notebook exports
+
+The Lab note tab offers **Benchling HTML**, **eLabFTW .eln**, and **Steps CSV**
+next to Download PDF. They reuse saved note wording and evidence. If the note is
+missing, the service builds it with rules only. Export generation uses local files
+and Python's standard library; it makes no external requests and needs no PDF renderer.
+The browser downloads through the existing local hub-to-note proxy.
+
+| Note route | Download |
+| --- | --- |
+| `GET /note/{run}.benchling` | `benchling-entry.html`: open locally, select the rendered entry and paste into a Benchling notebook entry |
+| `GET /note/{run}.eln` | `lab-note.eln`: import through eLabFTW's Profile → Import page; select experiment if the destination requires an explicit type |
+| `GET /note/{run}.csv` | `steps.csv`: one row per protocol step, UTF-8, with a header |
+
+The HTML contains a results table, note sections and an attachment list. Pasting
+HTML does not upload attachments: upload those separately from the .eln archive.
+The archive includes entry.html, steps.csv, note.json, available events.jsonl and
+timing.jsonl, and referenced key frames contained within the run directory.
+Camera and microphone recordings are listed but excluded. Arbitrary run files are
+not collected. Archives are buffered in memory, intended for short bench runs.
+
+CSV columns are step number, instruction, status, evidence label, Unix epoch
+seconds, seconds from run start, and a JSON map of per-camera offsets in seconds.
+Times describe recorded status/evidence events, not inferred step durations.
+Missing times are blank; unconfirmed steps and seen/said/seen+said distinctions
+remain unchanged. Text beginning with a spreadsheet formula marker (after leading
+whitespace) gets an apostrophe prefix in CSV. HTML and note.json preserve that text.
+
+The archive follows the [ELN specification 1.2+20260923](https://github.com/TheELNConsortium/TheELNFileFormat/blob/master/SPECIFICATION.md)
+and [RO-Crate 1.2](https://www.researchobject.org/ro-crate/specification/1.2/).
+It has one enclosing folder, JSON-LD metadata, an experiment Dataset with HTML text
+and `genre: experiment`, and File entities with MIME types, byte sizes and SHA-256.
+[eLabFTW's import documentation](https://doc.elabftw.net/import-export.html)
+describes .eln imports and type selection. Offline tests check archive structure,
+references and payload hashes. Live eLabFTW import and Benchling paste fidelity
+have not been tested; these files do not use either vendor's API.
+
+No dependencies were added. Python's [standard library](https://docs.python.org/3/library/)
+(PSF-2.0) supplies csv, html, json, hashlib and zipfile. The ELN specification is MIT
+licensed; no third-party implementation was copied.
+
+Run the export checks with `$BENCH_PY -m pytest note/tests/test_elnexport.py -q`.

@@ -30,6 +30,9 @@ def setup(tmp_path, monkeypatch):
             return httpx.Response(200, content=b'%PDF-test')
         if request.url.path.endswith('.zip'):
             return httpx.Response(200, content=b'PK-test')
+        for extension, content in [('benchling', b'<h1>Entry</h1>'), ('eln', b'PK-eln'), ('csv', b'step,status\r\n1,done\r\n')]:
+            if request.url.path.endswith('.' + extension):
+                return httpx.Response(200, content=content)
         if request.url.params.get('format') == 'html':
             return httpx.Response(200, text='<html><head></head><body>Readable note</body></html>')
         if '/note/' in request.url.path:
@@ -139,9 +142,12 @@ def test_import_and_note_exports(setup):
     response = client.get('/lab-note/'+run+'?format=html')
     assert '<base href="http://note.test/' in response.text and 'data-off' in response.text
     assert response.headers['content-security-policy'] == 'sandbox allow-scripts allow-popups'
-    for ext, content in [('pdf',b'%PDF-test'),('zip',b'PK-test')]:
+    for ext, content in [('pdf',b'%PDF-test'),('zip',b'PK-test'), ('benchling',b'<h1>Entry</h1>'),
+                         ('eln',b'PK-eln'), ('csv',b'step,status\r\n1,done\r\n')]:
         response = client.get('/lab-note/'+run+'?format='+ext)
         assert response.content == content and 'attachment' in response.headers['content-disposition']
+        assert calls[-1].url.path == '/note/' + run + '.' + ext
+        assert calls[-1].url.query == b''
     assert client.get('/lab-note/bad!').status_code == 400
     assert client.get('/lab-note/'+run+'?format=exe').status_code == 400
     client.post('/events', json=event('note', {'run':run,'url':'http://untrusted.test/secrets'}))
