@@ -1,0 +1,3 @@
+# Hand label for lsv_mv CP-*-249-269, from the earlier draft's notes in vision/eval/actions.json:
+# "Serological pipette fitted to pipette aid 0-~10 s". The draft logged no draw or dispense in this clip.
+{"s": 10.0, "kind": "tip_on", "object": "pipette"}

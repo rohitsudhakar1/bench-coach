@@ -538,7 +538,8 @@ def note_card(note: dict, credits: list[str]) -> np.ndarray:
         lab = f" ({s['label']})" if s.get("label") else ""
         at = f"  {nclock(s.get('at'))}" if s.get("at") is not None and st in ("done", "skipped", "unsure") else ""
         d.text((120, y), f"{s['number']}.", font=tf, fill=soft)
-        d.text((160, y), f"{word.get(st, st)}{lab}{at}", font=sf, fill=colours.get(st, soft))
+        colour = (190, 120, 10) if s.get("label") == "hand-labelled" else colours.get(st, soft)
+        d.text((160, y), f"{word.get(st, st)}{lab}{at}", font=sf, fill=colour)
         y += 32
         for line in L.wrap(s.get("text", ""), colw - 60, measure(tf))[:2]:
             d.text((160, y), line, font=tf, fill=ink)
@@ -690,6 +691,15 @@ def render(out: Path, videos, names, analysis, log, protocol, note, credits, cod
 
 # ------------------------------------------------------------------ main ----------------------
 
+def mark_labelled(note: dict, log: list[dict]) -> None:
+    """The note part calls every camera-event step "seen"; steps decided by hand labels must not be."""
+    hand = {e.get("step") for e in log if e.get("source") == "coach" and e["kind"] == "step"
+            and (e.get("detail") or {}).get("labelled") and (e.get("detail") or {}).get("status") in ("done", "unsure")}
+    for s in note.get("steps", []):
+        if s.get("index") in hand:
+            s["label"] = "hand-labelled"
+
+
 def credits_for(analysis: dict, labelled: bool) -> list[str]:
     det = analysis.get("detector")
     seen = ("Objects outlined by Grounding DINO tiny" if det == "gdino-tiny" else
@@ -777,6 +787,7 @@ def main(argv=None):
     t = time.time()
     note = None if a.no_note else build_note(work, run_id, log, videos)
     if note is not None:
+        mark_labelled(note, log)
         for s in note.get("steps", []):
             s["at"] = None if s.get("t") is None else s["t"] - t0
         for p in note.get("problems", []):

@@ -125,3 +125,11 @@ def test_encoder_writes_a_1080p_h264_file(tmp_path):
 def test_end_card_and_branded_title_are_full_frames():
     assert R.end_card(["Bench Coach", "a line"]).shape == (L.H, L.W, 3)
     assert R.title_card("Tip test", ["one"], "Bench Coach, a hackathon").shape == (L.H, L.W, 3)
+
+
+def test_note_steps_from_hand_labels_are_not_called_seen():
+    note = {"steps": [{"index": 0, "label": "seen"}, {"index": 1, "label": "seen"}]}
+    log = [{"source": "coach", "kind": "step", "step": 1, "detail": {"status": "done", "labelled": True}},
+           {"source": "coach", "kind": "step", "step": 0, "detail": {"status": "done"}}]
+    R.mark_labelled(note, log)
+    assert [s["label"] for s in note["steps"]] == ["seen", "hand-labelled"]
