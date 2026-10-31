@@ -321,3 +321,35 @@ def test_port_probe_allows_recently_closed_connections(base):
         connection.close()
         assert client.recv(1) == b''
     demo.check_ports([demo.Part('app', [], base)])
+
+
+def test_fake_vision_and_angle_without_roi(fake_root, monkeypatch):
+    monkeypatch.setenv('BENCH_PY', sys.executable)
+    args = demo.parse_args(['--fake-vision', '--fake-speed', '3', '--base-port', '8880'])
+    parts = {p.name: p for p in demo.plan(args, fake_root)}
+    command = parts['vision'].command
+    assert command[2].endswith('scripts/fake_vision.py')
+    assert command[3:] == ['--port', '8882', '--hub', 'http://127.0.0.1:8880', '--speed', '3.0']
+    # Without a chosen crop, angle may only measure inside vision's boxes.
+    assert '--need-box' in parts['angle'].command
+    args = demo.parse_args(['--angle-roi', '1,2,3,4', '--base-port', '8880'])
+    assert '--need-box' not in next(p for p in demo.plan(args, fake_root) if p.name == 'angle').command
+    with pytest.raises(SystemExit):
+        demo.parse_args(['--fake-vision', '--table'])
+
+
+def test_port_in_time_wait_is_free_but_listener_is_not(base):
+    # Rehearsal: restarting right after a demo failed with "app: port already in use".
+    listener = socket.socket()
+    listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    listener.bind(('127.0.0.1', base))
+    listener.listen()
+    client = socket.create_connection(('127.0.0.1', base))
+    server_side, _ = listener.accept()
+    part = demo.Part('app', [], base)
+    with pytest.raises(RuntimeError, match='already in use'):
+        demo.check_ports([part])
+    server_side.close()   # the server closes first, so its port sits in TIME_WAIT
+    client.close()
+    listener.close()
+    demo.check_ports([part])

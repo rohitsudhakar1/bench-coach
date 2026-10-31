@@ -163,18 +163,20 @@ def build_note(run: Run) -> dict:
         lim = f", limit {limit:g}°" if isinstance(limit, (int, float)) else ", no limit set"
         n = len(evs)
         reading = "reading" if n == 1 else "readings"
+        # the angle part flags one-camera, uncalibrated readings as rough; keep that caveat
+        rough = " (rough camera estimate)" if worst["detail"].get("rough") else ""
         if over:
-            text = (f"Pipette angle during {where}: highest {worst['detail']['deg']:.0f}° from vertical{lim}; "
+            text = (f"Pipette angle during {where}: highest {worst['detail']['deg']:.0f}° from vertical{rough}{lim}; "
                     f"{len(over)} of {n} {reading} over.")
         else:
-            text = f"Pipette angle during {where}: highest {worst['detail']['deg']:.0f}° from vertical{lim}; {n} {reading}, none over."
+            text = f"Pipette angle during {where}: highest {worst['detail']['deg']:.0f}° from vertical{rough}{lim}; {n} {reading}, none over."
         technique.append({"t": worst["t"], "kind": "angle", "step": idx, "text": text,
                           "deg": round(float(worst["detail"]["deg"]), 1), "limit": limit,
                           "readings": n, "over": len(over)})
         if over:
             first = over[0]
             problems.append({"t": first["t"], "kind": "angle", "step": idx,
-                             "text": f"Pipette tilted up to {worst['detail']['deg']:.0f}° from vertical during {where}{lim}."})
+                             "text": f"Pipette tilted up to {worst['detail']['deg']:.0f}° from vertical{rough} during {where}{lim}."})
 
     # ---- fresh or reused tip for each draw ------------------------------------------------------
     tip_on_seen = False

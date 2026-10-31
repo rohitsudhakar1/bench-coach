@@ -135,3 +135,16 @@ def test_half_written_last_line_is_ignored(fake_run):
     with open(fake_run / "events.jsonl", "a") as fh:
         fh.write('{"t": 17934000')
     assert len(note_for(fake_run)["steps"]) == 8
+
+
+def test_rough_angle_keeps_its_caveat(fake_run):
+    # Rehearsal: a rough one-camera reading of 66 degrees read as a firm fact in the note.
+    run = load_run(fake_run)
+    for e in run.events:
+        if e.get("kind") == "angle":
+            e["detail"]["rough"] = True
+    note = build_note(run)
+    angle = [t for t in note["technique"] if t["kind"] == "angle"]
+    assert all("(rough camera estimate)" in a["text"] for a in angle)
+    assert all("rough camera estimate" in p["text"] for p in note["problems"] if p["kind"] == "angle")
+    assert not any("rough" in t["text"] for t in note_for(fake_run)["technique"])

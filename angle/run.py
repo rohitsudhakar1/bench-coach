@@ -38,7 +38,7 @@ def measure(axes, calibration=None, reason=None):
         reason=reason or ('Second shaft missing' if calibration else 'No calibration'))
 
 
-def analyze(frames, trackers, crops, active, calibration, max_skew, live):
+def analyze(frames, trackers, crops, active, calibration, max_skew, live, need_box=False):
     axes, origins, used = [], [], []
     for frame, tracker, crop, is_live in zip(frames, trackers, crops, live):
         # Selection or a slow read can make an initially fresh JPEG stale before use.
@@ -47,7 +47,8 @@ def analyze(frames, trackers, crops, active, calibration, max_skew, live):
         fallback = tracker.update(frame.image) if tracker and frame.fresh else None
         region = crop if crop is not None else fallback
         origin = 'vision' if crop else 'manual' if tracker else 'local'
-        if region is None and tracker is None:
+        # need_box: a full-frame line has no pipette identity and can be a bench edge.
+        if region is None and tracker is None and not need_box:
             region = (0, 0, frame.image.shape[1], frame.image.shape[0])
         axis = detect_axis(frame.image, region) if active and frame.fresh and region else None
         axes.append(axis)
@@ -84,6 +85,8 @@ def parser():
     p.add_argument('--select-roi', action='store_true')
     p.add_argument('--fixed-roi', action='store_true')
     p.add_argument('--always', action='store_true')
+    p.add_argument('--need-box', action='store_true',
+                   help='measure only inside a vision box or a chosen crop, never the full frame')
     p.add_argument('--cam', action='append', type=int)
     p.add_argument('--calibration', help='JSON from python -m angle.calibrate')
     p.add_argument('--timing', help='capture timing.jsonl; also discovered beside input videos')
@@ -202,7 +205,7 @@ def main(argv=None):
                 sync_reason = None
                 if calibration and count == 2 and readers[0].timing and abs(frames[0].stamp-frames[1].stamp) > args.max_skew:
                     usable, sync_reason = None, 'Recorded timestamps exceed maximum skew'
-                result, axes, origins, used = analyze(frames, trackers, crops, active, usable, args.max_skew, live)
+                result, axes, origins, used = analyze(frames, trackers, crops, active, usable, args.max_skew, live, args.need_box)
                 state.update(frames=n+1, status='tracking' if result else 'axis_missing' if active else 'waiting_activity')
                 state.pop('error', None)
                 label = 'NO SHAFT' if active else 'WAITING FOR DRAW / DISPENSE'

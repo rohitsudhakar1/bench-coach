@@ -146,3 +146,19 @@ def test_real_websocket_reconnect_and_cleanup():
         thread.join(timeout=2)
         listener.close()
     assert not feed.thread.is_alive() and not thread.is_alive()
+
+
+def test_need_box_never_measures_the_full_frame(monkeypatch):
+    # Rehearsal: with no vision box the full-frame line picked a bench edge and warned of 66 degrees.
+    import angle.run as runner
+    from angle.sources import Frame
+    monkeypatch.setattr(runner.time, 'time', lambda: 100)
+    calls = []
+    monkeypatch.setattr(runner, 'detect_axis', lambda image, crop: calls.append(crop))
+    frame = Frame(np.zeros((100, 100, 3), np.uint8), 100, True)
+    result, *_ = analyze([frame], [None], [None], True, None, .1, [True], need_box=True)
+    assert result is None and not calls
+    analyze([frame], [None], [(10, 20, 30, 40)], True, None, .1, [True], need_box=True)
+    assert calls == [(10, 20, 30, 40)]
+    analyze([frame], [None], [None], True, None, .1, [True])
+    assert calls[-1] == (0, 0, 100, 100)

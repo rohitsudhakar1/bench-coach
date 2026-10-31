@@ -18,6 +18,10 @@ from dataclasses import dataclass, field
 from .core import (PIPETTE, PIPETTE_TIP, TIP_BOX, TOUCHABLE, VESSELS, WASTE, Det, area, center, dist,
                    event, inside, overlaps)
 
+# Tip rules went 0 for 2 on the labelled clips (see REPORT.md). Keep them under the coach's
+# 0.6 "solid evidence" line so one false tip_off cannot skip steps.
+TIP_CONFIDENCE = 0.5
+
 
 @dataclass
 class Rules:
@@ -119,7 +123,7 @@ class EventEngine:
             s.tipbox_done = s.tipbox_done or t - s.tipbox_since >= r.tip_dwell
         elif end is not None:  # a pipette missed for a frame does not reset the dwell
             if s.tipbox_done:
-                out.append(event(t, "tip_on", self.cam, TIP_BOX, side, 0.6))
+                out.append(event(t, "tip_on", self.cam, TIP_BOX, side, TIP_CONFIDENCE))
                 s.loaded = False
             s.tipbox_since, s.tipbox_done = None, False
 
@@ -127,7 +131,7 @@ class EventEngine:
         if end is not None and any(inside(end, d.box, r.box_pad) for d in by.get(WASTE, [])):
             s.waste_since = t if s.waste_since is None else s.waste_since
             if not s.waste_done and t - s.waste_since >= r.waste_dwell:
-                out.append(event(t, "tip_off", self.cam, WASTE, side, 0.6))
+                out.append(event(t, "tip_off", self.cam, WASTE, side, TIP_CONFIDENCE))
                 s.waste_done, s.loaded = True, False
         elif end is not None:
             s.waste_since, s.waste_done = None, False

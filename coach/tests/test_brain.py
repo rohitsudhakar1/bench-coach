@@ -1,4 +1,4 @@
-from coach.tests.helpers import demo_brain, emitted, ev, run, said, sample_events
+from coach.tests.helpers import T0, demo_brain, emitted, ev, run, said, sample_events
 
 CLEAN = [ev("tip_on", 5), ev("draw", 10, "tube A"), ev("dispense", 15, "tube B"), ev("tip_off", 20),
          ev("tip_on", 25), ev("draw", 30, "tube C"), ev("dispense", 35, "tube B"), ev("tip_off", 40)]
@@ -106,6 +106,13 @@ def test_run_start_resets_and_does_not_repeat_the_first_line():
     assert said(outs) == [] and emitted(outs, "step")
 
 
+def test_start_pressed_long_after_the_coach_started_says_the_first_line():
+    # Rehearsal: the coach said "First" at launch, then stayed silent when Start was clicked 48 s later.
+    b = demo_brain()
+    outs = b.handle(ev("run", 48, source="app", status="start", run="r", protocol="pipetting-demo.yaml"))
+    assert said(outs) == ["First: put a fresh tip."]
+
+
 def test_own_events_are_ignored():
     b = demo_brain()
     assert b.handle({**ev("tip_on", 5), "source": "coach"}) == []
@@ -128,3 +135,23 @@ def test_every_line_is_short():
     events = [e if e["source"] != "coach" else {**e, "source": "speech"} for e in sample_events()]
     for line in said(run(b, events)):
         assert len(line.split()) < 12, line
+
+
+def test_after_stop_camera_events_are_ignored_until_the_next_start():
+    # Rehearsal: after Stop the coach still asked "Did you just draw from tube A?" and warned.
+    b = demo_brain(hints=True)
+    run(b, [ev("run", 1, source="app", status="start", run="r", protocol="pipetting-demo.yaml")])
+    assert b.handle(ev("run", 10, source="app", status="stop", run="r")) == []
+    late = [ev("draw", 11, "tube A", 0.3, hint=True), ev("tip_on", 12),
+            ev("angle", 13, "pipette", source="angle", deg=40, ok=False, limit=20)]
+    assert run(b, late) == [] and b.tick(T0 + 200) == []
+    assert b.status[0] == "current" and b.question is None
+    outs = b.handle(ev("run", 300, source="app", status="start", run="r2", protocol="pipetting-demo.yaml"))
+    assert said(outs) == ["First: put a fresh tip."]
+    assert emitted(b.handle(ev("tip_on", 301)), "step")
+
+
+def test_rough_angle_is_hedged():
+    b = demo_brain()
+    outs = b.handle(ev("angle", 5, "pipette", source="angle", deg=53, ok=False, limit=20, rough=True))
+    assert said(outs) == ["Pipette may be tilted about 53 degrees. Keep it under 20."]

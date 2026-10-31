@@ -95,3 +95,11 @@ def test_tip_end_is_far_from_hand():
     pip = Det("pipette", (100, 100, 120, 300), 0.5)
     assert tip_end(pip, [], hand_at(110, 120)) == (110, 300)
     assert tip_end(pip, [], hand_at(110, 290)) == (110, 100)
+
+
+def test_tip_rules_stay_below_the_coachs_solid_evidence_line():
+    # Rehearsal: a false tip_off at 0.6 made the coach skip steps 1-3 two seconds into a run.
+    waste = Det("waste", (300, 300, 400, 400), 0.4)
+    path = [(350, 250)] * 3 + [(350, 350)] * 6 + [(350, 250)] * 3
+    (tip_off,) = [e for e in run_pipette(EventEngine(0), path, [waste]) if e["kind"] == "tip_off"]
+    assert tip_off["confidence"] < 0.6
