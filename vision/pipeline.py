@@ -5,11 +5,12 @@ ones; it returns events.
 """
 from __future__ import annotations
 
-from .core import HAND, TIP_BOX, Det
+from .core import HAND, PIPETTE, PIPETTE_TIP, TIP_BOX, Det, iou
 from .detector import CONTAINER, clean
 from .draw import DipTracker, DrawRules, Sequencer
 from .events import EventEngine, Rules
 from .hands import merge_hands
+from .held import HeldPipette
 from .scene import SceneFilter, SceneRules
 
 
@@ -23,6 +24,8 @@ class Vision:
         self.dips = [DipTracker(i, draw) for i in range(n_cams)]
         self.seq = Sequencer(draw)
         self.dets = [[] for _ in range(n_cams)]
+        self.held = [HeldPipette() for _ in range(n_cams)]
+        self.detector_times = [-float("inf")] * n_cams
         self.hands = [[] for _ in range(n_cams)]
         self.on_entry = None  # called with every draw-tracker entry (the Claude check uses it)
 
@@ -30,6 +33,7 @@ class Vision:
         """raw: this frame's new detector boxes (container ones labelled "container:..."), or None."""
         fresh = raw is not None
         if fresh:
+            self.detector_times[cam] = t
             conts = [Det(d.label[len(CONTAINER):], d.box, d.score) for d in raw if d.label.startswith(CONTAINER)]
             main = clean([d for d in raw if not d.label.startswith(CONTAINER)], w, h)
             self.dets[cam] = self.scenes[cam].update(t, main, w, h)
@@ -41,6 +45,18 @@ class Vision:
         self.hands[cam] = hands
         eng = self.engines[cam]
         events = eng.update(t, hands, [d for d in dets if d.label != HAND], fresh)
+        # Qualification annotates objects only. Draw selection and carry stay unchanged.
+        gate = self.held[cam]
+        gate_hands = merge_hands(landmarked, [d.box for d in dets if d.label == HAND]
+                                 if t - self.detector_times[cam] <= 1.0 else [], w)
+        gate.update(t, gate_hands)
+        gate.observe(t, eng.pip.box if eng.pip else None, gate_hands)
+        for e in events:
+            if e["kind"] == "objects":
+                for box in e["detail"]["boxes"]:
+                    if box["label"] in (PIPETTE, PIPETTE_TIP):
+                        box["held"] = gate.allows(box["box"]) and not any(
+                            iou(box["box"], stand) >= 0.3 for stand in self.scenes[cam].stands)
         if self.new_draw:
             if any(e["kind"] == "tip_on" for e in events):
                 events += self.seq.flush(t, final=True)

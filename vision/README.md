@@ -39,13 +39,17 @@ real video is skipped when `BENCH_SAMPLES` is not set.
 - Boxes: Grounding DINO tiny with the prompt `hand . pipette . pipette tip . tip box . tube . tube
   rack . well plate . waste bin .` at 480 x 640. Boxes in `objects` events are in each camera's own
   frame size (`detail.width`, `detail.height`), whatever size vision worked at.
-- Box clean-up (`scene.py`): pipette and pipette tip boxes that sit still for 3 s are dropped
-  (wall tubing, tripods, pipettes hanging on the hood); rack and plate boxes over a tenth of the frame
-  (they span the bench edge) and tube boxes over 3% are dropped; waste must be in the lower half, small, and seen in the same
-  place 5 times.
-- The pipette is the best "pipette" box; with none, a "pipette tip" box held in a hand is the
-  pipette (the detector often names the whole pipette that). Between detector runs its box moves
-  with the hand holding it. The tip end is the end of the box farther from that hand.
+- Box clean-up (`scene.py`): pipette and pipette tip boxes that sit still for 3 s are dropped;
+  rack and plate boxes over a tenth of the frame and tube boxes over 3% are dropped.
+  Waste must be small, in the lower half, and seen in the same place 5 times.
+- Draw uses the original best pipette selection, hand-associated tip fallback, and four-second
+  carry. Its boxes, timing, overlays and action rules are unchanged by the held-hand check.
+- Each pipette or pipette tip in `objects.detail.boxes` now carries `held: true/false`.
+  True requires current hand adjacency and more than 0.5 s of evidence in the last second.
+  Frame gaps contribute at most 0.25 s; cached detector hands expire after 1 s for this check.
+  Stationary boxes touching the frame edge or inferred bench line get false after 2 s.
+  This metadata never removes a box from draw. Angle accepts only explicit `held: true`;
+  missing metadata is rejected too. Manual angle ROIs remain a separate explicit input.
 - `hand_touch`: a fingertip of a hand with finger points stays on a tip box, tube, rack, plate or
   waste for 0.3 s. The same hand on the same thing fires again only after 3 s away.
 - `tip_on`: the tip end stays in the tip box 0.4 s and then leaves. `tip_off`: it stays over
@@ -117,6 +121,20 @@ $BENCH_PY -m vision.eval.score_actions --per-clip   # draw and dispense, both ru
 
 Both scorers replay through the same `Vision` class (`pipeline.py`) the live part runs, and both
 print chance numbers next to precision and recall. Results are in `REPORT.md`.
+
+Round 2 is measured in `TRIPOD-REPORT.md`: held-out pipettes remain 38/58, with 130/199 wrong
+boxes, matching the original baseline. Draw is restored to 15/29 precision and 15/18 recall;
+dispense to 10/24 and 10/22. Angle accepts no boxes on either cached 12-27 clip, so the tripod
+is excluded but no useful angle is measured there. These reused labels are regression checks.
+
+```
+$BENCH_PY -m vision.eval.tripod  # cached 12-27 audit; BENCH_SAMPLES enables three paired stills
+```
+
+The stills and local run logs live in `vision/eval/out/`, which is ignored. The audit checks
+labelled distractor regions in both views; no region coordinates enter the live filter.
+Bench support lines are horizontal edges of wide rack/plate detections, not calibrated bench
+geometry. If no such box exists, only the frame-edge test and older static filter apply.
 
 ## Sources and licences
 

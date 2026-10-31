@@ -20,7 +20,7 @@ def event(kind, detail, t=100, source='vision'):
 
 def objects(boxes=None, cam=0, t=100):
     return event('objects', dict(cam=cam, boxes=boxes if boxes is not None else [
-        dict(label='pipette', box=[-5, 10, 40, 90], score=.8)]), t)
+        dict(label='pipette', box=[-5, 10, 40, 90], score=.8, held=True)]), t)
 
 
 def test_per_camera_freshness_empty_and_order():
@@ -43,6 +43,8 @@ def test_invalid_boxes_and_scores():
            dict(label='tube', box=[0, 0, 40, 90], score=1),
            dict(label='pipette', box=[40, 90, 0, 0], score=1),
            dict(label='pipette', box=[0, 0, 40, float('inf')], score=1)]
+    for box in bad:
+        box['held'] = True
     state.accept(objects(bad), now=100)
     assert state.snapshot([0], [(100, 100, 3)], now=100)[0] == [None]
 
@@ -162,3 +164,18 @@ def test_need_box_never_measures_the_full_frame(monkeypatch):
     assert calls == [(10, 20, 30, 40)]
     analyze([frame], [None], [None], True, None, .1, [True])
     assert calls[-1] == (0, 0, 100, 100)
+
+
+@pytest.mark.parametrize('label', ['pipette', 'pipette tip'])
+@pytest.mark.parametrize('held', [False, None, 1, 'true'])
+def test_angle_requires_explicit_held_true(label, held):
+    state = FeedState()
+    state.accept(objects(), now=100)
+    box = dict(label=label, box=[10, 10, 40, 90], score=.99)
+    if held is not None:
+        box['held'] = held
+    state.accept(objects([box], t=100.5), now=100.5)
+    assert state.snapshot([0], [(100, 100, 3)], now=100.5)[0] == [None]
+    box['held'] = True
+    state.accept(objects([box], t=100.6), now=100.6)
+    assert state.snapshot([0], [(100, 100, 3)], now=100.6)[0] == [(10, 10, 30, 80)]
