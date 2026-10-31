@@ -332,3 +332,23 @@ It uses three real captures and coaches with scripted vision, on ports 8800–88
 checks each bench's recordings and event IDs, stops all owned children, and checks port
 release. The browser check uses intercepted requests and no server or audio. See
 [CLASSROOM-REPORT.md](CLASSROOM-REPORT.md) for measured results and limits.
+
+## Live view (camera picture with outlines, hands, steps and coach)
+
+For the event, from the repository root, with the hub and coach already running on 8700:
+
+```sh
+$BENCH_PY -m app.live --source 0 --fallback "$BENCH_SAMPLES/lsv_mv/CP-Left-Front-414-445.mp4"
+```
+
+Open `http://127.0.0.1:8706/` (or the hub's `/live`, which sends the browser there; set `LIVE_URL` if the live view runs elsewhere). If camera 0 cannot be opened, or sends no frames for 3 seconds, the fallback clip plays on a loop at real speed and the page says "fallback video". Without a camera at all:
+
+```sh
+$BENCH_PY -m app.live --source "$BENCH_SAMPLES/lsv_mv/CP-Left-Front-414-445.mp4" --realtime --loop
+```
+
+The picture is drawn on every camera frame with the newest outlines and hands, so it stays at the camera's frame rate. Grounding DINO tiny (the same model and prompt vision uses) runs in its own thread on the newest frame whenever it is free. Each box then gets an outline from OpenCV GrabCut on a small copy of the box; when GrabCut finds nothing sensible the box is drawn instead. Hands come from MediaPipe on every frame. Steps, warnings and coach lines come from the hub's `/state` twice a second; with no hub the picture still works and the side panel says so.
+
+Add `--post-events` only when the vision part is not running: the live view then sends vision's own events (objects, touches, tips) to the hub, so the coach can tick steps. Other flags: `--no-outlines` (boxes only), `--no-detector`, `--no-hands`, `--max-side` (picture size, default 960), `--mirrored`, `--hub none`, `--port`, `--seconds N` (stop after N seconds, printing the measured rates every 2 s). Routes: `/` the page, `/stream.mjpeg` the drawn picture, `/frame.jpg` the newest drawn frame, `/data` rates, objects, hands and the hub summary as JSON.
+
+Libraries: OpenCV GrabCut (https://github.com/opencv/opencv, Apache 2.0) for outlines; Grounding DINO tiny and MediaPipe Hand Landmarker as listed in vision/README.md. Measurements are in [LIVE-REPORT.md](LIVE-REPORT.md).
