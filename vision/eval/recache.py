@@ -27,8 +27,8 @@ LABEL_FILES = ("CP-Left-Front-12-27@0", "CP-Right-Front-12-27@0", "CP-Left-Front
                "CP-Right-Front-249-269@0", "CP-Left-Front-414-445@0", "CP-Right-Front-414-445@0",
                "cas9_hood_033@0", "pcr_105@0")
 # Lowest score kept per detector; scorers keep boxes from meta.json's min_score up.
-KEEP = {"gdino-tiny": 0.2, "gdino-base": 0.1, "owlv2": 0.1, "florence2": 0.0}
-USE = {"gdino-tiny": 0.25, "gdino-base": 0.15, "owlv2": 0.15, "florence2": 0.0}
+KEEP = {"gdino-tiny": 0.2, "gdino-base": 0.1, "owlv2": 0.1, "florence2": 0.0, "yoloe": 0.05}
+USE = {"gdino-tiny": 0.25, "gdino-base": 0.15, "owlv2": 0.15, "florence2": 0.0, "yoloe": 0.1}
 
 
 def build(name: str):
@@ -37,7 +37,7 @@ def build(name: str):
     kw = {}
     if name.startswith("gdino"):
         kw = {"box_threshold": KEEP[name], "text_threshold": min(0.2, KEEP[name])}
-    elif name == "owlv2":
+    elif name in ("owlv2", "yoloe"):
         kw = {"threshold": KEEP[name]}
     det = make(name, raw=True, **kw)
     return det, det.with_prompts(CONTAINER_PROMPTS)

@@ -6,19 +6,25 @@ names in core.py. Measured against Grounding DINO tiny in DETECTOR2-REPORT.md.
 - owlv2: OWLv2 base patch16 ensemble (Google, Apache 2.0), several phrasings per thing.
 - florence2: Florence-2 base (Microsoft, MIT), phrase grounding of one caption. It gives no
   scores, so every box gets FLORENCE_SCORE.
+- yoloe: YOLOE-26 large (Ultralytics, AGPL-3.0: using it in a product means opening that
+  product's source, or buying an Ultralytics licence) with text prompts. Weights are looked up in
+  VISION_YOLO_DIR (yoloe-26l-seg.pt and its mobileclip2_b.ts text encoder), else downloaded there.
 - ensemble:<a>+<b>: both detectors, boxes of the same name that overlap merged (score = the
   higher one, box = the score-weighted mean).
 """
 from __future__ import annotations
 
 import copy
+import os
+from contextlib import contextmanager
+from pathlib import Path
 
 import cv2
 
 from .core import Det, iou
 from .detector import CONTAINER_PROMPTS, PROMPTS, GroundingDino, WithContainers, canonical, clean, pick_device
 
-NAMES = ("gdino-tiny", "gdino-base", "owlv2", "florence2")
+NAMES = ("gdino-tiny", "gdino-base", "owlv2", "florence2", "yoloe")
 GDINO_BASE = "IDEA-Research/grounding-dino-base"
 OWL_ID = "google/owlv2-base-patch16-ensemble"
 FLORENCE_ID = "florence-community/Florence-2-base"
@@ -124,6 +130,59 @@ class Florence2:
         return dets if self.raw else clean(dets, w, h)
 
 
+YOLOE_WEIGHTS = "yoloe-26l-seg.pt"
+YOLO_PHRASES = {"hand": "hand", "pipette": "pipette", "pipette tip": "pipette tip", "tip box": "pipette tip box",
+                "tube": "plastic tube", "tube rack": "tube rack", "well plate": "well plate", "waste bin": "waste bin",
+                "bottle": "bottle", "flask": "flask", "beaker": "beaker", "petri dish": "petri dish"}
+
+
+@contextmanager
+def _in_yolo_dir():
+    """Ultralytics finds and downloads weights in the working folder, so work in VISION_YOLO_DIR."""
+    d = os.environ.get("VISION_YOLO_DIR")
+    old = os.getcwd()
+    if d:
+        Path(d).mkdir(parents=True, exist_ok=True)
+        os.chdir(d)
+    try:
+        yield
+    finally:
+        os.chdir(old)
+
+
+class YoloE:
+    def __init__(self, device: str | None = None, threshold: float = 0.1, raw: bool = False,
+                 prompts: dict | None = None, imgsz: int = 640):
+        from ultralytics import YOLOE
+        self.device = device or pick_device()
+        with _in_yolo_dir():
+            self.model = YOLOE(YOLOE_WEIGHTS)
+        self.th, self.raw, self.imgsz = threshold, raw, imgsz
+        self.set_prompts(prompts or PROMPTS)
+
+    def set_prompts(self, prompts: dict):
+        self.prompts = dict(prompts)
+        self.keys = list(self.prompts)
+        texts = [YOLO_PHRASES.get(k, k) for k in self.keys]
+        with _in_yolo_dir():
+            self.pe = self.model.get_text_pe(texts)
+        self.texts = texts
+
+    def with_prompts(self, prompts: dict) -> "YoloE":
+        other = copy.copy(self)
+        other.set_prompts(prompts)
+        return other
+
+    def __call__(self, bgr) -> list:
+        h, w = bgr.shape[:2]
+        self.model.set_classes(self.texts, self.pe)
+        r = self.model.predict(bgr, conf=self.th, imgsz=self.imgsz, device=self.device, verbose=False)[0]
+        dets = []
+        for box, score, k in zip(r.boxes.xyxy.tolist(), r.boxes.conf.tolist(), r.boxes.cls.tolist()):
+            dets.append(Det(self.prompts[self.keys[int(k)]], tuple(float(v) for v in box), float(score)))
+        return dets if self.raw else clean(dets, w, h)
+
+
 def merge(a: list, b: list, overlap: float = 0.5) -> list:
     """Boxes from two detectors: same name and IoU over `overlap` become one box."""
     out = [Det(d.label, d.box, d.score) for d in a]
@@ -166,6 +225,8 @@ def make(name: str = "gdino-tiny", raw: bool = False, **kw):
         return Owl2(raw=raw, **kw)
     if name == "florence2":
         return Florence2(raw=raw, **kw)
+    if name == "yoloe":
+        return YoloE(raw=raw, **kw)
     raise ValueError(f"unknown detector {name!r}; one of {', '.join(NAMES)} or ensemble:<a>+<b>")
 
 
