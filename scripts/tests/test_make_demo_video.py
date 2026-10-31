@@ -62,7 +62,7 @@ def test_finished_video_if_present():
     assert 'codec_name=h264' in probe and 'width=1920' in probe and 'height=1080' in probe
     assert 'codec_type=audio' not in probe
     duration = float(probe.split('duration=')[1].split()[0])
-    assert 100 <= duration <= 140
+    assert 120 <= duration <= 150      # 2:00 to 2:30
     assert final.stat().st_size < 50e6
 
 

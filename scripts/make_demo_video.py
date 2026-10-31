@@ -317,12 +317,11 @@ def record(app, runs, raw):
         page.click('#note-tab')
         page.wait_for_selector('#pdf:not([hidden])', timeout=20000)
         buttons = ', '.join('#' + b for b, _ in DOWNLOADS)
-        page.evaluate(f"document.querySelectorAll('{buttons}').forEach(a => {{ a.style.outline = '4px solid #f0a020';"
-                      " a.style.outlineOffset = '3px'; }})")
+        outline(page, buttons, True)
         say('Download the note as a PDF, as Benchling HTML, as an eLabFTW .eln file or as a steps CSV.')
         checks['downloads'] = {b: fetched(page, page.get_attribute('#' + b, 'href')) for b, _ in DOWNLOADS}
         page.wait_for_timeout(5000)
-        page.evaluate(f"document.querySelectorAll('{buttons}').forEach(a => {{ a.style.outline = ''; }})")
+        outline(page, buttons, False)
 
         panel = page.locator('#nvidia-panel')
         page.wait_for_function("/ready|tasks/i.test(document.getElementById('nvidia-status').textContent)"
@@ -355,9 +354,9 @@ def record(app, runs, raw):
 
         page.goto(f'{app}/trainer')
         page.evaluate('window.dcTag(true)')
-        row = page.locator('#runs tr', has_text=STUDENT)
-        row.first.wait_for(timeout=20000)
-        row.first.evaluate("r => { r.style.outline = '4px solid #f0a020'; r.style.background = '#fff6df'; }")
+        row = page.locator('#runs tr', has_text=run_id).first
+        row.wait_for(timeout=20000)
+        row.evaluate("r => { r.style.outline = '4px solid #f0a020'; r.style.background = 'rgba(240,160,32,.22)'; }")
         say(f'The trainer page lists every saved run. This one is {STUDENT}.')
         checks['trainer_rows'] = page.locator('#runs tr').count()
         page.wait_for_timeout(6500)
@@ -375,6 +374,12 @@ def record(app, runs, raw):
         ctx.close()
         browser.close()
         return Path(video.path()), lead, checks
+
+
+def outline(page, selector, on):
+    page.evaluate("([sel, on]) => document.querySelectorAll(sel).forEach(a => {"
+                  " a.style.outline = on ? '4px solid #f0a020' : ''; a.style.outlineOffset = '3px'; })",
+                  [selector, on])
 
 
 def fetched(page, href):
