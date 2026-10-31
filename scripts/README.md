@@ -292,3 +292,53 @@ under 40% free the script halts the soak and cleans up. No speaker is opened.
 The soak adds [psutil](https://github.com/giampaolo/psutil) (BSD-3-Clause) for direct
 PID CPU/RSS reads, listed in `scripts/requirements.txt`. HTTPX, websockets and pytest
 are already listed above. No package was installed for the measured run.
+
+## Demo video from a recorded run (9am checklist)
+
+`scripts/render_demo.py` turns one or two camera files and a protocol into a finished 1080p
+video: every object outlined and named, both hands drawn, the protocol steps ticking off on the
+right with their times, warnings as they happen, and the lab note at the end. It runs the same
+vision, coach and note code as the live demo, offline, so nothing needs to be started first.
+
+### Recording
+
+1. Camera angle: side-on or 45 degrees from the front, about 60-80 cm from the work, at bench
+   height or a little above. The pipette, the tip box and every tube must be in frame the whole
+   time, and the hands must not leave it. A second camera from the other side helps when one
+   hand hides the tubes.
+2. Light: bright and even. Overhead lights on, no window behind the bench, no strong shadows on
+   the tubes. Blue or purple gloves are fine.
+3. Hold the phone or Pi camera still on a stand. Landscape, 1280x720 or 1920x1080, 30 fps.
+4. Before pressing record, write the protocol as numbered lines in a text file, one action
+   per line, naming the tubes the way they are labelled (for example `2. Draw 100 uL from tube A`).
+   Lines that say attach/eject a tip, draw/collect from and dispense/add into are the ones the
+   cameras can tick off.
+5. Start both cameras, wait two seconds, then do the steps at a normal pace. Change tips where
+   the protocol says so. Stop recording two seconds after the last step.
+6. Copy the files to the Mac (AirDrop or `scp` from the Pi).
+
+### The command
+
+```sh
+"$BENCH_PY" -m scripts.render_demo --video cam1.mp4 --video2 cam2.mp4 \
+  --protocol protocol.txt --out ~/Desktop/bench-coach-demo.mp4
+```
+
+`--video2` is optional. `--title "PCR master mix"` sets the name on screen. `--seconds 60` renders
+only the start (for a quick look). Re-running with `--reuse` skips the vision pass and only redraws
+(seconds). A protocol `.yaml` from `protocols/` works too. Everything else lands next to the
+output in `<name>-work/` (events, the lab note as HTML and Markdown, the vision pass).
+
+If a step the cameras missed has to be in the video, write it in a labels file, one JSON object
+per line, and add `--labels labels.jsonl`:
+
+```
+{"s": 12.5, "kind": "tip_on", "object": "pipette"}
+{"s": 20.0, "kind": "draw", "object": "tube A"}
+```
+
+`s` is seconds into the video. Steps decided by these lines say "hand-labelled" in amber on
+screen, and the credits line says hand-labelled events were added. Never present them as detected.
+
+On this Mac a 2-minute clip takes about the time measured in `scripts/RENDER-REPORT.md`.
+Nothing plays sound and no server is started.
