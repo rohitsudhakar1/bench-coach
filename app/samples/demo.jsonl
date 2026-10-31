@@ -1,0 +1,10 @@
+{"t":1,"source":"coach","kind":"step","detail":{"index":0,"status":"current","text":"Put a fresh tip on the pipette."}}
+{"t":2,"source":"coach","kind":"say","detail":{"text":"Synthetic replay. Put a fresh tip on the pipette."}}
+{"t":3,"source":"coach","kind":"step","detail":{"index":0,"status":"done","evidence":"vision","source":"seen"}}
+{"t":3.1,"source":"coach","kind":"step","detail":{"index":1,"status":"current","text":"Draw 100 microlitres from tube A.","question":"Did you draw from tube A?"}}
+{"t":4,"source":"angle","kind":"angle","detail":{"deg":27,"ok":false,"limit":20}}
+{"t":4.1,"source":"coach","kind":"warning","detail":{"text":"Camera estimate: pipette tilted 27°. Keep it under 20°."}}
+{"t":5,"source":"coach","kind":"speech","detail":{"text":"Yes, done."}}
+{"t":5.1,"source":"coach","kind":"step","detail":{"index":1,"status":"done","evidence":"hint+speech","source":"seen+said","question":null}}
+{"t":6,"source":"angle","kind":"angle","detail":{"deg":9,"ok":true,"limit":20}}
+{"t":7,"source":"coach","kind":"say","detail":{"text":"Replay complete. This was synthetic evidence."}}
