@@ -104,3 +104,14 @@ compact run above completed all model trials. The full suite includes the older 
 and websocket voice-loop checks. No additional model run was started after the memory pause.
 `git diff --check`, the required tracked-file public-path scan, and a coach source/docs/data
 scan including new files found no prohibited absolute home paths.
+
+## Larger run (lead, Oct 31 overnight)
+
+The eight-voice set (768 clips) was generated outside the sandbox with no failures. The scoring script stopped after about 100 clips per run, almost all in one voice (Samantha), so this is not the full matrix.
+
+| Run | Clips scored | Correct | Exact transcript |
+| --- | --- | --- | --- |
+| Before (old gate, no vocabulary hints) | 99 | 81 (82%) | 65 |
+| After | 107 | 90 (84%) | 76 |
+
+By noise level after the change: quiet 31 of 36, normal 32 of 36, loud 27 of 35. The gain is small at this size; the voices other than Samantha are barely covered, so treat multi-voice robustness as unmeasured.
