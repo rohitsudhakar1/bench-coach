@@ -827,15 +827,49 @@ def render(rows, seconds, coach):
     for r in rows:
         head.append("| " + " | ".join(cell(r[k]) for k in
                                        ("part", "data", "amount", "number", "chance", "meaning", "missing")) + " |")
-    head += ["", "## The weakest part", "",
+    head += ["", "## From the part reports (not rerun by this script)", "",
+             "These come from the October 30 and 31 part reports, quoted as written. This script does not rerun "
+             "them, so check the linked report before quoting one.", "",
+             "| Check | Data | Number | Chance | Report |",
+             "| --- | --- | --- | --- | --- |",
+             "| Detectors on the labelled frames, 64 frames from 4 clips | held-out | Grounding DINO tiny (default) "
+             "finds the pipette on 38 of 58, 0.65 of boxes wrong, tip box right 0.26. Florence-2 base finds 42 of 58, "
+             "0.45 wrong (0.28 after dropping unsure waste and tip box boxes), tip box right 0.67 | - | "
+             "[detectors](vision/DETECTOR2-REPORT.md), [Florence-2](vision/FLORENCE-REPORT.md) |",
+             "| Draws and dispenses found with Florence-2, `--new-draw` | held-out | draws found 7 of 18 (tiny 15 of 18); "
+             "dispenses found 4 of 22 (tiny 10 of 22) | draws 0.36, dispenses 0.26 (tiny's chance 0.43 and 0.32) | "
+             "[Florence-2](vision/FLORENCE-REPORT.md) |",
+             "| Detector speed on the Mac's GPU, both cameras sharing one detector, after batching | real | tiny 4.04 "
+             "runs a second per camera (3.69 before). Florence-2 2.15 in float32, 2.76 in float16 with its accuracy "
+             "unchecked. The target is 3 | - | [speed](vision/SPEED-REPORT.md) |",
+             "| Small trained pipette model (Faster R-CNN MobileNetV3), not adopted | held-out | pipette found by the "
+             "live code 30 of 58 (tiny 38 of 58); 17 ms a frame against 178 ms | - | "
+             "[tip model](vision/TIPMODEL-REPORT.md) |",
+             "| Table mode under 15 lighting and placement conditions, 60 rendered runs | synthetic | before 142 of "
+             "360 events found, 20 of 60 runs exact; after 360 of 360, 60 of 60 exact. The same fixtures were used "
+             "while making the changes | - | [table robustness](vision/TABLEROBUST-REPORT.md) |",
+             "| Spoken questions, 3 recordings at 2 speeds over bench noise at 3 levels | tuning | 12 of 18 right "
+             "before, 18 of 18 after | - | [voice](coach/VOICEROBUST-REPORT.md) |",
+             "| Spoken questions, made with 8 computer voices | synthetic | before 81 of 99 "
+             "right (82%), after 90 of 107 (84%). Scoring stopped after about 100 clips, almost all one voice "
+             "(Samantha), so other voices are unmeasured | - | [voice](coach/VOICEROBUST-REPORT.md) |",
+             "| Every launcher mode end to end (scripted, real vision, hints, table, three benches, replay) | "
+             "scripted and real video | 6 of 6 modes started, ran, stopped and served their pages and downloads; "
+             "3 problems found and fixed | - | [sweep](SWEEP-REPORT.md) |",
+             "| Three benches at once on one hub, scripted vision | scripted | each bench reached 8 step outcomes "
+             "and its event log held only its own bench id | - | [classroom](app/CLASSROOM-REPORT.md) |",
+             "",
+             "The detector and trained-model studies changed no default, so the main table still uses Grounding DINO "
+             "tiny. The table and voice changes are in the default code now.", ""]
+    head += ["## The weakest part", "",
              "Seeing lab actions in real video. The default draw and dispense rule rarely fires (recall about 0.1). "
              "The --new-draw hints find most draws, but about half of them are false, and dispense hints are only a "
              "little better than chance. That is why hints never tick a step on their own. Touch and tip events on "
              "the held-out frames are close to useless, and vision never names a specific tube outside table mode, "
              "which has only been tried on drawn pictures.", "",
              "## Not in the table", "",
-             "- Speech: the coach's noise gate and Whisper on the spoken test questions. The coach part's own tests "
-             "cover them; this script does not load Whisper.",
+             "- Speech, beyond the two report rows above. This script does not load Whisper. No real person has "
+             "been scored speaking to a real microphone at a bench.",
              "- The whole demo end to end with every part running, and how fast events reach the page live.",
              "- Anything with a key: the Claude check on hints, the Claude note wording, the Claude protocol converter, "
              "Gemini Live, Nemotron. Every row here is the no-key behaviour.",

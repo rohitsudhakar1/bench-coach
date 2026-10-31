@@ -1,6 +1,6 @@
 # Bench Coach scorecard
 
-Written by `scripts/scorecard.py` on 2026-10-31 03:30 EDT in 15 s. Every number comes from data in this repo (and the sample videos in `$BENCH_SAMPLES`) run through the parts' own code.
+Written by `scripts/scorecard.py` on 2026-10-31 03:32 EDT in 15 s. Every number comes from data in this repo (and the sample videos in `$BENCH_SAMPLES`) run through the parts' own code.
 
 The Data column says what each number rests on. **held-out**: real footage nobody tuned on. **tuning**: real footage the part was tuned on, so it flatters the part; it is there to compare. **real**: real footage with no split. **scripted**: events written by hand. **synthetic**: made-up pictures or numbers. The Chance column is what you get from the same events at random times, or from the simple guess named there.
 
@@ -33,9 +33,27 @@ The Data column says what each number rests on. **held-out**: real footage nobod
 | Coach: hint mode, person only answers | tuning | 4 clip streams, 5.1 min, 40 labelled steps; --new-draw hints replayed, replies simulated 2 s later | 16 questions (3.1 a minute); about a real action 9 of 16 (56%); ticked 9 of 40 steps | about a real action 0.32 (hints at random times, 50 tries) | How often the coach asks 'did you just draw?', how often that was right, and how many steps a yes ticked. | Simulated replies, no live speech, no person. A person who also says 'done' would tick more; that is not scored. |
 | Note: steps and problems from coach events | scripted | 1 scripted 60 s run (note/fakerun.py): 8 steps, a tilt, a reused tip, 3 skipped steps, an event after stop | 8 of 8 step results match the script; problems listed: angle, skipped, tip; event after stop left out; built in 3 ms | - | The note copies what the coach decided and lists the tilt, the reused tip and the skips. | Scripted by the note builder. The note is only as right as the coach's step events. The Claude wording pass has not run against the real API. |
 | Note: walking the protocol itself on real vision events | real | vision's events on the 414-445 pair (31 s, both views), that clip's 4-step protocol | 1 of 4 steps marked done (all 4 really happened) | - | With no coach events the note checks the protocol against vision's events (tip_on, hand_touch, tip_off, hand_touch). | One short clip. The default vision rule fires no draw or dispense here, so the draw steps cannot be seen. |
-| App: event hub | scripted | 43 events from the earlier draft's rehearsal log, posted one at a time, in process | 43 of 43 reached a websocket listener, 43 in the same order; 43 in the history; 0.6 ms per post | - | Every event posted came back out to a listener and in the history. | In-process test client, no network, one listener, no browser. The page itself was not opened. |
+| App: event hub | scripted | 43 events from the earlier draft's rehearsal log, posted one at a time, in process | 43 of 43 reached a websocket listener, 43 in the same order; 43 in the history; 0.5 ms per post | - | Every event posted came back out to a listener and in the history. | In-process test client, no network, one listener, no browser. The page itself was not opened. |
 | App: protocol text to steps (no key) | real | 6 protocol texts, 23 steps, answer key written by the scorecard builder | camera-checkable or not right on 23 of 23 steps; right kind of action on 16 of 16 checkable steps | calling every step a draw or dispense: 16 of 23 on checkable-or-not | Whether the converter knows a camera can check a step, and if so, which pipetting action to look for. | One reader's key on six short texts. Tube names, volumes and timings are not scored. The Claude converter (with a key) was not run. |
 | NVIDIA: run logs to verifier tasks | scripted | 2 sample runs (the earlier draft's rehearsal, scripted vision; and the note's scripted run), 9 tasks (missing_step_text 5, skipped_step 2, tip_reuse 2) | reference answers 1.00, blank 0.00, offline rules solver 0.89 | always 'none' / 'no': 0.00 | The checker gives full marks to the logged answer and none to a blank one. The rules solver, which sees only the protocol and events, gets the score shown. | Two runs of one protocol. The answer key is what Bench Coach logged, so a vision miss makes the key wrong too. The rules solver was written by the same builder. No Harbor, Docker or model run. |
+
+## From the part reports (not rerun by this script)
+
+These come from the October 30 and 31 part reports, quoted as written. This script does not rerun them, so check the linked report before quoting one.
+
+| Check | Data | Number | Chance | Report |
+| --- | --- | --- | --- | --- |
+| Detectors on the labelled frames, 64 frames from 4 clips | held-out | Grounding DINO tiny (default) finds the pipette on 38 of 58, 0.65 of boxes wrong, tip box right 0.26. Florence-2 base finds 42 of 58, 0.45 wrong (0.28 after dropping unsure waste and tip box boxes), tip box right 0.67 | - | [detectors](vision/DETECTOR2-REPORT.md), [Florence-2](vision/FLORENCE-REPORT.md) |
+| Draws and dispenses found with Florence-2, `--new-draw` | held-out | draws found 7 of 18 (tiny 15 of 18); dispenses found 4 of 22 (tiny 10 of 22) | draws 0.36, dispenses 0.26 (tiny's chance 0.43 and 0.32) | [Florence-2](vision/FLORENCE-REPORT.md) |
+| Detector speed on the Mac's GPU, both cameras sharing one detector, after batching | real | tiny 4.04 runs a second per camera (3.69 before). Florence-2 2.15 in float32, 2.76 in float16 with its accuracy unchecked. The target is 3 | - | [speed](vision/SPEED-REPORT.md) |
+| Small trained pipette model (Faster R-CNN MobileNetV3), not adopted | held-out | pipette found by the live code 30 of 58 (tiny 38 of 58); 17 ms a frame against 178 ms | - | [tip model](vision/TIPMODEL-REPORT.md) |
+| Table mode under 15 lighting and placement conditions, 60 rendered runs | synthetic | before 142 of 360 events found, 20 of 60 runs exact; after 360 of 360, 60 of 60 exact. The same fixtures were used while making the changes | - | [table robustness](vision/TABLEROBUST-REPORT.md) |
+| Spoken questions, 3 recordings at 2 speeds over bench noise at 3 levels | tuning | 12 of 18 right before, 18 of 18 after | - | [voice](coach/VOICEROBUST-REPORT.md) |
+| Spoken questions, made with 8 computer voices | synthetic | before 81 of 99 right (82%), after 90 of 107 (84%). Scoring stopped after about 100 clips, almost all one voice (Samantha), so other voices are unmeasured | - | [voice](coach/VOICEROBUST-REPORT.md) |
+| Every launcher mode end to end (scripted, real vision, hints, table, three benches, replay) | scripted and real video | 6 of 6 modes started, ran, stopped and served their pages and downloads; 3 problems found and fixed | - | [sweep](SWEEP-REPORT.md) |
+| Three benches at once on one hub, scripted vision | scripted | each bench reached 8 step outcomes and its event log held only its own bench id | - | [classroom](app/CLASSROOM-REPORT.md) |
+
+The detector and trained-model studies changed no default, so the main table still uses Grounding DINO tiny. The table and voice changes are in the default code now.
 
 ## The weakest part
 
@@ -43,7 +61,7 @@ Seeing lab actions in real video. The default draw and dispense rule rarely fire
 
 ## Not in the table
 
-- Speech: the coach's noise gate and Whisper on the spoken test questions. The coach part's own tests cover them; this script does not load Whisper.
+- Speech, beyond the two report rows above. This script does not load Whisper. No real person has been scored speaking to a real microphone at a bench.
 - The whole demo end to end with every part running, and how fast events reach the page live.
 - Anything with a key: the Claude check on hints, the Claude note wording, the Claude protocol converter, Gemini Live, Nemotron. Every row here is the no-key behaviour.
 - Real cameras, a real bench, real calibration, and any real user.
