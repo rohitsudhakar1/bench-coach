@@ -97,16 +97,31 @@ $BENCH_PY -m vision.table run --source http://localhost:8701/cam/0/frame.jpg
 ```
 
 `--source` is a camera index, a video file, or a capture frame URL (its `X-Frame-Time` is kept,
-repeated frames are skipped). Setup finds the three caps by colour in one still (OpenCV hue: red
-0-10 or 170-179, blue 100-130, yellow 20-35, all with saturation at least 110 and value at least
-80), asks for clicks for anything it could not find plus the tip box and waste, and saves
-`vision/table.json` (not committed: it belongs to one camera position). Run follows the magenta
-band (hue 140-165) and names visits by their order: tip box with no tip on is `tip_on`, waste
+repeated frames are skipped). Setup estimates white balance and exposure from the median bench
+colour, so use a mostly neutral, matte bench. It proposes red A, blue B and yellow C jointly,
+then learns each cap's actual hue and saturation from the reviewed regions. Keep caps closed
+and the pipette out of view during setup. Ambiguous colours require clicks; use `--manual` to
+correct all centres. Automatic tube regions extend to 1.65 times the detected cap radius.
+Review them for overlap and for the position of the open tube. Setup saves lighting gains,
+cap colours and static magenta distractors in `vision/table.json` (not committed).
+
+Setup prints a quality score out of 100; preflight recomputes it against the current image
+using cap visibility, exposure and colour separation. It requests a fix below 70 or when cap
+colours are too similar. This is a readiness heuristic, not an accuracy percentage. Old configs
+still run, but preflight reports that their quality is unavailable; rerun setup to upgrade.
+Lighting correction is held fixed during a run. Rerun setup after moving the camera, rack,
+lighting or coloured bench objects. Preflight must see the closed caps before they are opened.
+
+Run follows the magenta
+band (hue 134-170 after correction) and names visits by their order: tip box with no tip on is `tip_on`, waste
 with a tip on is `tip_off`, first tube after a fresh tip or a dispense is `draw`, the next
 different tube `dispense`, back into the same tube within 4 s is mixing. Mixing goes out as
 `hand_touch` with `detail.action = "mix"`, since the contract has no mix kind. Events have
 `detail.mode = "table"`, `object` like `"tube A"`, confidence 0.75. Losing the band for more than
-0.5 s drops the visit. It only knows the band visited a place, not that liquid moved.
+0.5 s drops the visit. A short motion prior chooses among visible band fragments; no predicted
+point is passed to the event rules. Static magenta areas from setup are excluded. Multiple
+candidates at acquisition cause a missed observation rather than a largest-blob guess.
+It only knows the band visited a place, not that liquid moved.
 
 The launcher supplies `--port` for health and `--follow-runs` to poll the hub's run state
 at 0.1-second intervals. Start opens the source and resets tracking; Stop releases it.
@@ -154,6 +169,19 @@ The stills and local run logs live in `vision/eval/out/`, which is ignored. The 
 labelled distractor regions in both views; no region coordinates enter the live filter.
 Bench support lines are horizontal edges of wide rack/plate detections, not calibrated bench
 geometry. If no such box exists, only the frame-edge test and older static filter apply.
+
+## Table stress check
+
+```sh
+$BENCH_PY -m vision.eval.table_stress --output vision/eval/table_stress_results.json
+$BENCH_PY -m pytest vision/tests/test_table.py vision/tests/test_table_robust.py -q
+```
+
+Add `--videos vision/eval/out/table-stress` to retain one clip per condition. The benchmark
+compares the original tracker at a pinned commit with the current tracker on the same pixels,
+including automatic setup failures. See [TABLEROBUST-REPORT.md](TABLEROBUST-REPORT.md) for
+per-condition counts and limits. These are rendered stress cases, not real-table accuracy.
+Table calibration and tracking use the existing OpenCV and NumPy dependencies below.
 
 ## Sources and licences
 

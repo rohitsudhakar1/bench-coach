@@ -114,3 +114,9 @@ See [TIP-REPORT.md](TIP-REPORT.md). New labels (30 tip pick-ups, 22 ejects, 51 t
 steady-tip-box rule for tip_on: held-out 5 of 16 pick-ups found and 5 of 17 events right
 (chance 0.09 and 0.08), was 0 of 16. Touches and tip_off are unchanged; nothing tried beat them
 on held-out. Draw and dispense scores are unchanged.
+
+## Table robustness follow-up
+
+See [TABLEROBUST-REPORT.md](TABLEROBUST-REPORT.md) for calibration and tracking changes,
+per-condition before/after counts, tests, limits and the current empty branch commit audit.
+No additional event contract change is proposed by this follow-up.
