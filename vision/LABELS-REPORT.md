@@ -1,3 +1,8 @@
+Update, run outside the sandbox on the same Mac: Apple Vision works and reads the bottle on both of Rohit's Pi cameras.
+Andy: yes, these cameras can read a label at this distance. In 1-second samples with 2x enlargement, the USB camera read the product name ("shea better", i.e. shea butter) in 11 frames, "vanilla cashmere", and the small print ("Our 24H moisture body lotion with", "...Shea Oil + lasting protection Shea Butter quickly absorbs") with a few wrong letters. The ribbon camera read the product name and "vanilla cashmere" and parts of the small print with more errors.
+Still untested: tube labels, handwriting on tubes, and labels turned away from the camera. A quick test with a real labelled tube at bench distance settles that.
+The earlier result below (Apple Vision unavailable on all 36 attempts) came from the builder's sandbox, which blocks the Mac's text recognition; it is kept as written.
+
 Andy: do not order a batch on the strength of these clips; dependable label reading is not demonstrated.
 Apple Vision compiles but fails at runtime here: all 36 sampled attempts were unavailable, so its accuracy and confidence are unmeasured.
 A separate Tesseract check reads “shea better” on the lit USB bottle after straightening; 2× enlargement also recovers “vanilla cashmere”.
