@@ -50,7 +50,8 @@ class FeedState:
                     if not isinstance(box, dict) or not isinstance(box.get('label'), str):
                         continue
                     coords, score = box.get('box'), box.get('score')
-                    if ('pipette' not in box['label'].lower() or not isinstance(coords, list)
+                    if (box.get('held') is not True
+                            or 'pipette' not in box['label'].lower() or not isinstance(coords, list)
                             or len(coords) != 4 or not all(finite(v) for v in coords)
                             or not finite(score) or not 0 <= score <= 1):
                         continue

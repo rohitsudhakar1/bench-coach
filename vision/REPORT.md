@@ -2,6 +2,9 @@
 
 ## Proposed changes to docs/EVENTS.md (not made)
 
+- Round 2: document `held: true/false` on each pipette/pipette-tip entry in
+  `objects.detail.boxes`. Angle requires explicit true; draw ignores this metadata.
+
 - A `mix` event kind. Table mode sees mixing (the tip going back into the same tube within 4 s)
   and today sends it as `hand_touch` with `detail.action = "mix"`, because the contract has no
   mix kind.
@@ -95,3 +98,12 @@ draft's measured setting) they are 3. So the default is a tenth; `SceneRules.max
 
 Real times, no rewritten history, author from the repo config. No sound played, no package
 added, only ports 8810 and 8811 used for checks, nothing left running.
+
+## Tripod follow-up, round 2
+
+See [TRIPOD-REPORT.md](TRIPOD-REPORT.md). Draw selection and carry are restored to the original
+baseline; only angle uses the held-hand check. Held-out frames: 38/58 pipettes, 130/199 wrong
+boxes. Held-out draw: 15/29 precision, 15/18 recall; dispense: 10/24 precision, 10/22 recall.
+Both cached 12-27 views provide no angle crops, including no tripod crops. Three angle-path
+stills are ignored under eval/out/. Missing useful angles remains a limitation.
+The follow-up is uncommitted. Latest `git log --format='%h %an %aI %cI' main..HEAD` output: empty.
