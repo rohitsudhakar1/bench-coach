@@ -1,0 +1,5 @@
+# Hand labels for lsv_mv CP-*-414-445, copied from the earlier draft's vision/eval/actions.json (found by looking at frames).
+{"s": 6.5, "kind": "tip_on", "object": "pipette"}
+{"s": 15.9, "kind": "draw", "object": "trypsin"}
+{"s": 23.1, "kind": "dispense", "object": "flask"}
+{"s": 25.2, "kind": "draw", "object": "trypsin"}
