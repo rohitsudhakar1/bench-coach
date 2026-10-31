@@ -135,3 +135,18 @@ No new dependencies were added. This integration uses Python's asyncio subproces
 zipfile modules (PSF-2.0), the existing FastAPI routes, and the NVIDIA modules documented
 in `nvidia/README.md`. The optional browser check also covers task links and the synthesis
 table; it requires a working Chromium installation and permission to launch it.
+
+## Phone step view
+
+Open `/step` on the hub for a large current instruction, the next step, the latest
+warning and a Done button. Done sends an app speech event containing “done”; the
+coach marks the step with said evidence. The page follows websocket updates and
+reloads state on reconnect. It disables confirmation until a current step is
+available and while waiting for the coach to handle a tap. See
+[the protocol library](../protocols/README.md) for selection, phone access and limits.
+
+```sh
+$BENCH_PY -m pytest app/tests/test_step.py protocols/tests -q -p no:cacheprovider
+node --test app/tests/step.test.cjs
+$BENCH_PY app/tests/step_browser.py  # optional browser layout check
+```

@@ -1,0 +1,71 @@
+# Source: https://www.addgene.org/protocols/bacterial-transformation/
+# Example for an instructor-approved nonpathogenic teaching E. coli strain and plasmid.
+# Use the competent-cell supplier instructions if its timing differs; ends before plating.
+# Waits require done confirmation. min_seconds warns on early completion; it is not a timer lock.
+name: Bacterial transformation by heat shock
+steps:
+- text: Check the teaching strain, plasmid and matching selection plates.
+  expect:
+  - kind: speech
+- text: Thaw 50 microlitres of competent E. coli on ice for 30 minutes.
+  expect:
+  - kind: speech
+  min_seconds: 1800
+- text: Fit a fresh tip.
+  expect:
+  - kind: tip_on
+- text: Draw 1 microlitres from teaching plasmid DNA.
+  expect:
+  - kind: draw
+    object: teaching plasmid DNA
+  technique:
+    angle_max_deg: 20
+- text: Dispense into competent cell tube.
+  expect:
+  - kind: dispense
+    object: competent cell tube
+  technique:
+    angle_max_deg: 20
+- text: Eject the tip.
+  expect:
+  - kind: tip_off
+- text: Flick the tube gently to mix.
+  expect:
+  - kind: speech
+- text: Hold on ice for 30 minutes.
+  expect:
+  - kind: speech
+  min_seconds: 1800
+- text: Heat shock at 42 degrees C for 45 seconds.
+  expect:
+  - kind: speech
+  min_seconds: 45
+- text: Return to ice for 2 minutes.
+  expect:
+  - kind: speech
+  min_seconds: 120
+- text: Fit a fresh tip.
+  expect:
+  - kind: tip_on
+- text: Draw 250 microlitres from antibiotic-free SOC.
+  expect:
+  - kind: draw
+    object: antibiotic-free SOC
+  technique:
+    angle_max_deg: 20
+- text: Dispense into transformation tube.
+  expect:
+  - kind: dispense
+    object: transformation tube
+  technique:
+    angle_max_deg: 20
+- text: Eject the tip.
+  expect:
+  - kind: tip_off
+- text: Recover with shaking at 37 degrees C for 45 minutes.
+  expect:
+  - kind: speech
+  min_seconds: 2700
+- text: Continue with plating cells on the matching selection agar.
+  expect:
+  - kind: speech

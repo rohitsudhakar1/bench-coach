@@ -1,0 +1,40 @@
+# Source: https://www.addgene.org/protocols/bacterial-transformation/
+# Plating excerpt for an instructor-approved nonpathogenic teaching E. coli strain.
+# 16 hours specifies the source overnight incubation for this example.
+# Speech confirms spreading, absorption and incubation; vision cannot verify them.
+name: Plating cells
+steps:
+- text: Label the base of the matching selection plate; use recovered teaching E. coli.
+  expect:
+  - kind: speech
+- text: Fit a fresh tip.
+  expect:
+  - kind: tip_on
+- text: Draw 50 microlitres from recovered cell suspension.
+  expect:
+  - kind: draw
+    object: recovered cell suspension
+  technique:
+    angle_max_deg: 20
+- text: Dispense into agar plate.
+  expect:
+  - kind: dispense
+    object: agar plate
+  technique:
+    angle_max_deg: 20
+- text: Eject the tip.
+  expect:
+  - kind: tip_off
+- text: Spread evenly with a sterile spreader, then close the lid.
+  expect:
+  - kind: speech
+- text: Let the liquid absorb fully before incubation.
+  expect:
+  - kind: speech
+- text: Incubate the inverted plate at 37 degrees C for 16 hours.
+  expect:
+  - kind: speech
+  min_seconds: 57600
+- text: Record colony growth and dispose of cultures by the teaching lab procedure.
+  expect:
+  - kind: speech

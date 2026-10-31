@@ -388,6 +388,10 @@ def create_app(runs_dir=None, capture_url=None, note_service_url=None, protocols
     async def index():
         return FileResponse(ROOT / 'static/index.html', headers={'Cache-Control': 'no-cache'})
 
+    @app.get('/step')
+    async def phone_step():
+        return FileResponse(ROOT / 'static/step.html', headers={'Cache-Control': 'no-cache'})
+
     app.mount('/static', StaticFiles(directory=ROOT / 'static'), name='static')
     return app
 

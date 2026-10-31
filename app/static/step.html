@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101b21">
+  <title>Current step · Bench Coach</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/step.css">
+  <script src="/static/step.js" defer></script>
+</head>
+<body>
+  <main>
+    <header><a href="/">Bench Coach</a><span id="connection" role="status">Connecting…</span></header>
+    <p id="protocol"></p>
+    <section aria-live="polite" aria-atomic="true">
+      <p id="position" class="label">Current step</p>
+      <h1 id="current">Waiting for the hub…</h1>
+      <p class="label">Up next</p>
+      <p id="next">—</p>
+    </section>
+    <aside id="warning-box" hidden aria-live="assertive" aria-atomic="true">
+      <p class="label">Last warning</p><p id="warning"></p>
+    </aside>
+    <p id="question" aria-live="polite" hidden></p>
+    <div class="confirmation">
+      <button id="done" type="button" disabled>Done</button>
+      <p id="feedback" role="status">Start a run from the bench page.</p>
+      <p class="hint">Tap after finishing the step. This records your confirmation.</p>
+    </div>
+  </main>
+</body>
+</html>

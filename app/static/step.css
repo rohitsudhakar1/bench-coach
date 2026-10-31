@@ -1,0 +1,20 @@
+:root { color-scheme: dark; font-family: system-ui, sans-serif; background: #101b21; color: #f3f7f8; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+main { max-width: 50rem; margin: auto; padding: 1.25rem; padding-bottom: max(1.25rem, env(safe-area-inset-bottom)); overflow-wrap: anywhere; }
+header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; font-size: .95rem; }
+a { color: #8de6ce; padding-block: .75rem; }
+#connection, #protocol, .hint, .label { color: #b8cbd2; }
+#protocol { margin-block: 1.75rem; }
+.label { font-size: .85rem; text-transform: uppercase; letter-spacing: .08em; margin-bottom: .5rem; }
+h1 { font-size: clamp(2.25rem, 8vw, 4rem); line-height: 1.12; margin: .5rem 0 2rem; }
+#next { font-size: 1.4rem; line-height: 1.4; margin-top: .5rem; }
+aside { background: #482827; border-left: .35rem solid #ffa98b; padding: .75rem 1rem; border-radius: .4rem; margin-block: 1.5rem; }
+aside .label { color: #ffd7c8; }
+#warning, #question { font-size: 1.25rem; line-height: 1.4; }
+.confirmation { margin-top: 2rem; }
+button { width: 100%; min-height: 5rem; font: 700 2rem system-ui, sans-serif; color: #082820; background: #8de6ce; border: 0; border-radius: .75rem; touch-action: manipulation; cursor: pointer; }
+button:disabled { color: #b8cbd2; background: #30434b; cursor: default; }
+button:focus-visible, a:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
+#feedback, .hint { line-height: 1.4; }
+[hidden] { display: none !important; }
