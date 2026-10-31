@@ -9,7 +9,7 @@ import re
 
 # How Whisper tends to write single tube letters.
 LETTERS = {
-    "a": "a", "ay": "a", "eh": "a", "hey": "a",
+    "a": "a", "ay": "a", "aye": "a", "eh": "a", "hey": "a",
     "b": "b", "be": "b", "bee": "b", "bea": "b",
     "c": "c", "see": "c", "sea": "c", "cee": "c", "si": "c",
     "d": "d", "dee": "d",
@@ -32,6 +32,9 @@ def objects_in(text: str) -> set[str]:
     """Vessels named in a sentence, with letters fixed: 'tube see' -> {'tube c'}."""
     t = clean(text)
     found = {f"{v} {LETTERS[l]}" for v, l in re.findall(rf"\b({VESSELS})s?\s+({_LETTER_WORDS})\b", t)}
+    # Preserve unknown explicit letters too: tube Z must not become an unnamed claim
+    # that matches any tube. Whisper also sometimes joins the noun and letter.
+    found.update(f"{v} {l}" for v, l in re.findall(rf"\b({VESSELS})\s*([a-z])\b", t))
     if not found:
         for l in re.findall(rf"\b(?:to|into|in|from|two)\s+({_LETTER_WORDS})\b(?!\s+\w+ing)", t):
             # "added it to b", "drew from a"; "to be" only when nothing else names a vessel
@@ -84,7 +87,10 @@ def question(text: str) -> str | None:
 _NEG = re.compile(r"\b(?:not|never|didn't|haven't|can't|don't|won't|did i|have i|should|will|going to|"
                   r"gonna|need to|about to|want to|shall|let me|i'll)\b")
 _ASK = re.compile(r"^(?:is|are|can|could|did|do|does|have|has|should|would|will|shall|what|which|how|where)\b")
-_NUM = {"one": "1", "once": "1", "two": "2", "twice": "2", "three": "3", "four": "4", "five": "5"}
+_NUM = {"one": "1", "once": "1", "two": "2", "twice": "2", "three": "3", "free": "3",
+        "four": "4", "for": "4", "five": "5", "six": "6", "seven": "7", "eight": "8",
+        "nine": "9", "ten": "10"}
+_COUNTS = "|".join(_NUM)
 
 
 def statement(text: str) -> dict | None:
@@ -110,7 +116,7 @@ def statement(text: str) -> dict | None:
     names = objects_in(clause) if kind not in ("tip_on", "tip_off") else set()
     if len(names) > 1:
         return None   # "from A into B" names two things; ask for one at a time
-    m = re.search(r"\b(\d+|one|two|three|four|five) times\b|\b(once|twice)\b", clause)
+    m = re.search(rf"\b(\d+|{_COUNTS}) times\b|\b(once|twice)\b", clause)
     count = _NUM.get((m.group(1) or m.group(2)), m.group(1) or m.group(2)) if m else None
     return {"kind": kind, "object": next(iter(names), None), "count": count}
 
@@ -124,7 +130,7 @@ def claim_fits(step, claim: dict) -> bool:
         text = clean(step.text)
         if "mix" not in text:
             return False
-        m = re.search(r"\b(\d+|one|two|three|four|five) times\b", text)
+        m = re.search(rf"\b(\d+|{_COUNTS}) times\b", text)
         if m and claim["count"] and _NUM.get(m.group(1), m.group(1)) != claim["count"]:
             return False
         return claim["object"] is None or any(same(o, claim["object"]) for o in step.objects())

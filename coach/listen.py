@@ -39,8 +39,8 @@ class Gate:
 
     FRAME = 480   # samples, 30 ms
 
-    def __init__(self, rate=RATE, start_ratio=4.0, end_ratio=2.0, min_level=0.03, onset=0.12,
-                 end_silence=0.6, min_voiced=0.25, max_len=8.0, warmup=0.3, preroll=0.15,
+    def __init__(self, rate=RATE, start_ratio=4.0, end_ratio=2.0, min_level=0.03, onset=0.09,
+                 end_silence=0.6, min_voiced=0.18, max_len=8.0, warmup=0.3, preroll=0.15,
                  room_time=2.0, room_margin=2.5, end_drop=0.4):
         self.rate = rate
         self.start_ratio, self.end_ratio = start_ratio, end_ratio
@@ -158,6 +158,8 @@ class Whisper:
     MAX_NO_SPEECH = 0.3
     MIN_LOGPROB = -0.8
     NOISE_WORDS = {"", "you", "thank you", "thanks for watching", "bye", "okay"}
+    # Vocabulary only, never a suggested answer or completion command.
+    VOCABULARY = "Pipette, fresh tip, tube A, tube B, tube C, microlitres, aspirate, dispense."
 
     def __init__(self, model="small.en"):
         self.name = model
@@ -174,7 +176,8 @@ class Whisper:
     def transcribe(self, audio: np.ndarray) -> str:
         self.load()
         segs, _ = self.model.transcribe(audio, language="en", beam_size=1, vad_filter=True,
-                                        condition_on_previous_text=False)
+                                        condition_on_previous_text=False,
+                                        initial_prompt=self.VOCABULARY)
         kept = [s.text for s in segs
                 if s.no_speech_prob < self.MAX_NO_SPEECH and s.avg_logprob > self.MIN_LOGPROB]
         text = " ".join(" ".join(kept).split())
