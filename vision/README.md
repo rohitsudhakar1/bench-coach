@@ -65,6 +65,11 @@ real video is skipped when `BENCH_SAMPLES` is not set.
   1 s are one event. First entry after a fresh tip or a dispense is a draw, the next a dispense.
   These events carry `detail.hint = true`, plus `cams`, `start` and `end`. No part may treat a
   hint as proof. `--containers-every 3` runs the container prompt on every third detector run only.
+- `--dispense-min-dwell 0.4` (off by default): leave out a dispense hint when the tip stayed in
+  under 0.4 s; the turn still flips, so draws are unchanged. Held out it raises dispense
+  precision from 0.42 to 0.54 but drops recall from 0.45 to 0.32 and costs two right hint-mode
+  questions, so it is not the default. The other naming checks tried are in `DrawRules`, all off;
+  see `DISPENSE-REPORT.md`.
 - Claude check of hints (`verify.py`), only with `--new-draw` and `ANTHROPIC_API_KEY` set: for
   each camera that saw a hint (at most 2), three crops around where the tip went (before, during,
   after) go to `claude-haiku-5-5`, which answers in a fixed JSON form. The event gets
@@ -121,6 +126,9 @@ $BENCH_PY -m vision.eval.score_actions --per-clip   # draw and dispense, both ru
 
 Both scorers replay through the same `Vision` class (`pipeline.py`) the live part runs, and both
 print chance numbers next to precision and recall. Results are in `REPORT.md`.
+
+Dispense signals and naming checks are measured in `DISPENSE-REPORT.md`
+(`vision.eval.dispense_signals`, `vision.eval.sweep_dispense`, `vision.eval.hint_dispense`).
 
 Round 2 is measured in `TRIPOD-REPORT.md`: held-out pipettes remain 38/58, with 130/199 wrong
 boxes, matching the original baseline. Draw is restored to 15/29 precision and 15/18 recall;
