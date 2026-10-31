@@ -252,6 +252,52 @@ def plan(args, root=ROOT):
     return sorted(result, key=lambda part: part.name != 'app')
 
 
+def needed_models(parts):
+    """Model keys (see scripts/fetch_models.py) that the planned parts load with their settings."""
+    keys = []
+    for part in parts:
+        command = part.command
+        module = command[command.index('-m') + 1] if '-m' in command else None
+        if module == 'vision' and '--no-detector' not in command:
+            keys += ['gdino-tiny', 'hand-landmarker']
+        elif module == 'coach' and not ('--mic' in command and command[command.index('--mic') + 1] == 'off'):
+            keys += ['whisper-small.en', 'silero-vad']
+    return list(dict.fromkeys(keys))
+
+
+def load_fetch_models(root=ROOT):
+    script = root / 'scripts/fetch_models.py'
+    if not script.is_file():
+        return None
+    import importlib.util
+    spec = importlib.util.spec_from_file_location('bench_fetch_models', script)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module  # dataclasses look their module up here
+    spec.loader.exec_module(module)
+    return module
+
+
+def offline_env(parts, env, root=ROOT):
+    """Set HF_HUB_OFFLINE/TRANSFORMERS_OFFLINE for the parts when every model they need is on disk.
+
+    Without the flags a cached model still loads, but with Wi-Fi off the Hub library retries
+    for about 70 s first, longer than a part's startup deadline. A flag the user set is kept."""
+    keys = needed_models(parts)
+    if not keys:
+        return None
+    if any(k in env for k in ('HF_HUB_OFFLINE', 'TRANSFORMERS_OFFLINE')):
+        return 'models: keeping your HF_HUB_OFFLINE/TRANSFORMERS_OFFLINE setting'
+    fetch = load_fetch_models(root)
+    if fetch is None:
+        return None
+    missing = fetch.missing_for(keys, root)
+    if missing:
+        return (f'models: {", ".join(missing)} not downloaded yet; the first start fetches them and needs '
+                'network (or run scripts/fetch_models.py --download first)')
+    env.update(fetch.OFFLINE_FLAGS)
+    return 'models: all on disk, parts start offline (no network needed)'
+
+
 def ready(part):
     try:
         with urlopen(f'http://127.0.0.1:{part.port}{part.path}', timeout=.4) as response:
@@ -380,6 +426,9 @@ def main(argv=None):
         parts = plan(args)
         if not parts:
             raise ValueError('no available services selected')
+        note = offline_env(parts, env)
+        if note:
+            print(note, flush=True)
         rows = replay_rows(args.replay) if args.replay else []
         if args.replay and not any(p.name == 'app' for p in parts):
             raise ValueError('--replay requires app')

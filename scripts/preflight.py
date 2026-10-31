@@ -186,6 +186,22 @@ print(" ".join(s.text for s in segments if s.no_speech_prob < .3 and s.avg_logpr
     return 'heard "testing" in the 5-second capture; nothing played'
 
 
+async def offline_ready():
+    """Every default model loads from disk with the network blocked (scripts/fetch_models.py --check)."""
+    child = await asyncio.create_subprocess_exec(sys.executable, str(ROOT / 'scripts/fetch_models.py'), '--check',
+        stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.DEVNULL)
+    try:
+        out, _ = await asyncio.wait_for(child.communicate(), 50)
+    finally:
+        if child.returncode is None:
+            child.kill()
+        await child.wait()
+    failed = [line.split()[1] for line in out.decode().splitlines() if line.startswith('FAILED')]
+    if child.returncode != 0 or failed:
+        raise ValueError('not offline ready: ' + (', '.join(failed) or 'check failed'))
+    return 'default models load from disk with the network blocked; the demo starts with Wi-Fi off'
+
+
 async def parts(client, args):
     data = (await fetch(client, args.hub + '/parts')).json()
     if not -.5 <= time.time() - data['checked_at'] <= 5:
@@ -247,6 +263,8 @@ async def run(args):
         if not args.no_mic:
             await check('microphone', lambda: microphone(args), 'Enable capture mic access, say "testing" within 5 seconds, and provide a cached --whisper-model. Disable fake mic for live speech.', 55)
         await check('hub parts', lambda: parts(client, args), 'Restore hub /parts and restart offline or quiet parts; verify service URLs and logs.')
+        if not args.no_offline:
+            await check('offline ready', offline_ready, 'Run scripts/fetch_models.py --download while online, then scripts/fetch_models.py --check to see which model fails.', 55)
     try:
         free = shutil.disk_usage(args.disk).free
         ok = free > 2_000_000_000
@@ -274,7 +292,7 @@ def parse_args(argv=None):
     p.add_argument('--disk', type=Path, default=ROOT)
     p.add_argument('--whisper-model', default='small.en')
     p.add_argument('--min-fps', type=float, default=5)
-    for name in ('table', 'angle', 'mic'):
+    for name in ('table', 'angle', 'mic', 'offline'):
         p.add_argument('--no-' + name, action='store_true')
     args = p.parse_args(argv)
     if not math.isfinite(args.min_fps) or args.min_fps <= 0:
