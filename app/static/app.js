@@ -35,6 +35,7 @@ document.querySelector('.tabs').onkeydown = event => {
 };
 function controls() {
   $('run').disabled = !connected || busy || !state;
+  $('student').disabled = busy || !!state?.recording;
   $('load').disabled = !connected || busy || !!state?.recording;
   $('run').textContent = busy ? 'Please wait…' : state?.recording ? 'Stop run' : 'Start run';
   $('run').classList.toggle('stop', !!state?.recording);
@@ -167,7 +168,7 @@ async function pollParts() {
 }
 $('run').onclick = async () => {
   busy = true; controls();
-  try { const result = await api(state.recording ? '/run/stop' : '/run/start', {method:'POST'}); await refresh(); showNotice(result.capture?.ok === false ? result.capture.error : ''); }
+  try { const result = await api(state.recording ? '/run/stop' : '/run/start', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(state.recording ? {} : {student:$('student').value.trim()})}); await refresh(); showNotice(result.capture?.ok === false ? result.capture.error : ''); }
   catch (error) { await refresh(); showNotice(error.message); }
   finally { busy = false; controls(); }
 };

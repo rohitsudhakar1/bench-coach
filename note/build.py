@@ -206,7 +206,11 @@ def build_note(run: Run) -> dict:
 
     # ---- what the person said -------------------------------------------------------------------
     said = []
-    who = None
+    who = next((e['detail']['student'].strip() for e in events
+                if e.get('kind') == 'run' and e['detail'].get('status') == 'start'
+                and e['detail'].get('run') == run.run_id
+                and isinstance(e['detail'].get('student'), str)
+                and e['detail']['student'].strip()), None)
     for ev in events:
         if ev.get("kind") != "speech":
             continue

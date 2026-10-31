@@ -80,3 +80,8 @@ Output:
 ```
 
 No commits exist ahead of main. No commit, staging, push, date override, identity change or history rewrite was attempted. The lead can review and commit the files.
+
+## Trainer addition
+
+See [TRAINER-REPORT.md](TRAINER-REPORT.md) for the trainer implementation, contract
+proposal, three-run checks and browser limitation. Changes are left uncommitted.

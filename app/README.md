@@ -135,3 +135,41 @@ No new dependencies were added. This integration uses Python's asyncio subproces
 zipfile modules (PSF-2.0), the existing FastAPI routes, and the NVIDIA modules documented
 in `nvidia/README.md`. The optional browser check also covers task links and the synthesis
 table; it requires a working Chromium installation and permission to launch it.
+
+## Trainer view
+
+Open `/trainer` to review saved runs. Before Start, enter an optional student name on
+the bench page. It is trimmed, limited to 120 characters, and saved as `detail.student`
+on the run start event. The note header uses this name before a spoken name. Older notes
+retain their original header until rebuilt with `python -m note build runs/<run>`.
+
+`GET /trainer/runs?protocol=<file>&student=<name>` reads run folders on each request.
+Protocol matches exactly; student matches a case-insensitive substring. No database,
+recording scan, write, hosted service or new dependency is involved. Saved `note.json`
+is preferred; otherwise the existing note rules summarize events and the start event's
+protocol snapshot in memory. No protocol path from an event is opened. Missing snapshots
+mean step counts are unavailable; malformed data is reported on the row. Symbolic links
+for run folders and input files are ignored. Folders without an event log or note are
+not considered runs (for example, launcher logs).
+
+The table shows date, duration, final done/skipped/unsure/unfinished counts, reused-tip
+problems and angle readings over the limit. Repeated warning messages do not inflate
+counts. A draw hint does not prove tip reuse. Active runs have no final duration unless
+a saved note supplies one. Refresh after a run or note changes. Note links use the existing
+note proxy and need the note service running.
+
+Select one protocol for most missed steps. The student filter also applies to this summary.
+Missed means skipped, unsure, not finished or not reached; the breakdown remains visible.
+Each denominator counts runs containing that exact step index and text, so edited
+instructions are separate. Active runs can contribute unfinished steps. These are recorded
+outcomes for review, not a score of real bench accuracy. Phones scroll the results table
+horizontally inside its panel.
+
+```sh
+$BENCH_PY -m pytest app/tests/test_trainer.py -q -p no:cacheprovider
+$BENCH_PY -m app.tests.trainer_browser_check
+node --check app/static/trainer.js
+```
+
+The browser check uses three temporary fake folders, no server, no camera and no audio.
+It needs permission to launch Chromium. See `TRAINER-REPORT.md` for this run's results.

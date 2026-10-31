@@ -103,3 +103,7 @@ All were already in the shared environment.
 | Poppler `pdftotext` (https://poppler.freedesktop.org/) | GPL-2.0-or-later | tests only, to read the PDF back; the test skips that check without it |
 
 The design follows the earlier draft's note part; the code was written fresh here.
+
+Typed student names from the app's start event (`detail.student`) take precedence over
+spoken names in the note header. Blank names keep the existing spoken-name fallback.
+Rebuild an older note to update its header; the trainer view does not rewrite notes.

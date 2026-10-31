@@ -2,7 +2,7 @@
 <html lang="en">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bench Coach</title><link rel="icon" href="/static/favicon.svg"><link rel="stylesheet" href="/static/style.css"><script src="/static/app.js" defer></script></head>
 <body>
-<header class="topbar"><a class="brand" href="/" aria-label="Bench Coach home"><span class="brand-icon">⌁</span><span>BENCH<span class="muted"> / </span>COACH<small>A second pair of eyes.</small></span></a><div class="controls"><div id="parts" aria-label="Part health"></div><div class="actions"><span id="connection" role="status">Connecting…</span><button id="load">Load protocol</button><button id="run" class="primary" disabled>Start run</button></div></div></header>
+<header class="topbar"><a class="brand" href="/" aria-label="Bench Coach home"><span class="brand-icon">⌁</span><span>BENCH<span class="muted"> / </span>COACH<small>A second pair of eyes.</small></span></a><div class="controls"><div id="parts" aria-label="Part health"></div><div class="actions"><span id="connection" role="status">Connecting…</span><a href="/trainer">Trainer</a><label class="student-field" for="student">Student <input id="student" maxlength="120" autocomplete="off" placeholder="Name (optional)"></label><button id="load">Load protocol</button><button id="run" class="primary" disabled>Start run</button></div></div></header>
 <main>
 <section class="heading"><div><div class="eyebrow" id="progress">BENCH MONITOR / READY</div><h1 id="current">Ready at the bench.</h1></div><span class="run-label" id="run-label">No active run</span></section>
 <div id="notice" role="status" hidden></div>

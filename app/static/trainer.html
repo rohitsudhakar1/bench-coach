@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Trainer · Bench Coach</title><link rel="icon" href="/static/favicon.svg"><link rel="stylesheet" href="/static/trainer.css"><script src="/static/trainer.js" defer></script></head>
+<body><header><a href="/">← Bench Coach</a><span>TRAINER</span></header><main>
+<h1>Review the practice. Plan the next one.</h1><p>Recorded progress across students. Counts reflect the event log, not independent proof of technique.</p>
+<form id="filters"><label>Protocol<select id="protocol"><option value="">All protocols</option></select></label><label>Student<input id="student" type="search" placeholder="Search by name" maxlength="120"></label><button type="submit">Refresh runs</button></form>
+<p id="status" role="status">Loading saved runs…</p>
+<section aria-labelledby="missed-title"><h2 id="missed-title">Most missed steps</h2><p id="summary-help">Select a protocol to compare its steps.</p><ol id="missed"></ol></section>
+<section aria-labelledby="runs-title"><h2 id="runs-title">Runs</h2><p class="hint">Tilt counts are readings over the recorded limit, not separate incidents. Unfinished includes steps not reached. Names are blank when none was recorded.</p><div class="table-wrap" tabindex="0" role="region" aria-label="Run results, scroll horizontally on small screens"><table><thead><tr><th scope="col">Student / run</th><th scope="col">Protocol</th><th scope="col">Date</th><th scope="col">Length</th><th scope="col">Done</th><th scope="col">Skipped</th><th scope="col">Unsure</th><th scope="col">Unfinished</th><th scope="col">Reused tips</th><th scope="col">Tilts over</th><th scope="col">Note</th></tr></thead><tbody id="runs"></tbody></table></div></section>
+</main></body></html>
