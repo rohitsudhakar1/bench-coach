@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bench Coach phone camera</title>
+<style>body{font:18px system-ui;max-width:720px;margin:24px auto;padding:0 16px;background:#102428;color:#fff}video{width:100%;background:#000}button,select{font:inherit;padding:12px;margin:8px 4px}a{color:#9fe4d8}</style>
+<h1>Bench Coach camera</h1>
+<p>Mount the phone, keep this page visible, and leave the screen unlocked.</p>
+<label>Camera slot <select id="slot"><option value="0">0</option><option value="1">1</option></select></label>
+<button id="start">Start camera</button><button id="stop" disabled>Stop</button>
+<p id="status" role="status">Ready. Camera access needs HTTPS.</p>
+<video id="preview" autoplay playsinline muted></video>
+<p><a href="/phone/certificate">Download laptop certificate</a></p>
+<script>
+const preview=document.querySelector('#preview'), status=document.querySelector('#status');
+const start=document.querySelector('#start'), stop=document.querySelector('#stop'), slot=document.querySelector('#slot');
+let stream=null, socket=null, timer=null, active=false, generation=0;
+const canvas=document.createElement('canvas'), context=canvas.getContext('2d');
+function finish(){active=false;generation++;clearTimeout(timer);if(socket)socket.close();socket=null;
+ if(stream)stream.getTracks().forEach(track=>track.stop());stream=null;preview.srcObject=null;
+ start.disabled=false;stop.disabled=true;slot.disabled=false;status.textContent='Stopped.';}
+function connect(token){
+ if(!active||token!==generation)return;
+ const ws=new WebSocket(`${location.protocol==='https:'?'wss':'ws'}://${location.host}/phone/${slot.value}`);socket=ws;
+ ws.onmessage=event=>{if(!active||token!==generation)return;const reply=JSON.parse(event.data);
+ status.textContent=reply.ready?'Connected. Sending frames.':`Camera ${reply.cam}: frame ${reply.sequence}`;
+ timer=setTimeout(()=>send(ws,token),100);};
+ ws.onerror=()=>ws.close();
+ ws.onclose=event=>{if(!active||token!==generation)return;clearTimeout(timer);
+ if([1003,1007,1008].includes(event.code)){finish();status.textContent=event.reason||'Camera rejected. Check the selected slot.';return;}
+ status.textContent='Disconnected. Reconnecting…';timer=setTimeout(()=>connect(token),2000);};
+}
+function send(ws,token){
+ if(!active||token!==generation||ws.readyState!==WebSocket.OPEN)return;
+ if(!preview.videoWidth){timer=setTimeout(()=>send(ws,token),100);return;}
+ const scale=Math.min(1,1280/Math.max(preview.videoWidth,preview.videoHeight));
+ canvas.width=Math.floor(preview.videoWidth*scale);canvas.height=Math.floor(preview.videoHeight*scale);
+ context.drawImage(preview,0,0,canvas.width,canvas.height);
+ canvas.toBlob(blob=>{if(blob&&active&&token===generation&&ws.readyState===WebSocket.OPEN)ws.send(blob);},'image/jpeg',0.8);
+}
+start.onclick=async()=>{start.disabled=true;slot.disabled=true;const token=++generation;
+ try{if(!navigator.mediaDevices)throw new Error('Open the HTTPS address and trust its certificate first.');
+ const acquired=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280}},audio:false});
+ if(token!==generation){acquired.getTracks().forEach(track=>track.stop());return;}
+ stream=acquired;preview.srcObject=stream;await preview.play();active=true;stop.disabled=false;connect(token);
+ }catch(error){finish();status.textContent=error.message;}};
+stop.onclick=finish;window.addEventListener('pagehide',finish);
+</script></html>
