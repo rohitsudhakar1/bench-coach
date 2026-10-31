@@ -18,13 +18,19 @@ export BENCH_PY="$PWD/.venv/bin/python"
 
 Open <http://127.0.0.1:8700> when it prints **Demo ready**. This replays a short recorded session: the step list ticks off, the coach talks, and the camera panels stay empty because no cameras are running. Ctrl-C stops it.
 
-To see the full pipeline, point it at any two video files of someone pipetting (the team's sample clips are not in the repo):
+To see the full pipeline, first fetch the model weights while you have good Wi-Fi (about 1.2 GB; it lists each model, its size and licence, then loads each one with the network blocked to prove it works):
+
+```sh
+"$BENCH_PY" scripts/fetch_models.py --download
+```
+
+Then point it at any two video files of someone pipetting (the team's sample clips are not in the repo):
 
 ```sh
 ./scripts/demo.sh --source left.mp4 right.mp4
 ```
 
-Choose **Start run**, wait half a minute, choose **Stop run**, then open **Lab note**. The first run downloads model weights, so give it a few minutes. Run the tests with `"$BENCH_PY" -m pytest -q`; tests that need the sample clips skip themselves.
+Choose **Start run**, wait half a minute, choose **Stop run**, then open **Lab note**. With the weights on disk the launcher starts every part offline, so this works with Wi-Fi off. Skip the fetch and the first run downloads them instead, which takes a few minutes and needs a network. Run the tests with `"$BENCH_PY" -m pytest -q`; tests that need the sample clips skip themselves.
 
 ## How the parts fit together
 
@@ -60,7 +66,7 @@ The coach follows the protocol from the event stream, listens through local spee
 
 ## Run the demo
 
-Run from the repository root with the dependencies listed in each part installed. Set `BENCH_PY` to that Python executable, or leave it unset for `python3`. Set `BENCH_SAMPLES` to the folder holding the sample videos, which are not bundled. General vision downloads model weights on first use, so prepare those before presenting.
+Run from the repository root with the dependencies listed in each part installed. Set `BENCH_PY` to that Python executable, or leave it unset for `python3`. Set `BENCH_SAMPLES` to the folder holding the sample videos, which are not bundled. Fetch model weights beforehand with `scripts/fetch_models.py --download`; `scripts/fetch_models.py --check` proves they load with the network blocked, and preflight repeats that check as its **offline ready** line.
 
 Choose one of these three commands. Stop it with Ctrl-C before starting another.
 
@@ -150,7 +156,7 @@ This table gathers the parts' reported dependencies. The linked guides contain s
 | [App](app/README.md) | Shared service libraries; original HTML/CSS/JavaScript; Playwright and Node.js for checks | Playwright Apache-2.0; Node.js MIT with bundled notices; no bundled Tailwind or shadcn code |
 | [Note](note/README.md) | Anthropic SDK, OpenCV, NumPy, WeasyPrint, Pango; Poppler for PDF tests | Anthropic SDK MIT; OpenCV Apache-2.0; NumPy and WeasyPrint BSD-3-Clause; Pango LGPL-2.1-or-later; Poppler GPL-2.0-or-later |
 | [NVIDIA work](nvidia/README.md) | NeMo Data Designer; Harbor task format; pandas, pyarrow, duckdb, scipy; optional hosted Nemotron | Data Designer and Harbor Apache-2.0; pandas and scipy BSD-3-Clause; pyarrow Apache-2.0; duckdb MIT; Nemotron endpoint under NVIDIA service terms |
-| [Scripts](scripts/README.md) | Python launcher; HTTPX, OpenCV, NumPy, PyYAML, websockets and cached faster-whisper for preflight | PSF-2.0, BSD-3-Clause, Apache-2.0 and MIT as listed above |
+| [Scripts](scripts/README.md) | Python launcher; HTTPX, OpenCV, NumPy, PyYAML, websockets and cached faster-whisper for preflight; huggingface_hub, Transformers and MediaPipe for the model fetch and offline check | PSF-2.0, BSD-3-Clause, Apache-2.0 and MIT as listed above |
 
 ## Sponsor tools
 
