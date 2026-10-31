@@ -80,7 +80,7 @@ draft's measured setting) they are 3. So the default is a tenth; `SceneRules.max
 - Speed: files run at about 4 frames a second per camera with two cameras and both prompts
   (`--containers-every 3` cuts the container cost). Live mode was not timed against the real
   capture part.
-- `scripts/addpkg.sh` (outside vision, from main) still has a `/Users/` path; it is the lead's file.
+- `scripts/addpkg.sh` (outside vision, from main) still names a local home folder; it is the lead's file.
 
 ## Date check
 
