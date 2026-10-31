@@ -38,6 +38,22 @@ def _build_lock(out: Path):
 def make_note(run_dir: str | Path, use_claude: bool | None = None, frames: bool = True,
               sources: list[str] | None = None, events_file: str | None = None,
               out_dir: str | Path | None = None) -> dict:
+    """Build in a fresh process, then release all native resources on worker exit."""
+    from .worker import run_worker
+
+    out = Path(out_dir) if out_dir else Path(run_dir)
+    lock = _build_lock(out)
+    with lock:
+        payload = dict(run_dir=str(run_dir), use_claude=use_claude, frames=frames,
+                       sources=[str(p) for p in sources] if sources else None,
+                       events_file=str(events_file) if events_file else None,
+                       out_dir=str(out_dir) if out_dir else None)
+        return json.loads(run_worker("build", json.dumps(payload).encode()))
+
+
+def _make_note(run_dir: str | Path, use_claude: bool | None = None, frames: bool = True,
+               sources: list[str] | None = None, events_file: str | None = None,
+               out_dir: str | Path | None = None) -> dict:
     """Build the note for one run folder; write note.md, note.html, note.json and key frames.
     use_claude None means: only if ANTHROPIC_API_KEY is set."""
     run_dir = Path(run_dir)

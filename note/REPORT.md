@@ -10,6 +10,32 @@
 3. Say in the contract that only events between a run's start and stop belong to it. The earlier
    draft's rehearsal log has `smoke-tube` draws written an hour after its stop; the note drops them.
 
+## Note memory follow-up
+
+No new contract changes proposed. Builds and PDF renders now use one short-lived
+worker per job, with bounded concurrency, a timeout and kill/reap on timeout.
+Metadata captures also release on property-read errors. Outputs and event shapes
+are unchanged; all changes remain uncommitted under `note/`.
+
+Ten real-sample builds with PDFs: parent RSS was 259.45 to 308.83 MiB before and
+40.80 to 43.61 MiB after. After two warmups, spread fell from 35.72 to 2.06 MiB.
+Combined parent/worker sampled peaks after the change were 193.31–210.42 MiB.
+Build plus PDF takes about 0.68 seconds instead of 0.30 seconds after warmup.
+The capture note probe also passed; see `LEAK-REPORT.md` for all measurements,
+commands, diagnosis and limits. This is not a full-pipeline or multi-hour soak.
+
+Final validation with sample clips enabled: 45 note tests passed in 28.75 seconds.
+The real-clip memory regression separately skipped with BENCH_SAMPLES unset.
+Timeout cleanup, worker recovery, metadata failure, PDF/ZIP contents, service
+routes and hub-triggered builds are covered. `git diff --check` and the required
+tracked-file public-path audit passed; new source/test/report files were checked
+separately. No dependency was installed. No test server or worker was left running.
+
+Required current history audit:
+`git log --format='%h %an %aI %cI' main..HEAD`
+Output: empty (zero lines). No commits, date/identity overrides or history edits.
+The original build report and its historical audit follow below.
+
 ## What works
 
 - `python -m note build <run folder>` writes note.md, note.html, note.json and key frames.

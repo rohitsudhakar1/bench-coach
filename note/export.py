@@ -79,6 +79,12 @@ footer{margin-top:20px}@media screen{body{max-width:820px;margin:30px auto;paddi
 
 
 def render_pdf(document: str) -> bytes:
+    from .worker import run_worker
+
+    return run_worker("pdf", document.encode())
+
+
+def _render_pdf(document: str) -> bytes:
     try:
         from weasyprint import HTML
         from weasyprint.urls import URLFetcher
