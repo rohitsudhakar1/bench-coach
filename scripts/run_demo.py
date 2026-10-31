@@ -59,6 +59,8 @@ def parse_args(argv=None):
     p.add_argument('--runs', type=Path, default=ROOT / 'runs')
     p.add_argument('--timeout', type=float, default=60)
     p.add_argument('--hints', action='store_true')
+    p.add_argument('--fake-vision', action='store_true', help='scripted vision stand-in (scripts/fake_vision.py)')
+    p.add_argument('--fake-speed', type=float, default=1.0)
     p.add_argument('--table', action='store_true')
     p.add_argument('--table-source', default='capture:0')
     p.add_argument('--table-config', type=Path, default=ROOT / 'vision/table.json')
@@ -89,6 +91,10 @@ def parse_args(argv=None):
     for path in [*args.source, args.replay, args.mic_file, args.calibration]:
         if path and not Path(path).is_file():
             p.error(f'input file missing: {path}')
+    if args.fake_vision and args.table:
+        p.error('--fake-vision replaces vision; it cannot run table mode')
+    if not math.isfinite(args.fake_speed) or args.fake_speed <= 0:
+        p.error('--fake-speed must be positive')
     if args.table and args.hints:
         p.error('--hints requires general vision, not table mode')
     if args.table_source.startswith('capture:') and args.table_source not in ('capture:0', 'capture:1'):
@@ -153,6 +159,8 @@ def plan(args, root=ROOT):
                 extra += ['--source', url('capture') + f'/cam/{cam}/frame.jpg']
             for roi in args.angle_roi:
                 extra += ['--roi', roi]
+            if not args.angle_roi:
+                extra += ['--need-box']
             extra += ['--hub', url('app')]
             if args.calibration:
                 extra += ['--calibration', str(args.calibration)]
@@ -166,6 +174,11 @@ def plan(args, root=ROOT):
             extra += ['--hub', url('app'), '--runs', str(args.runs)]
             if module == 'note':
                 extra.insert(0, 'serve')
+        if name == 'vision' and args.fake_vision:
+            command = [python, '-u', str(root / 'scripts/fake_vision.py'), '--port', str(ports[name]),
+                       '--hub', url('app'), '--speed', str(args.fake_speed)]
+            result.append(Part(name, command, ports[name]))
+            continue
         result.append(Part(name, [python, '-u', '-m', module, *extra], ports[name], '/state' if name == 'app' else '/health'))
     return result
 

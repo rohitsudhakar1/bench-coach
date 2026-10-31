@@ -302,3 +302,18 @@ def test_bad_replay_rejected(tmp_path):
         path.write_text('\n'.join(json.dumps(row) for row in rows))
         with pytest.raises(ValueError):
             demo.replay_rows(path)
+
+
+def test_fake_vision_and_angle_without_roi(fake_root, monkeypatch):
+    monkeypatch.setenv('BENCH_PY', sys.executable)
+    args = demo.parse_args(['--fake-vision', '--fake-speed', '3', '--base-port', '8880'])
+    parts = {p.name: p for p in demo.plan(args, fake_root)}
+    command = parts['vision'].command
+    assert command[2].endswith('scripts/fake_vision.py')
+    assert command[3:] == ['--port', '8882', '--hub', 'http://127.0.0.1:8880', '--speed', '3.0']
+    # Without a chosen crop, angle may only measure inside vision's boxes.
+    assert '--need-box' in parts['angle'].command
+    args = demo.parse_args(['--angle-roi', '1,2,3,4', '--base-port', '8880'])
+    assert '--need-box' not in next(p for p in demo.plan(args, fake_root) if p.name == 'angle').command
+    with pytest.raises(SystemExit):
+        demo.parse_args(['--fake-vision', '--table'])
