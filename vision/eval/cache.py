@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 import gzip
 import json
+import os
 import time
 from pathlib import Path
 
@@ -21,7 +22,20 @@ import cv2
 from ..core import sample
 
 HERE = Path(__file__).parent
-CACHE = HERE / "cache"
+# VISION_EVAL_CACHE picks another detector's cache (a folder under vision/eval/, e.g. cache-owlv2,
+# written by vision.eval.recache) for every scorer.
+CACHE = HERE / os.environ.get("VISION_EVAL_CACHE", "cache")
+
+
+def min_score(default: float = 0.25) -> float:
+    """The box score the replay keeps from this cache: VISION_EVAL_MIN_SCORE, else the cache's
+    meta.json, else default."""
+    if os.environ.get("VISION_EVAL_MIN_SCORE"):
+        return float(os.environ["VISION_EVAL_MIN_SCORE"])
+    meta = CACHE / "meta.json"
+    if meta.exists():
+        return float(json.loads(meta.read_text()).get("min_score", default))
+    return default
 FPS, DETECT_EVERY, MAX_SIDE, CHUNK = 10.0, 0.35, 640, 60.0
 
 

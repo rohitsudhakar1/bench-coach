@@ -27,6 +27,8 @@ def parse(argv=None):
     p.add_argument("--realtime", action="store_true", help="files: play at real speed")
     p.add_argument("--detect-every", type=float, default=0.35, help="files: detector every this many video seconds")
     p.add_argument("--no-detector", action="store_true", help="hands only")
+    p.add_argument("--detector", default="gdino-tiny",
+                   help="gdino-tiny, gdino-base, owlv2, florence2 or ensemble:<a>+<b> (see vision/zoo.py)")
     p.add_argument("--debug-video", help="write an annotated side-by-side video here")
     p.add_argument("--log", help="also append every event to this JSON lines file")
     p.add_argument("--mirrored", action="store_true")
@@ -79,8 +81,9 @@ def main(argv=None):
 
     detect = adet = None
     if not a.no_detector:
-        from .detector import GroundingDino, WithContainers
-        detect = GroundingDino()
+        from .detector import WithContainers
+        from .zoo import make
+        detect = make(a.detector)
         if new_draw:
             detect = WithContainers(detect, a.containers_every)
         if live:
