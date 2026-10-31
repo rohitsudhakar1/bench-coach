@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+numpy
+opencv-python
+sounddevice
+qrcode
+httpx
+websockets
+pytest
+starlette
+pydantic
