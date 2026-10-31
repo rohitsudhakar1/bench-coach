@@ -80,7 +80,11 @@ All choices were made on the tuning clips, then checked on held-out.
 `git log --format='%h %an %aI %cI' main..HEAD` before this report was committed:
 
 ```
-GITLOG
+b40e9c8 Andy Bei 2026-10-30T22:39:56-04:00 2026-10-30T22:39:56-04:00
+46925ab Andy Bei 2026-10-30T22:39:06-04:00 2026-10-30T22:39:06-04:00
+c71b7d6 Andy Bei 2026-10-30T22:37:54-04:00 2026-10-30T22:37:54-04:00
+d3a9a3e Andy Bei 2026-10-30T22:37:29-04:00 2026-10-30T22:37:29-04:00
+287e1a6 Andy Bei 2026-10-30T22:32:22-04:00 2026-10-30T22:32:22-04:00
 ```
 
 Real times, author from the repo config, no rewritten history. No sound played, no server
