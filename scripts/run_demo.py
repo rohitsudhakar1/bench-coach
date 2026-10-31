@@ -195,6 +195,9 @@ def ready(part):
 def check_ports(parts):
     for part in parts:
         with socket.socket() as sock:
+            # Closed connections from the last demo leave the port in TIME_WAIT for a while;
+            # the servers bind with SO_REUSEADDR, so only a live listener counts as in use.
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             try:
                 sock.bind(('127.0.0.1', part.port))
             except OSError as exc:
