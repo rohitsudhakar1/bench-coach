@@ -123,7 +123,7 @@ def protocol(path):
             raise ValueError('invalid min_seconds')
     # Also exercise the coach loader when it is available.
     try:
-        from coach.protocol import load_protocol
+        from coach.protocol import load as load_protocol
     except ModuleNotFoundError as exc:
         if exc.name not in ('coach', 'coach.protocol'):
             raise
