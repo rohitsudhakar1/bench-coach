@@ -20,7 +20,10 @@ flowchart LR
     Coach -->|steps, speech and warnings| Hub
     Hub -->|run stop| Note[Note 8705]
     Note -->|note ready| Hub
-    Hub --> Page[Bench page]
+    Hub --> Page[Bench, trainer and phone step pages]
+    Capture --> Calibration[Calibration page]
+    Calibration -->|saved camera fit| Angle
+    Nvidia -->|tasks and scores| Page
     Capture -->|camera feeds| Page
     Capture -->|video, audio and timing| Run[Run folder]
     Hub -->|event log| Run
@@ -54,7 +57,43 @@ Wait for **Demo ready**, then open <http://127.0.0.1:8700>. For live cameras or 
 
 The bundled replay shows synthetic steps, a question and an angle warning. Its camera panels stay empty and it produces no recording or lab note. It does not measure recognition. For a saved log containing run events, use the [app replay guide](app/README.md) with an existing hub instead. The launcher's direct replay retains run events, which the rebuilt hub rejects through its event endpoint.
 
-Angle uses vision's pipette boxes by default. Supply `--angle-roi X,Y,W,H` for a manual shaft crop, once per camera used, and `--calibration angle/calibration.json` for your measured camera setup. Without usable calibration, angles are rough image projections. The [launcher guide](scripts/README.md) covers hints, table mode, recorded microphone input and custom ports.
+Angle uses vision's held-pipette boxes by default. Supply `--angle-roi X,Y,W,H` for a manual shaft crop, once per camera used, and `--calibration angle/calibration.json` for your measured camera setup. Without usable calibration, angles are rough image projections. The [launcher guide](scripts/README.md) covers hints, table mode, recorded microphone input and custom ports.
+
+## Views and teaching protocols
+
+Open these paths on the running hub. They share the same run and event history.
+
+| View | What it does |
+| --- | --- |
+| `/trainer` | Review saved runs by protocol and student, with duration, done/skipped/unsure/unfinished counts, tip reuse and angles over the limit. Select one protocol to see its most missed steps. |
+| `/step` | Show the current instruction in large type, the next step, the latest warning and a Done button. Done sends a confirmation to the coach and records said evidence. |
+| `/calibrate` | Preview checkerboard corners from both capture feeds, collect pairs, compute a camera fit and save a good result. |
+
+Enter an optional student name on the bench page before Start. Refresh the trainer after a run or note changes. Its missed-step counts include unfinished steps in active runs and reflect recorded outcomes, not measured bench skill. Note links need the note service. See the [trainer guide](app/README.md#trainer-view).
+
+For a physical phone, use the reachable hub address with `/step`. The hub binds to loopback by default; configure its `--host` for the lab network first. It has no authentication. The button waits for the coach to advance the step, so check coach health if it stays waiting. All devices control the same run; avoid confirming from several at once.
+
+The [teaching library](protocols/README.md) adds five protocols alongside `pipetting-demo.yaml`.
+
+| File in `protocols/` | Exercise |
+| --- | --- |
+| `serial-dilution.yaml` | Four transfers through prefilled dilution tubes |
+| `pcr-master-mix.yaml` | Prepare a common mix for seven reactions with extra volume |
+| `heat-shock-transformation.yaml` | Teaching transformation through recovery |
+| `loading-gel.yaml` | Load a prepared gel with a ladder and sample |
+| `plating-cells.yaml` | Spread recovered teaching cells and incubate |
+
+Select the protocol before starting the run. Each file cites its source and assumptions. Draw and dispense are separate steps; mixing and actions the cameras cannot verify need spoken or Done confirmation. Explicit waits carry `min_seconds`, but an early confirmation only warns and still advances. These exercises add instructions, not new recognition. Review the library and reagent instructions before use.
+
+For calibration, keep capture camera slots 0 and 1 running and open `/calibrate`. Print the linked board with 9 × 6 inner corners at 25 mm spacing. The first captured pose must be level because it defines gravity. Collect at least 12 distinct poses, preferably 20–25 across the views, then choose **Compute** and **Use this calibration** after a good fit. The default destination is `angle/calibration.json`. Restart angle with `--calibration angle/calibration.json` after saving, then complete the physical pencil check. A good image fit does not prove physical tilt accuracy. See the [calibration page guide](app/README.md#camera-calibration-page).
+
+## Vision rules
+
+Angle accepts vision boxes only when their `held` field is explicitly true. Vision requires current hand adjacency and more than 0.5 s of evidence in the last second. Stationary boxes at the frame edge or inferred bench line become unheld after 2 s. Missing held metadata is rejected by angle. This check leaves draw tracking unchanged; a manual angle ROI remains a separate explicit input.
+
+The tip pick-up rule needs a tip box seen in about the same place on at least three detector runs. Its region extends half its height downward to include tips below the lid. The lower end of an upright pipette enters that region and is later seen out or higher up, producing `tip_on` at most once in 5 s. Tip ejects and touches still use the older rules. A tip event is a visual estimate, not proof that a fresh tip attached.
+
+Vision's `--new-draw` mode sends hints that never complete a step alone. The opt-in vision flag `--dispense-min-dwell 0.4` suppresses dispense hints with less than 0.4 s of dwell, while still flipping the draw/dispense turn. It is off by default. The [dispense report](vision/DISPENSE-REPORT.md) gives precision 0.42 to 0.54 against chance 0.30 to 0.33, but recall falls from 0.45 to 0.32 and right hint questions fall from 8 of 17 to 6 of 15. The scorecard below uses the unchanged default.
 
 ## At the table
 
@@ -68,7 +107,7 @@ Angle uses vision's pipette boxes by default. Supply `--angle-roi X,Y,W,H` for a
 
 ## Models, libraries and licences
 
-This table gathers the parts' reported dependencies. The linked guides contain source URLs and details. Coach dependencies are provisional from its brief and the earlier draft until its implementation lands. SDK licences do not grant rights to hosted models, which follow provider terms.
+This table gathers the parts' reported dependencies. The linked guides contain source URLs and details. SDK licences do not grant rights to hosted models, which follow provider terms.
 
 | Part | Models and libraries | Reported licences |
 | --- | --- | --- |
@@ -84,20 +123,49 @@ This table gathers the parts' reported dependencies. The linked guides contain s
 
 ## Sponsor tools
 
-NVIDIA NeMo Data Designer actually sampled synthetic run settings in the [NVIDIA part](nvidia/README.md), without a key or GPU. It uses a separate environment. Without that library, an explicitly labelled seeded local generator runs instead. The same part exports Harbor-format tasks with answer verifiers. Nine sample tasks scored 1.0 with reference answers and 0.889 with the rules solver. Those keys reflect recorded events, not independent bench truth. Harbor's CLI and a container run were not tested. Optional Nemotron note generation needs `NVIDIA_API_KEY` and has not been tried live. NeMo Anonymizer, Safe Synthesizer and BioNeMo Framework are not used.
+After Stop, the **Lab note** tab queues **Training tasks (NVIDIA)** automatically. It shows questions, checkers, the offline rules solver score and task ZIP downloads. Each ZIP includes the answer key and reference solution, without recordings or raw speech. This panel works without the note service. **Make synthetic runs** creates 20 runs and compares their skip rates with smoothed recorded rates. It names the engine actually used, either NeMo Data Designer or the local NumPy fallback. A small generated sample can differ greatly from one recorded run. See the [training task guide](app/README.md#training-tasks-in-lab-note).
+
+NVIDIA NeMo Data Designer actually sampled synthetic run settings in the [NVIDIA part](nvidia/README.md), without a key or GPU. It uses a separate environment. Without that library, an explicitly labelled seeded local generator runs instead. The same part exports Harbor-format tasks with answer verifiers. For nine sample tasks the scorecard reports “reference answers 1.00, blank 0.00, offline rules solver 0.89”, against an always 'none' / 'no' baseline of 0.00 in the current scorecard. Those keys reflect recorded events, not independent bench truth. Harbor's CLI and a container run were not tested. Optional Nemotron note generation needs `NVIDIA_API_KEY` and has not been tried live. NeMo Anonymizer, Safe Synthesizer and BioNeMo Framework are not used.
 
 Anthropic Claude supplies optional note wording and a check of vision hints with `ANTHROPIC_API_KEY`. The coach uses it to word answers. Vision checks before/during/after crops in hint mode, but a check never turns a hint into proof. Note checks rewritten numbers and names and falls back to rules on failure. The app also supports optional Claude protocol conversion, and NVIDIA task evaluation can request Claude answers. The part reports describe mocked checks, not successful live API calls.
 
-Google Gemini Live is the coach's optional voice mode, tested only with a stand-in so far, with `--voice gemini-live` and `GEMINI_API_KEY`. Its brief says voice alone must not mark steps. Local faster-whisper is the default. Playback requires explicit `--speak`; keep it off during shared-machine checks.
+Google Gemini Live is the coach's optional voice mode, tested only with a stand-in so far, with `--voice gemini-live` and `GEMINI_API_KEY`. Local faster-whisper is the default. Playback requires explicit `--speak`; keep it off during shared-machine checks.
 
 Nebius and NVIDIA Brev are planned GPU hosts only. Vision supports `VISION_DEVICE` for CUDA, MPS or CPU, but the part reports establish no deployment or benchmark on either host.
 
 ## Evidence and limits
 
-The rebuild's top-level `SCORECARD.md` has not landed in this checkout. Until it does, the [vision scorecard](vision/REPORT.md#measured) and [angle measurements](angle/REPORT.md#measured-results) are the available measured results. Do not present the earlier draft's results as a fresh full-system test.
+The current [scorecard](SCORECARD.md) was written on October 30, 2026 at 22.40 EDT. The selected result and chance cells below quote it as written. A dash means no baseline was reported. Precision is the share of events that matched; recall is the share of labelled actions found.
 
-Vision found the pipette in 38 of 58 labelled held-out frames, while 65% of scored boxes were wrong. Draw hints had 0.52 precision and 0.83 recall; dispense hints had 0.42 precision and 0.45 recall on the reported hold split. Labels and prior tuning come from the earlier draft, so these small reused sets are not a new independent benchmark. General vision cannot name tube A/B/C. Table mode can name saved regions but has only been checked on generated footage.
+| Check | Data | Result | Chance |
+| --- | --- | --- | --- |
+| Capture files and silent mic | real | camera 0 90 frames, camera 1 90 (about 97 expected); timing rows match the saved video on both; same-moment gap between the two views median 0 ms, worst 0 ms; audio 48000 samples, rows say 48000 | - |
+| Pipette boxes | held-out | 38 of 58 (66%) | - |
+| Wrong object boxes | held-out | 130 of 199 boxes on the wrong thing (0.65) | - |
+| Default draw | held-out | precision 0.50 (2 of 4); recall 0.11 (2 of 18) | precision 0.30, recall 0.07 |
+| Default dispense | held-out | precision 0.67 (2 of 3); recall 0.09 (2 of 22) | precision 0.42, recall 0.06 |
+| Draw hints | held-out | precision 0.52 (15 of 29); recall 0.83 (15 of 18) | precision 0.26, recall 0.43 |
+| Dispense hints | held-out | precision 0.42 (10 of 24); recall 0.45 (10 of 22) | precision 0.30, recall 0.32 |
+| Table mode | synthetic | 27 of 40 runs exactly right; precision 0.95 (389 of 410); recall 0.98 (389 of 395) | precision 0.31 (random events, same count) |
+| Coach with real vision | real | 0 of 4 steps done (all 4 really happened); 0 warnings | - |
+| Coach with simulated hint replies | held-out | 17 questions (3.1 a minute); about a real action 8 of 17 (47%); ticked 8 of 40 steps | about a real action 0.31 (hints at random times, 50 tries) |
+| Note with real vision | real | 1 of 4 steps marked done (all 4 really happened) | - |
+| Hub delivery | scripted | 43 of 43 reached a websocket listener, 43 in the same order; 43 in the history; 0.6 ms per post | - |
 
-Angle detected 9 of 12 manually cropped development shafts, with 1.32 degrees mean projected error on detections. Physical calibration and the pencil check remain pending. Synthetic stereo results assume correct cameras and shaft lines. Capture timestamps measure delivery, not synchronized exposure, and recording can drop data under load.
+The newer held-out tip-moment check uses 9 clips and 450 s. Tip pick-up precision is 0.29 (5 of 17), recall 0.31 (5 of 16), against chance precision / recall 0.08 / 0.09. Tip eject precision is 0.00 (0 of 1), recall 0.00 (0 of 13), against 0.00 / 0.00. Touch precision is 0.45 (5 of 11), recall 0.15 (5 of 33), against 0.24 / 0.08. One person labelled moments at 0.5 s intervals, and most ejects happen out of frame, so their times are guesses.
 
-Neither camera mode proves liquid transfer, volume, reagent identity or sterility. The note inherits mistakes in events and step tracking. Protocol conversion may treat sub-actions as alternatives. Physical cameras, microphone, table lighting, hosted calls and the complete rebuilt demo still need checks. The [app report](app/REPORT.md) also records that browser rendering could not be verified. Review the evidence labels, warnings and final note before keeping it as a lab record.
+Angle's tuning stills gave “9 of 12 measured; mean error 1.3 deg, worst 4.9 deg; 7 within 2 deg”. Guessing the average angle was off by 21.5 deg. Synthetic stereo gave “791 of 1000 answered; mean error 0.87 deg, 95% under 2.68 deg, worst 5.04 deg”, against guessing 45 deg with about 22.5 deg error. The stills used hand-drawn crops and were used for tuning; stereo assumes correct cameras and shaft lines. Physical calibration and the pencil check remain unmeasured.
+
+The scripted coach check got 8 of 8 step results right and warned on all three planned mistakes; its clean script got 8 of 8 done and 0 warnings. The scripted note matched 8 of 8 step results and built in 3 ms. No chance baseline is reported for those scripts. Protocol conversion classified camera-checkable steps correctly on 23 of 23 and action kinds on 16 of 16 checkable steps; calling every step a draw or dispense gets 16 of 23 on checkable-or-not. Tube names, volumes and timings were not scored.
+
+These are small reused sets, not a new independent benchmark. Earlier hint filters were chosen after looking at held-out scores, so those results may be optimistic. General vision cannot name tube A/B/C. Table mode knows saved regions but has only been scored on drawn pictures. Capture timestamps measure delivery, not synchronized exposure, and recording can drop data under load.
+
+Neither camera mode proves liquid transfer, volume, reagent identity or sterility. The note inherits mistakes in events and step tracking. Protocol conversion may treat sub-actions as alternatives. The scorecard does not measure live speech, hosted calls, real cameras, a real bench, real users or the complete demo end to end. Review the evidence labels, warnings and final note before keeping it as a lab record.
+
+## Rehearsal check
+
+`tests/test_rehearsal.py` can fail under heavy load in a full-suite run and is reported to pass on its own. The docs2 isolated check reached the note but failed during launcher shutdown when the sandbox denied a process-group check; see [the docs2 report](docs/REPORT.md). Rerun it alone before treating a suite timeout as a regression. It uses sample video files, a silent mic and scripted vision on check ports in 8800–8899, and skips when `BENCH_SAMPLES` or the required clips are missing. Passing it does not establish real-camera recognition accuracy.
+
+```sh
+"${BENCH_PY:-python3}" -m pytest tests/test_rehearsal.py -q -p no:cacheprovider
+```
