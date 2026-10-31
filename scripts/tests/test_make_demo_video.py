@@ -64,3 +64,28 @@ def test_finished_video_if_present():
     duration = float(probe.split('duration=')[1].split()[0])
     assert 100 <= duration <= 140
     assert final.stat().st_size < 50e6
+
+
+def test_three_benches_and_their_ports(tmp_path):
+    cmd = mdv.launch_command(tmp_path, 8700)
+    assert cmd[cmd.index('--benches') + 1] == '3'
+    assert mdv.BENCHES == 3
+
+
+def test_extra_benches_are_labelled_as_replayed():
+    assert set(mdv.EXTRA_STUDENTS) == {'2', '3'}
+    assert all('replayed' in name for name in mdv.EXTRA_STUDENTS.values())
+    assert 'replay' in mdv.CLASS_TAG and 'scripted' in mdv.CLASS_TAG
+    assert 'replayed' not in mdv.STUDENT
+
+
+def test_all_four_note_downloads_are_shown():
+    assert [b for b, _ in mdv.DOWNLOADS] == ['pdf', 'benchling', 'eln', 'csv']
+    page = (mdv.ROOT / 'app' / 'static' / 'index.html').read_text()
+    for button, _ in mdv.DOWNLOADS:
+        assert f'id="{button}"' in page
+    assert 'id="nvidia-panel"' in page
+
+
+def test_tag_text_can_change_per_page():
+    assert 'window.dcTag = (on, text)' in mdv.OVERLAY_JS

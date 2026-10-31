@@ -6,6 +6,10 @@ scripted vision), drives the page with Playwright while it records, and puts a t
 front and an end card behind with ffmpeg. The coach's lines are captioned from the hub's
 websocket, because the video has no sound.
 
+After the lab note it shows the download buttons (PDF, Benchling, eLabFTW, CSV), the NVIDIA
+training tasks, /trainer with this run listed and /class with three benches. The launcher runs
+three benches for that; benches 2 and 3 replay the same scripted events and say so on screen.
+
     BENCH_PY=... BENCH_SAMPLES=... "$BENCH_PY" scripts/make_demo_video.py
 
 Output: runs/demo-video/bench-coach-demo.mp4 (runs/ is not committed). Nothing is played out
@@ -23,12 +27,19 @@ import subprocess
 import sys
 import threading
 import time
-from urllib.request import urlopen
+from urllib.parse import urljoin
+from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parents[1]
 W, H, FPS = 1920, 1080, 30
 CLIPS = ('lsv_mv/CP-Left-Front-12-27.mp4', 'lsv_mv/CP-Right-Front-12-27.mp4')
 TAG = 'Sample clips as cameras. Vision events scripted for this recording.'
+BENCHES = 3
+STUDENT = 'Student A'
+# Benches 2 and 3 exist only so /class has three cards. They replay scripts/fake_vision.py's events.
+EXTRA_STUDENTS = {'2': 'Student B (replayed)', '3': 'Student C (replayed)'}
+CLASS_TAG = 'Benches 2 and 3 replay the same scripted events on the sample clips.'
+DOWNLOADS = (('pdf', 'pdf'), ('benchling', 'benchling'), ('eln', 'eln'), ('csv', 'csv'))
 TITLE_LINE = 'Two cameras watch your bench and coach you through the protocol, step by step.'
 END_LINE = 'It catches the tilt, the reused tip and the skipped step, then writes the lab note.'
 
@@ -77,7 +88,8 @@ OVERLAY_JS = r"""
   let coachTimer = null;
   window.dcNarr = text => { add(); const n = document.getElementById('dc-narr');
     n.textContent = text || ''; n.classList.toggle('dc-hide', !text); };
-  window.dcTag = on => { add(); document.getElementById('dc-tag').classList.toggle('dc-hide', !on); };
+  window.dcTag = (on, text) => { add(); const t = document.getElementById('dc-tag');
+    t.textContent = text || __TAG__; t.classList.toggle('dc-hide', !on); };
   window.dcBottom = px => { add(); document.getElementById('dc-wrap').style.setProperty('--dc-bottom', px + 'px'); };
   window.dcCoach = text => { add(); const c = document.getElementById('dc-coach');
     if (!text) { c.classList.add('dc-hide'); return; }
@@ -121,7 +133,7 @@ code{font-size:22px;background:#fff;padding:4px 8px;border-radius:6px}</style></
 def launch_command(samples, base_port=8700):
     samples = Path(samples)
     return [str(ROOT / 'scripts' / 'demo.sh'), '--source', *(str(samples / c) for c in CLIPS),
-            '--fake-vision', '--base-port', str(base_port), '--timeout', '120']
+            '--fake-vision', '--benches', str(BENCHES), '--base-port', str(base_port), '--timeout', '120']
 
 
 def missing_clips(samples):
@@ -130,7 +142,7 @@ def missing_clips(samples):
 
 def busy_ports(base_port):
     busy = []
-    for port in range(base_port, base_port + 6):
+    for port in range(base_port, base_port + 6 * BENCHES):
         with socket.socket() as s:
             if s.connect_ex(('127.0.0.1', port)) == 0:
                 busy.append(port)
@@ -232,8 +244,10 @@ def record(app, runs, raw):
 
         page.evaluate('window.dcTag(true)')
         say('Two sample clips stand in for two cameras on one bench. The protocol is on the right.')
-        page.wait_for_timeout(7000)
-        say('Press Start run.')
+        page.wait_for_timeout(5000)
+        say('Type the student name and press Start run.')
+        page.click('#student')
+        page.type('#student', STUDENT, delay=60)
         page.wait_for_timeout(1500)
         page.evaluate('window.dcLive = true')
         page.click('#run')
@@ -297,13 +311,33 @@ def record(app, runs, raw):
             stamp.evaluate("a => { a.style.outline = ''; }")
 
         say('')
+        start_extra(page, app, '2', checks)   # far enough along at /class to show a warning
         page.goto(app)
         page.evaluate('window.dcTag(true)')
         page.click('#note-tab')
         page.wait_for_selector('#pdf:not([hidden])', timeout=20000)
+        buttons = ', '.join('#' + b for b, _ in DOWNLOADS)
+        page.evaluate(f"document.querySelectorAll('{buttons}').forEach(a => {{ a.style.outline = '4px solid #f0a020';"
+                      " a.style.outlineOffset = '3px'; }})")
+        say('Download the note as a PDF, as Benchling HTML, as an eLabFTW .eln file or as a steps CSV.')
+        checks['downloads'] = {b: fetched(page, page.get_attribute('#' + b, 'href')) for b, _ in DOWNLOADS}
+        page.wait_for_timeout(5000)
+        page.evaluate(f"document.querySelectorAll('{buttons}').forEach(a => {{ a.style.outline = ''; }})")
+
+        panel = page.locator('#nvidia-panel')
+        page.wait_for_function("/ready|tasks/i.test(document.getElementById('nvidia-status').textContent)"
+                               " && document.querySelectorAll('#nvidia-tasks p').length > 0", timeout=60000)
+        panel.scroll_into_view_if_needed()
+        panel.evaluate("p => { p.style.outline = '4px solid #f0a020'; p.style.outlineOffset = '6px'; }")
+        say('The same run becomes training tasks for NVIDIA models: a question, its answer key and the clip.')
+        checks['nvidia'] = {'status': page.inner_text('#nvidia-status').strip(),
+                            'tasks': page.locator('#nvidia-tasks p').count()}
+        page.wait_for_timeout(7000)
+        panel.evaluate("p => { p.style.outline = ''; }")
+        page.evaluate("document.querySelector('#note-panel .note-actions').scrollIntoView({block: 'center'})")
         page.locator('#pdf').evaluate("a => { a.style.outline = '4px solid #f0a020'; a.style.outlineOffset = '3px'; }")
         say('Download PDF saves the note to share or file.')
-        page.wait_for_timeout(2500)
+        page.wait_for_timeout(2000)
         with page.expect_download(timeout=60000) as info:
             page.click('#pdf')
         download = info.value
@@ -312,17 +346,58 @@ def record(app, runs, raw):
         checks['pdf'] = (pdf.name, pdf.stat().st_size, pdf.read_bytes()[:5])
         png = raw / 'pdf-page1.png'
         pdf_still(pdf, png)
-        page.wait_for_timeout(1000)
+        page.wait_for_timeout(500)
         say('')
         page.set_content(PDF_PAGE.replace('{img}', 'data:image/png;base64,' + __import__('base64').b64encode(png.read_bytes()).decode())
                          .replace('{name}', pdf.name).replace('{size}', f'{pdf.stat().st_size // 1024} KB, built from the run'))
+        page.wait_for_timeout(6000)
+        start_extra(page, app, '3', checks)   # just started at /class: an early step
+
+        page.goto(f'{app}/trainer')
+        page.evaluate('window.dcTag(true)')
+        row = page.locator('#runs tr', has_text=STUDENT)
+        row.first.wait_for(timeout=20000)
+        row.first.evaluate("r => { r.style.outline = '4px solid #f0a020'; r.style.background = '#fff6df'; }")
+        say(f'The trainer page lists every saved run. This one is {STUDENT}.')
+        checks['trainer_rows'] = page.locator('#runs tr').count()
+        page.wait_for_timeout(6500)
+
+        page.goto(f'{app}/class')
+        page.evaluate(f'window.dcTag(true, {json.dumps(CLASS_TAG)})')
+        page.wait_for_function(f"document.querySelectorAll('#benches .bench').length >= {BENCHES}", timeout=20000)
+        say('The classroom view: three benches at once, and the one that needs help comes first.')
+        checks['class_cards'] = page.locator('#benches .bench').count()
+        page.wait_for_timeout(6500)
         # Playwright's video runs a little behind the page; hold long enough that it lands.
-        page.wait_for_timeout(9000)
+        page.wait_for_timeout(2500)
         checks['pdf_href'] = pdf_href
         video = page.video
         ctx.close()
         browser.close()
         return Path(video.path()), lead, checks
+
+
+def fetched(page, href):
+    """Status, size and first bytes of one download link, read through the browser's session."""
+    r = page.request.get(urljoin(page.url, href), timeout=60000)
+    body = r.body()
+    return (r.status, len(body), body[:5])
+
+
+def start_extra(page, app, bench, checks):
+    """Start a replayed run on an extra bench so /class has more than one card."""
+    r = page.request.post(f'{app}/benches/{bench}/run/start', data={'student': EXTRA_STUDENTS[bench]})
+    checks.setdefault('extra_started', {})[bench] = r.status
+
+
+def stop_extra(app):
+    for bench in EXTRA_STUDENTS:
+        try:
+            req = Request(f'{app}/benches/{bench}/run/stop', data=b'{}',
+                          headers={'Content-Type': 'application/json'})
+            urlopen(req, timeout=10).read()
+        except Exception:
+            pass
 
 
 def card(line, png):
@@ -363,6 +438,7 @@ def main(argv=None):
         try:
             webm, lead, checks = record(app, ROOT / 'runs', raw)
         finally:
+            stop_extra(app)
             stop_demo(proc)
     print(json.dumps(checks, default=str), flush=True)
 
