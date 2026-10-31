@@ -1,0 +1,22 @@
+{
+ "whats_next": {
+  "text": "What's next?",
+  "speech_start": 0.03,
+  "speech_end": 0.69
+ },
+ "how_much": {
+  "text": "How much do I add?",
+  "speech_start": 0.06,
+  "speech_end": 1.05
+ },
+ "did_i_add_tube_c": {
+  "text": "Did I add tube C?",
+  "speech_start": 0.03,
+  "speech_end": 1.23
+ },
+ "long_noisy": {
+  "text": "Okay, I just put a fresh tip on the pipette, what is the next step I should do?",
+  "speech_start": 1.02,
+  "speech_end": 5.73
+ }
+}

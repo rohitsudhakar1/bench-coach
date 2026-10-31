@@ -1,0 +1,12 @@
+# Scripted demo: a good first half, a tilt, the tip not changed before tube C, the last dispense forgotten, and questions.
+{"t": 1793400000.0, "source": "app", "kind": "run", "object": null, "hand": null, "step": null, "confidence": null, "detail": {"status": "start", "run": "demo", "protocol": "pipetting-demo.yaml"}}
+{"t": 1793400006.0, "source": "vision", "kind": "tip_on", "object": null, "hand": "right", "step": null, "confidence": 0.9, "detail": {"cam": 0}}
+{"t": 1793400008.0, "source": "coach", "kind": "speech", "object": null, "hand": null, "step": null, "confidence": null, "detail": {"text": "How much do I add?"}}
+{"t": 1793400012.0, "source": "angle", "kind": "angle", "object": null, "hand": null, "step": null, "confidence": 0.8, "detail": {"deg": 27.0, "ok": false, "limit": 20}}
+{"t": 1793400014.0, "source": "vision", "kind": "draw", "object": "tube A", "hand": "right", "step": null, "confidence": 0.85, "detail": {"cam": 0}}
+{"t": 1793400016.0, "source": "angle", "kind": "angle", "object": null, "hand": null, "step": null, "confidence": 0.8, "detail": {"deg": 6.0, "ok": true, "limit": 20}}
+{"t": 1793400025.0, "source": "vision", "kind": "dispense", "object": "tube B", "hand": "right", "step": null, "confidence": 0.8, "detail": {"cam": 0}}
+{"t": 1793400037.0, "source": "vision", "kind": "draw", "object": "tube C", "hand": "right", "step": null, "confidence": 0.85, "detail": {"cam": 0}}
+{"t": 1793400042.0, "source": "speech", "kind": "speech", "object": null, "hand": null, "step": null, "confidence": null, "detail": {"text": "Did I add tube C?"}}
+{"t": 1793400050.0, "source": "vision", "kind": "tip_off", "object": null, "hand": "right", "step": null, "confidence": 0.9, "detail": {"cam": 0}}
+{"t": 1793400055.0, "source": "app", "kind": "run", "object": null, "hand": null, "step": null, "confidence": null, "detail": {"status": "stop", "run": "demo", "protocol": "pipetting-demo.yaml"}}
