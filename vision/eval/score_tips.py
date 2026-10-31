@@ -17,6 +17,7 @@ from pathlib import Path
 
 from ..events import Rules
 from ..scene import SceneRules
+from ..tips import TipRules
 from .replay import frames, replay
 
 HERE = Path(__file__).parent
@@ -53,6 +54,10 @@ def clip_events(clip, settings):
         kw["rules"] = Rules(**settings["rules"])
     if "scene" in settings:
         kw["scene"] = SceneRules(**settings["scene"])
+    if "tips" in settings:
+        kw["tips"] = TipRules(**settings["tips"])
+    if "tip_kinds" in settings:
+        kw["tip_kinds"] = settings["tip_kinds"]
     evs = [e for e in replay([fs], **kw) if e["kind"] in KINDS]
     return evs, (fs[0]["t"], fs[-1]["t"])
 
@@ -69,6 +74,8 @@ def score(labels, settings, split, tries=200, per_clip=False):
         if evs is None:
             continue
         for k in KINDS:
+            if k == "hand_touch" and not clip.get("touch_labelled"):
+                continue
             et = [e["t"] for e in evs if e["kind"] == k]
             lt = label_times(clip, k)
             m = match(et, lt)

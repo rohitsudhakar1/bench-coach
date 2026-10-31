@@ -1,5 +1,5 @@
 {
- "about": "Tip pick-ups, tip ejects and hand touches in the sample clips, found by looking at contact sheets (vision/eval/sheet.py, 0.5 s steps, 0.2 s around unclear moments). Times are seconds into the video, one camera per clip (two views of one moment are two clips). tip_on = the pipette lifts out of the tip box with a tip on. tip_off = the tip leaves the pipette (eject), or, where the eject is off frame, the moment the pipette swings to the waste side. touch = [time, object] when a hand closes on a tube, tube rack, tip box, plate or waste it was not already holding. tip_on and tip_off times start from vision/eval/actions.json; splits are the same as there.",
+ "about": "Tip pick-ups, tip ejects and hand touches in the sample clips, found by looking at contact sheets (vision/eval/sheet.py, 0.5 s steps, 0.2 s around unclear moments). Times are seconds into the video, one camera per clip (two views of one moment are two clips). tip_on = the pipette lifts out of the tip box with a tip on. tip_off = the tip leaves the pipette (eject), or, where the eject is off frame, the moment the pipette swings to the waste side. touch = [time, object] when a hand closes on a tube, tube rack, tip box, plate or waste it was not already holding. tip_on and tip_off times start from vision/eval/actions.json; splits are the same as there. touch_labelled says whether touches were looked for in that clip; hand_touch is only scored on clips where they were.",
  "clips": {
   "mv414L": {
    "path": "lsv_mv/CP-Left-Front-414-445.mp4",
@@ -15,7 +15,8 @@
      "tip box"
     ]
    ],
-   "notes": "Touch: the tip box lid opened at ~3.2 s. Tip lifted 6.5 s."
+   "notes": "Touch: the tip box lid opened at ~3.2 s. Tip lifted 6.5 s.",
+   "touch_labelled": true
   },
   "mv414R": {
    "path": "lsv_mv/CP-Right-Front-414-445.mp4",
@@ -31,7 +32,8 @@
      "tip box"
     ]
    ],
-   "notes": "Touch: the tip box lid opened at ~3.2 s. Tip lifted 6.5 s."
+   "notes": "Touch: the tip box lid opened at ~3.2 s. Tip lifted 6.5 s.",
+   "touch_labelled": true
   },
   "mv12R": {
    "path": "lsv_mv/CP-Right-Front-12-27.mp4",
@@ -40,7 +42,8 @@
    "tip_on": [],
    "tip_off": [],
    "touch": [],
-   "notes": ""
+   "notes": "",
+   "touch_labelled": true
   },
   "mv249R": {
    "path": "lsv_mv/CP-Right-Front-249-269.mp4",
@@ -49,7 +52,8 @@
    "tip_on": [],
    "tip_off": [],
    "touch": [],
-   "notes": ""
+   "notes": "",
+   "touch_labelled": false
   },
   "serial52": {
    "path": "lsv_dji/serial_xm052.mp4",
@@ -64,7 +68,8 @@
     71.1
    ],
    "touch": [],
-   "notes": ""
+   "notes": "",
+   "touch_labelled": false
   },
   "serial55": {
    "path": "lsv_dji/serial_xm055.mp4",
@@ -111,7 +116,8 @@
      "tube rack"
     ]
    ],
-   "notes": "Touches: the free (left) hand arriving at and closing on a rack or a tube in it, from 0.5 s contact sheets; the hand moves between the two racks every 2-4 s, so times are +-0.5 s and tube vs rack is a guess."
+   "notes": "Touches: the free (left) hand arriving at and closing on a rack or a tube in it, from 0.5 s contact sheets; the hand moves between the two racks every 2-4 s, so times are +-0.5 s and tube vs rack is a guess.",
+   "touch_labelled": true
   },
   "pcr48": {
    "path": "lsv_dji/pcr_xm048.mp4",
@@ -163,7 +169,8 @@
      "tube rack"
     ]
    ],
-   "notes": "Touches: the free (left) hand arriving at and closing on a rack or a tube in it, from 0.5 s contact sheets; the hand moves between the two racks every 2-4 s, so times are +-0.5 s and tube vs rack is a guess."
+   "notes": "Touches: the free (left) hand arriving at and closing on a rack or a tube in it, from 0.5 s contact sheets; the hand moves between the two racks every 2-4 s, so times are +-0.5 s and tube vs rack is a guess.",
+   "touch_labelled": true
   },
   "pcr49": {
    "path": "lsv_dji/pcr_xm049.mp4",
@@ -231,7 +238,8 @@
      "tube"
     ]
    ],
-   "notes": "Touches: the free (left) hand arriving at and closing on a rack or a tube in it, from 0.5 s contact sheets; the hand moves between the two racks every 2-4 s, so times are +-0.5 s and tube vs rack is a guess."
+   "notes": "Touches: the free (left) hand arriving at and closing on a rack or a tube in it, from 0.5 s contact sheets; the hand moves between the two racks every 2-4 s, so times are +-0.5 s and tube vs rack is a guess.",
+   "touch_labelled": true
   },
   "pcr50": {
    "path": "lsv_dji/pcr_xm050.mp4",
@@ -289,7 +297,8 @@
      "tube rack"
     ]
    ],
-   "notes": "Touches: the free (left) hand arriving at and closing on a rack or a tube in it, from 0.5 s contact sheets; the hand moves between the two racks every 2-4 s, so times are +-0.5 s and tube vs rack is a guess."
+   "notes": "Touches: the free (left) hand arriving at and closing on a rack or a tube in it, from 0.5 s contact sheets; the hand moves between the two racks every 2-4 s, so times are +-0.5 s and tube vs rack is a guess.",
+   "touch_labelled": true
   },
   "pcr51": {
    "path": "lsv_dji/pcr_xm051.mp4",
@@ -353,7 +362,8 @@
      "tube rack"
     ]
    ],
-   "notes": "Touches: the free (left) hand arriving at and closing on a rack or a tube in it, from 0.5 s contact sheets; the hand moves between the two racks every 2-4 s, so times are +-0.5 s and tube vs rack is a guess."
+   "notes": "Touches: the free (left) hand arriving at and closing on a rack or a tube in it, from 0.5 s contact sheets; the hand moves between the two racks every 2-4 s, so times are +-0.5 s and tube vs rack is a guess.",
+   "touch_labelled": true
   },
   "pcr105": {
    "path": "lsv_dji/pcr_105.mp4",
@@ -368,7 +378,8 @@
    ],
    "tip_off": [],
    "touch": [],
-   "notes": ""
+   "notes": "",
+   "touch_labelled": false
   },
   "hood033": {
    "path": "lsv_hood/cas9_hood_033.mp4",
@@ -383,7 +394,8 @@
     61.5
    ],
    "touch": [],
-   "notes": ""
+   "notes": "",
+   "touch_labelled": false
   },
   "hood034": {
    "path": "lsv_hood/cas9_hood_034.mp4",
@@ -398,7 +410,8 @@
     48.2
    ],
    "touch": [],
-   "notes": "Hood camera, looked at in 0.5 s steps. 32.5 pipette held upright over the waste beaker at the right (eject), 33-34 pressed upright into the tip box, lifted 34.3. 48.0-48.5 upright over the beaker again (eject), then the pipette is put down and a second pipette is pressed into a box at 51.0-51.5 and lifted ~51.8. The tip itself is too small to see; an earlier upright visit at 1.5-3.5 is left out as unclear. Touches not labelled."
+   "notes": "Hood camera, looked at in 0.5 s steps. 32.5 pipette held upright over the waste beaker at the right (eject), 33-34 pressed upright into the tip box, lifted 34.3. 48.0-48.5 upright over the beaker again (eject), then the pipette is put down and a second pipette is pressed into a box at 51.0-51.5 and lifted ~51.8. The tip itself is too small to see; an earlier upright visit at 1.5-3.5 is left out as unclear. Touches not labelled.",
+   "touch_labelled": false
   }
  }
 }
