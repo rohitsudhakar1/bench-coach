@@ -248,18 +248,3 @@ Still open (for the part owners):
     The October 31 sweep did run table mode through the launcher on the generated overhead video
     from `tests/test_table_e2e.py`: 5 done and 3 skipped, as scripted.
 
-## Git log check
-
-Run before this file was added: `git log --format='%h %an %aI %cI' main..HEAD`
-
-```
-e4bd002 Andy Bei 2026-10-30T20:52:03-04:00 2026-10-30T20:52:03-04:00
-04637c3 Andy Bei 2026-10-30T20:49:43-04:00 2026-10-30T20:49:43-04:00
-d394aa4 Andy Bei 2026-10-30T20:47:07-04:00 2026-10-30T20:47:07-04:00
-280fa0d Andy Bei 2026-10-30T20:44:26-04:00 2026-10-30T20:44:26-04:00
-9161675 Andy Bei 2026-10-30T20:42:15-04:00 2026-10-30T20:42:15-04:00
-bdf9430 Andy Bei 2026-10-30T20:37:33-04:00 2026-10-30T20:37:33-04:00
-bf2f00b Andy Bei 2026-10-30T20:37:07-04:00 2026-10-30T20:37:07-04:00
-74e7274 Andy Bei 2026-10-30T20:36:00-04:00 2026-10-30T20:36:00-04:00
-1045407 Andy Bei 2026-10-30T20:36:00-04:00 2026-10-30T20:36:00-04:00
-```

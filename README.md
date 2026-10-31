@@ -9,7 +9,7 @@ Built by the team at the MIT ScienceClaw hackathon, October 30 to November 1, 20
 You need Python 3.10 to 3.12 (or [uv](https://docs.astral.sh/uv/), which fetches 3.12 for you) and ffmpeg. The install is about 1.3 GB because the vision models need PyTorch.
 
 ```sh
-git clone https://github.com/rbei001/bench-coach
+git clone https://github.com/rohitsudhakar1/bench-coach
 cd bench-coach
 ./scripts/setup.sh
 export BENCH_PY="$PWD/.venv/bin/python"
