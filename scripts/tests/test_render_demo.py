@@ -120,3 +120,8 @@ def test_encoder_writes_a_1080p_h264_file(tmp_path):
                             "stream=codec_name,width,height", "-of", "json", str(out)], capture_output=True, text=True)
     s = json.loads(probe.stdout)["streams"][0]
     assert (s["codec_name"], s["width"], s["height"]) == ("h264", 1920, 1080)
+
+
+def test_end_card_and_branded_title_are_full_frames():
+    assert R.end_card(["Bench Coach", "a line"]).shape == (L.H, L.W, 3)
+    assert R.title_card("Tip test", ["one"], "Bench Coach, a hackathon").shape == (L.H, L.W, 3)

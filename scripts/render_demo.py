@@ -484,10 +484,10 @@ def cam_tag(i: int, name: str, sprites):
     return sprites.pill(f"Camera {i + 1}  ·  {name}", (30, 38, 48), 16)
 
 
-def title_card(title: str, lines: list[str]) -> np.ndarray:
+def title_card(title: str, lines: list[str], brand: str = "BENCH COACH") -> np.ndarray:
     img = Image.new("RGB", (L.W, L.H), BG)
     d = ImageDraw.Draw(img)
-    d.text((160, 380), "BENCH COACH", font=font(30, "bold"), fill=BLUE)
+    d.text((160, 380), brand.upper(), font=font(30, "bold"), fill=BLUE)
     y = 430
     for line in L.wrap(title, 1600, measure(font(76, "bold")))[:2]:
         d.text((160, y), line, font=font(76, "bold"), fill=TEXT)
@@ -496,6 +496,18 @@ def title_card(title: str, lines: list[str]) -> np.ndarray:
     for line in lines:
         d.text((160, y), line, font=font(30), fill=MUTED)
         y += 44
+    return to_bgr(img)
+
+
+def end_card(lines: list[str]) -> np.ndarray:
+    """Closing card: first line large, the rest smaller underneath."""
+    img = Image.new("RGB", (L.W, L.H), BG)
+    d = ImageDraw.Draw(img)
+    y = 440
+    for k, line in enumerate(lines):
+        f = font(64, "bold") if k == 0 else font(30)
+        d.text((L.W // 2, y), line, font=f, fill=TEXT if k == 0 else MUTED, anchor="ma")
+        y += 100 if k == 0 else 46
     return to_bgr(img)
 
 
@@ -594,7 +606,9 @@ def pick_codec(wanted: str) -> str:
     return "videotoolbox" if "h264_videotoolbox" in enc else "x264"
 
 
-def render(out: Path, videos, names, analysis, log, protocol, note, credits, codec, seconds=0.0):
+def render(out: Path, videos, names, analysis, log, protocol, note, credits, codec, seconds=0.0,
+           brand="BENCH COACH", title_seconds=TITLE_SECONDS, note_seconds=NOTE_SECONDS, end_lines=None,
+           end_seconds=3.0):
     caps = [cv2.VideoCapture(str(v)) for v in videos]
     sizes = [(int(c.get(cv2.CAP_PROP_FRAME_WIDTH)), int(c.get(cv2.CAP_PROP_FRAME_HEIGHT))) for c in caps]
     lengths = [c.get(cv2.CAP_PROP_FRAME_COUNT) / (c.get(cv2.CAP_PROP_FPS) or 30) for c in caps]
@@ -612,8 +626,8 @@ def render(out: Path, videos, names, analysis, log, protocol, note, credits, cod
     title = protocol.get("name") or "Protocol"
 
     card = title_card(title, [f"{len(videos)} camera{'s' if len(videos) > 1 else ''}, {L.clock(duration)} of bench footage, "
-                              f"{len(steps)} protocol steps.", *credits])
-    for _ in range(int(TITLE_SECONDS * OUT_FPS)):
+                              f"{len(steps)} protocol steps.", *credits], brand)
+    for _ in range(int(title_seconds * OUT_FPS)):
         enc.write(card)
 
     base = np.zeros((L.H, L.W, 3), np.uint8)
@@ -664,8 +678,12 @@ def render(out: Path, videos, names, analysis, log, protocol, note, credits, cod
         c.release()
     if note:
         nc = note_card(note, credits)
-        for _ in range(int(NOTE_SECONDS * OUT_FPS)):
+        for _ in range(int(note_seconds * OUT_FPS)):
             enc.write(nc)
+    if end_lines:
+        ec = end_card(end_lines)
+        for _ in range(int(end_seconds * OUT_FPS)):
+            enc.write(ec)
     enc.close()
     return {"frames": enc.frames, "duration": duration, "layout": [vars(r) for r in lay.cams]}
 
@@ -698,6 +716,10 @@ def parse(argv=None):
     p.add_argument("--reuse", action="store_true", help="reuse the saved vision pass if there is one")
     p.add_argument("--no-note", action="store_true")
     p.add_argument("--llm-protocol", action="store_true", help="let Claude convert a .txt protocol (needs a key)")
+    p.add_argument("--brand", default="Bench Coach", help="small line above the title on the title card")
+    p.add_argument("--title-seconds", type=float, default=TITLE_SECONDS)
+    p.add_argument("--note-seconds", type=float, default=NOTE_SECONDS)
+    p.add_argument("--end", action="append", default=[], help="end card line (repeat; first is large)")
     p.add_argument("--codec", default="auto", choices=["auto", "videotoolbox", "x264"])
     return p.parse_args(argv)
 
@@ -764,7 +786,8 @@ def main(argv=None):
     t = time.time()
     names = [v.stem for v in videos]
     info = render(a.out, videos, names, analysis, log, protocol, note,
-                  credits_for(analysis, labelled), pick_codec(a.codec), a.seconds)
+                  credits_for(analysis, labelled), pick_codec(a.codec), a.seconds,
+                  brand=a.brand, title_seconds=a.title_seconds, note_seconds=a.note_seconds, end_lines=a.end)
     timings["render"] = round(time.time() - t, 1)
     timings["total"] = round(sum(timings.values()), 1)
     kinds = {}
