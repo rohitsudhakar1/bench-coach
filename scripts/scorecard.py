@@ -160,6 +160,42 @@ def vision_frame_rows(v):
     return rows
 
 
+def vision_tips():
+    from vision.eval import score_tips as vt
+    labels = json.loads((vt.HERE / "tips.json").read_text())
+    out = {}
+    for split in ("hold", "tune"):
+        res, _ = vt.score(labels, {}, split)
+        names = [n for n, c in labels["clips"].items() if c["split"] == split]
+        out[split] = {"res": res, "clips": len(names),
+                      "seconds": sum(labels["clips"][n]["seconds"] for n in names)}
+    return out
+
+
+def vision_tip_rows(v):
+    rows = []
+    names = {"tip_on": "tip pick-ups", "tip_off": "tip ejects", "hand_touch": "hand touches"}
+    for split, data in (("hold", "held-out"), ("tune", "tuning")):
+        s = v[split]
+        res = s["res"]
+        amount = (f"{s['clips']} clips, {s['seconds']:.0f} s; " + ", ".join(
+            f"{res[k]['labelled']} {names[k]}" for k in names) + " labelled")
+        parts, chance = [], []
+        for k in names:
+            x = res[k]
+            parts.append(f"{k} precision {r2(x['precision'])} ({x['right']} of {x['fired']}), "
+                         f"recall {r2(x['recall'])} ({x['found']} of {x['labelled']})")
+            chance.append(f"{k} {r2(x['chance_precision'])} / {r2(x['chance_recall'])}")
+        rows.append(row("Vision: tip on, tip off, touches against labelled moments", data, amount, "; ".join(parts),
+                        "An event counts when a labelled moment of that kind is within 1 s; each moment once. "
+                        "Touches are only scored on clips where touches were labelled.",
+                        "One person labelled from contact sheets at 0.5 s steps. Most tip ejects in these clips "
+                        "happen out of frame, so their times are guesses. tip_on uses the steady tip box rule; "
+                        "touches and tip_off are the older rules.",
+                        "precision / recall by chance: " + ", ".join(chance)))
+    return rows
+
+
 def vision_actions():
     from vision.eval import score_actions as va
     labels = load_actions()
@@ -838,6 +874,7 @@ def main(argv=None):
     jobs = [
         ("capture", lambda: capture_rows(raw.setdefault("capture", capture_check()))),
         ("vision", lambda: vision_frame_rows(raw.setdefault("vision_frames", vision_frames()))),
+        ("vision", lambda: vision_tip_rows(raw.setdefault("vision_tips", vision_tips()))),
         ("vision", lambda: vision_action_rows(raw.setdefault("vision_actions", vision_actions()))),
         ("vision", lambda: table_rows(raw.setdefault("table", table_mode()))),
         ("angle", lambda: angle_rows(raw.setdefault("angle", angle_scores()))),

@@ -1,0 +1,68 @@
+{
+ "tune": {
+  "tip_on": {
+   "fired": 0,
+   "right": 0,
+   "labelled": 14,
+   "found": 0,
+   "precision": null,
+   "recall": 0.0,
+   "chance_precision": null,
+   "chance_recall": 0.0
+  },
+  "tip_off": {
+   "fired": 0,
+   "right": 0,
+   "labelled": 9,
+   "found": 0,
+   "precision": null,
+   "recall": 0.0,
+   "chance_precision": null,
+   "chance_recall": 0.0
+  },
+  "hand_touch": {
+   "fired": 5,
+   "right": 1,
+   "labelled": 18,
+   "found": 1,
+   "precision": 0.2,
+   "recall": 0.06,
+   "chance_precision": 0.34,
+   "chance_recall": 0.09,
+   "same_object": 0
+  }
+ },
+ "hold": {
+  "tip_on": {
+   "fired": 1,
+   "right": 0,
+   "labelled": 16,
+   "found": 0,
+   "precision": 0.0,
+   "recall": 0.0,
+   "chance_precision": 0.04,
+   "chance_recall": 0.0
+  },
+  "tip_off": {
+   "fired": 1,
+   "right": 0,
+   "labelled": 13,
+   "found": 0,
+   "precision": 0.0,
+   "recall": 0.0,
+   "chance_precision": 0.0,
+   "chance_recall": 0.0
+  },
+  "hand_touch": {
+   "fired": 11,
+   "right": 5,
+   "labelled": 33,
+   "found": 5,
+   "precision": 0.45,
+   "recall": 0.15,
+   "chance_precision": 0.26,
+   "chance_recall": 0.09,
+   "same_object": 1
+  }
+ }
+}
