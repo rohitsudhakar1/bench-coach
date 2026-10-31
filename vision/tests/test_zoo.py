@@ -41,3 +41,22 @@ def test_unknown_detector_name():
 def test_detector_option_defaults_to_tiny():
     assert parse(["--source", "a.mp4"]).detector == "gdino-tiny"
     assert parse(["--source", "a.mp4", "--detector", "owlv2"]).detector == "owlv2"
+
+
+def test_florence_phrase_scores_line_up_with_boxes():
+    from vision.zoo import phrase_scores
+    toks = ["<s>", "hand", "<loc_1>", "<loc_2>", "<loc_3>", "<loc_4>",
+            "tip", "Ġbox", "<loc_5>", "<loc_6>", "<loc_7>", "<loc_8>", "<loc_9>", "<loc_9>", "<loc_9>", "<loc_9>",
+            "w", "aste", "<loc_1>", "<loc_2>", "<loc_3>", "<loc_4>", "</s>"]
+    probs = [1.0, 0.9, 0.5, 0.5, 0.5, 0.5, 0.6, 0.5, 0.2, 0.2, 0.2, 0.2, 1, 1, 1, 1, 0.4, 1.0, 0.9, 0.9, 0.9, 0.9, 0.3]
+    out = phrase_scores(toks, probs)
+    assert len(out) == 4  # tip box has two boxes
+    assert out[0]["start"] == 0.9 and out[0]["loc"] == 0.5
+    assert out[1]["start"] == out[2]["start"] == 0.6
+    assert out[1]["phrase"] == 0.3
+    assert out[3]["start"] == 0.4
+
+
+def test_florence_phrase_scores_give_up_on_odd_output():
+    from vision.zoo import phrase_scores
+    assert phrase_scores(["<s>", "<loc_1>", "<loc_2>", "<loc_3>", "<loc_4>"], [1] * 5) == []
