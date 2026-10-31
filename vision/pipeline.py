@@ -24,7 +24,7 @@ _DEFAULT = object()
 class Vision:
     def __init__(self, n_cams: int, new_draw: bool = False, rules: Rules | None = None,
                  scene: SceneRules | None = None, draw: DrawRules | None = None,
-                 tips=_DEFAULT, tip_kinds=TIP_KINDS):
+                 tips=_DEFAULT, tip_kinds=TIP_KINDS, stops: bool = False):
         self.new_draw = new_draw
         # tips: the anchor rules in tips.py replace the engine's own events of tip_kinds.
         # None turns them off (the engine's own rules for every kind).
@@ -42,10 +42,16 @@ class Vision:
         self.detector_times = [-float("inf")] * n_cams
         self.hands = [[] for _ in range(n_cams)]
         self.on_entry = None  # called with every draw-tracker entry (the Claude check uses it)
+        from .stops import StopEstimator
+        self.stops = StopEstimator(n_cams) if stops else None
+        self.stop_pip_times = [-float("inf")] * n_cams
+        self.last_t = 0.0
 
-    def step(self, cam: int, t: float, w: int, h: int, landmarked: list, raw: list | None = None) -> list:
-        """raw: this frame's new detector boxes (container ones labelled "container:..."), or None."""
+    def step(self, cam: int, t: float, w: int, h: int, landmarked: list, raw: list | None = None,
+             raw_t: float | None = None) -> list:
+        """raw: new detector boxes, or None; raw_t: their source-frame time when asynchronous."""
         fresh = raw is not None
+        self.last_t = max(self.last_t, t)
         if fresh:
             self.detector_times[cam] = t
             conts = [Det(d.label[len(CONTAINER):], d.box, d.score) for d in raw if d.label.startswith(CONTAINER)]
@@ -72,6 +78,12 @@ class Vision:
                                  if t - self.detector_times[cam] <= 1.0 else [], w)
         gate.update(t, gate_hands)
         gate.observe(t, eng.pip.box if eng.pip else None, gate_hands)
+        if self.stops is not None:
+            if fresh and eng.pip is not None and eng.s.pip_t == t:
+                self.stop_pip_times[cam] = t if raw_t is None else raw_t
+            qualified = eng.pip is not None and gate.allows(eng.pip.box) and not any(
+                iou(eng.pip.box, stand) >= 0.3 for stand in self.scenes[cam].stands)
+            self.stops.observe(cam, t, eng.pip_hand, eng.pip, qualified, t - self.stop_pip_times[cam])
         for e in events:
             if e["kind"] == "objects":
                 for box in e["detail"]["boxes"]:
@@ -85,7 +97,7 @@ class Vision:
             for en in self.dips[cam].update(t, eng.pip.box if eng.pip is not None else None, eng.pip_hand):
                 self._push(en)
             events += self.seq.flush(t)
-        return events
+        return self.stops.process(events, t) if self.stops is not None else events
 
     def _push(self, en):
         self.seq.push(en)
@@ -93,12 +105,13 @@ class Vision:
             self.on_entry(en)
 
     def finish(self) -> list:
-        if not self.new_draw:
-            return []
-        for d in self.dips:
-            for en in d.finish():
-                self._push(en)
-        return self.seq.flush(0.0, final=True)
+        events = []
+        if self.new_draw:
+            for d in self.dips:
+                for en in d.finish():
+                    self._push(en)
+            events = self.seq.flush(0.0, final=True)
+        return self.stops.process(events, self.last_t, final=True) if self.stops is not None else events
 
 
 def to_source_pixels(events: list, processed_shape, source_shape, detector_t=None):

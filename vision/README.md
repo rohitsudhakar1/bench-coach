@@ -42,6 +42,53 @@ present is used.
 Tests: `$BENCH_PY -m pytest vision/tests`. Sample-dependent tests skip when
 `BENCH_SAMPLES` is unset or the required clips are missing.
 
+## Experimental plunger stops (proposal)
+
+Proposed addition to the event contract, not yet adopted in `docs/EVENTS.md`:
+with `--stops`, each `dispense` gets `detail.stop`, one of `"first"`, `"second"`,
+or `"unknown"`. The field is absent by default. No new event kind, coach hint,
+warning or step-completion rule is added. Existing hint flags and confidence stay
+unchanged. This is a visual estimate, not evidence that liquid was delivered.
+
+```sh
+$BENCH_PY -m vision --source "$BENCH_SAMPLES/lsv_mv/CP-Left-Front-414-445.mp4" \
+  "$BENCH_SAMPLES/lsv_mv/CP-Right-Front-414-445.mp4" \
+  --new-draw --stops --no-verify --hub none --port 0
+$BENCH_PY -m vision.eval.stops --output vision/eval/stops-results.json \
+  --sheets vision/eval/out/stops
+$BENCH_PY -m pytest vision/tests/test_stops.py -q
+```
+
+`--stops` works with the original press rule and `--new-draw`. It buffers dispenses
+until two media seconds after their event/end time, or EOF. Other events pass
+through, so delivery can be out of timestamp order; event timestamps are retained.
+An unfinished press at the deadline or EOF is unknown. A stalled input can postpone
+delivery until another frame or shutdown. Table mode does not measure thumb motion
+and has no stops flag. There are no new model downloads, packages or API keys.
+
+`stops.py` measures the fall in `Hand.thumb_ratio()` from a stable baseline. Its unit
+is wrist-to-middle-knuckle length in the image, not millimetres. A three-frame median
+rejects isolated spikes. A press starts at a 0.18-unit drop and ends after returning
+within 0.06 units of rest for 0.15 s. Stable levels need at least three samples over
+0.15 s, within 0.04 units. A shallow plateau (peak 0.18–0.45) estimates first stop.
+A pause followed by a second plateau at least 0.12 units deeper estimates second stop.
+A deeper single plateau or a ramp without distinct pauses is unknown. These are
+uncalibrated heuristic thresholds, tested on synthetic traces only; direct second-stop
+presses, camera foreshortening and different grips can defeat them.
+
+Stop evidence requires landmarks on the held hand, palm length at least 8 pixels,
+thumb/index near the pipette, the existing held-pipette gate, and a detector frame no
+more than 0.6 s old. Missing frames, gaps over 0.25 s, hand changes or abrupt geometry
+changes invalidate a press. Box-only hands and vessel dwell never establish a stop.
+Several presses in one event, reused presses or conflicting camera results are unknown.
+Internal `Press` records retain start, end, depth, hand, label and rejection reason for
+evaluation; only `detail.stop` is added to the event.
+
+On the six CP clips, paired cached replay emitted 8 dispense hints: 0 first, 0 second,
+8 unknown. All eight windows were inspected; none allowed a reliable mechanical stop
+count. This does not establish accuracy. See [STOPS-REPORT.md](STOPS-REPORT.md) and
+the per-window notes in `eval/stops-review.json`.
+
 ## How it works
 
 - Hands: MediaPipe Hand Landmarker on every frame. Blue and purple pixels are painted skin
@@ -253,6 +300,11 @@ per-condition counts and limits. These are rendered stress cases, not real-table
 Table calibration and tracking use the existing OpenCV and NumPy dependencies below.
 
 ## Sources and licences
+
+- Python standard library, PSF-2.0, https://docs.python.org/3/library/.
+  Stop traces, median smoothing, event buffering and evaluation JSON. Stop estimation
+  reuses the existing MediaPipe hands and Grounding DINO boxes listed below; OpenCV
+  decodes review frames and pytest checks synthetic traces. No new dependency.
 
 - MediaPipe Hand Landmarker, model `hand_landmarker.task` float16, Apache-2.0.
   https://ai.google.dev/edge/mediapipe/solutions/vision/hand_landmarker. Hand points per frame.

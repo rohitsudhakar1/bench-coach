@@ -35,6 +35,8 @@ def parse(argv=None):
     p.add_argument("--quiet-objects", action="store_true", help="do not print objects events")
     p.add_argument("--new-draw", action="store_true",
                    help="tip-into-container draw/dispense tracker; its events carry detail.hint = true")
+    p.add_argument("--stops", action="store_true",
+                   help="experimental dispense detail.stop estimate; waits up to 2 media seconds for release")
     p.add_argument("--dispense-min-dwell", type=float, default=0.0,
                    help="--new-draw: send a dispense hint only when the tip stayed in this long (0.4 tried; off by default)")
     p.add_argument("--containers-every", type=int, default=1, help="container prompt every n-th detector run")
@@ -75,7 +77,7 @@ def main(argv=None):
     n = len(sources)
     new_draw = a.new_draw and not a.no_detector
     from .draw import DrawRules
-    vis = Vision(n, new_draw, draw=DrawRules(disp_min_dwell=a.dispense_min_dwell))
+    vis = Vision(n, new_draw, draw=DrawRules(disp_min_dwell=a.dispense_min_dwell), stops=a.stops)
     trackers = [HandTracker(mirrored=a.mirrored) for _ in range(n)]
     sink = Sink(None if a.hub == "none" else a.hub, a.log, a.quiet_objects)
 
@@ -162,7 +164,7 @@ def main(argv=None):
                 if raw is not None:
                     stats["detections"][i] += 1
                 h, w = frame.shape[:2]
-                events = checked(vis.step(i, t, w, h, trackers[i](frame, t), raw))
+                events = checked(vis.step(i, t, w, h, trackers[i](frame, t), raw, raw_t=det_t[i]))
                 to_source_pixels(events, frame.shape, src.shape, det_t[i])
                 sink.send(events)
                 stats["events"] += len(events)

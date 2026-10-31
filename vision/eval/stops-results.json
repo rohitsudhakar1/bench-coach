@@ -1,0 +1,850 @@
+{
+  "method": "existing 10 Hz MediaPipe/Grounding DINO cache replay; no new inference",
+  "accuracy": null,
+  "manual_stop_ground_truth": "not supplied by this script",
+  "skipped_missing_samples": [],
+  "results": [
+    {
+      "clips": [
+        "lsv_mv/CP-Left-Front-12-27.mp4"
+      ],
+      "mode": "legacy",
+      "coverage": [
+        {
+          "frames": 150,
+          "landmarked_frames": 113,
+          "usable_thumb_frames": 1
+        }
+      ],
+      "dispenses": 0,
+      "labels": {
+        "first": 0,
+        "second": 0,
+        "unknown": 0
+      },
+      "events_unchanged_except_stop_and_delivery_order": true,
+      "presses": [],
+      "dispense_events": []
+    },
+    {
+      "clips": [
+        "lsv_mv/CP-Right-Front-12-27.mp4"
+      ],
+      "mode": "legacy",
+      "coverage": [
+        {
+          "frames": 150,
+          "landmarked_frames": 95,
+          "usable_thumb_frames": 4
+        }
+      ],
+      "dispenses": 0,
+      "labels": {
+        "first": 0,
+        "second": 0,
+        "unknown": 0
+      },
+      "events_unchanged_except_stop_and_delivery_order": true,
+      "presses": [],
+      "dispense_events": []
+    },
+    {
+      "clips": [
+        "lsv_mv/CP-Left-Front-12-27.mp4",
+        "lsv_mv/CP-Right-Front-12-27.mp4"
+      ],
+      "mode": "legacy",
+      "coverage": [
+        {
+          "frames": 150,
+          "landmarked_frames": 113,
+          "usable_thumb_frames": 1
+        },
+        {
+          "frames": 150,
+          "landmarked_frames": 95,
+          "usable_thumb_frames": 4
+        }
+      ],
+      "dispenses": 0,
+      "labels": {
+        "first": 0,
+        "second": 0,
+        "unknown": 0
+      },
+      "events_unchanged_except_stop_and_delivery_order": true,
+      "presses": [],
+      "dispense_events": []
+    },
+    {
+      "clips": [
+        "lsv_mv/CP-Left-Front-12-27.mp4"
+      ],
+      "mode": "new-draw",
+      "coverage": [
+        {
+          "frames": 150,
+          "landmarked_frames": 113,
+          "usable_thumb_frames": 1
+        }
+      ],
+      "dispenses": 1,
+      "labels": {
+        "first": 0,
+        "second": 0,
+        "unknown": 1
+      },
+      "events_unchanged_except_stop_and_delivery_order": true,
+      "presses": [],
+      "dispense_events": [
+        {
+          "t": 6.4,
+          "source": "vision",
+          "kind": "dispense",
+          "object": "bottle",
+          "hand": null,
+          "step": null,
+          "confidence": 0.3,
+          "detail": {
+            "cam": 0,
+            "cams": [
+              0
+            ],
+            "start": 4.9,
+            "end": 6.4,
+            "hint": true,
+            "stop": "unknown"
+          }
+        }
+      ]
+    },
+    {
+      "clips": [
+        "lsv_mv/CP-Right-Front-12-27.mp4"
+      ],
+      "mode": "new-draw",
+      "coverage": [
+        {
+          "frames": 150,
+          "landmarked_frames": 95,
+          "usable_thumb_frames": 4
+        }
+      ],
+      "dispenses": 0,
+      "labels": {
+        "first": 0,
+        "second": 0,
+        "unknown": 0
+      },
+      "events_unchanged_except_stop_and_delivery_order": true,
+      "presses": [],
+      "dispense_events": []
+    },
+    {
+      "clips": [
+        "lsv_mv/CP-Left-Front-12-27.mp4",
+        "lsv_mv/CP-Right-Front-12-27.mp4"
+      ],
+      "mode": "new-draw",
+      "coverage": [
+        {
+          "frames": 150,
+          "landmarked_frames": 113,
+          "usable_thumb_frames": 1
+        },
+        {
+          "frames": 150,
+          "landmarked_frames": 95,
+          "usable_thumb_frames": 4
+        }
+      ],
+      "dispenses": 1,
+      "labels": {
+        "first": 0,
+        "second": 0,
+        "unknown": 1
+      },
+      "events_unchanged_except_stop_and_delivery_order": true,
+      "presses": [],
+      "dispense_events": [
+        {
+          "t": 6.4,
+          "source": "vision",
+          "kind": "dispense",
+          "object": "bottle",
+          "hand": null,
+          "step": null,
+          "confidence": 0.3,
+          "detail": {
+            "cam": 0,
+            "cams": [
+              0
+            ],
+            "start": 4.9,
+            "end": 6.4,
+            "hint": true,
+            "stop": "unknown"
+          }
+        }
+      ]
+    },
+    {
+      "clips": [
+        "lsv_mv/CP-Left-Front-249-269.mp4"
+      ],
+      "mode": "legacy",
+      "coverage": [
+        {
+          "frames": 200,
+          "landmarked_frames": 176,
+          "usable_thumb_frames": 49
+        }
+      ],
+      "dispenses": 0,
+      "labels": {
+        "first": 0,
+        "second": 0,
+        "unknown": 0
+      },
+      "events_unchanged_except_stop_and_delivery_order": true,
+      "presses": [
+        {
+          "cam": 0,
+          "start": 11.1,
+          "end": 14.1,
+          "hand": "left",
+          "depth": 0.26197985371570087,
+          "stop": "unknown",
+          "reason": "incomplete_or_occluded"
+        }
+      ],
+      "dispense_events": []
+    },
+    {
+      "clips": [
+        "lsv_mv/CP-Right-Front-249-269.mp4"
+      ],
+      "mode": "legacy",
+      "coverage": [
+        {
+          "frames": 200,
+          "landmarked_frames": 185,
+          "usable_thumb_frames": 103
+        }
+      ],
+      "dispenses": 0,
+      "labels": {
+        "first": 0,
+        "second": 0,
+        "unknown": 0
+      },
+      "events_unchanged_except_stop_and_delivery_order": true,
+      "presses": [
+        {
+          "cam": 0,
+          "start": 19.6,
+          "end": 20.0,
+          "hand": "left",
+          "depth": 0.4491644934529714,
+          "stop": "unknown",
+          "reason": "incomplete_or_occluded"
+        }
+      ],
+      "dispense_events": []
+    },
+    {
+      "clips": [
+        "lsv_mv/CP-Left-Front-249-269.mp4",
+        "lsv_mv/CP-Right-Front-249-269.mp4"
+      ],
+      "mode": "legacy",
+      "coverage": [
+        {
+          "frames": 200,
+          "landmarked_frames": 176,
+          "usable_thumb_frames": 49
+        },
+        {
+          "frames": 200,
+          "landmarked_frames": 185,
+          "usable_thumb_frames": 103
+        }
+      ],
+      "dispenses": 0,
+      "labels": {
+        "first": 0,
+        "second": 0,
+        "unknown": 0
+      },
+      "events_unchanged_except_stop_and_delivery_order": true,
+      "presses": [
+        {
+          "cam": 0,
+          "start": 11.1,
+          "end": 14.1,
+          "hand": "left",
+          "depth": 0.26197985371570087,
+          "stop": "unknown",
+          "reason": "incomplete_or_occluded"
+        },
+        {
+          "cam": 1,
+          "start": 19.6,
+          "end": 20.0,
+          "hand": "left",
+          "depth": 0.4491644934529714,
+          "stop": "unknown",
+          "reason": "incomplete_or_occluded"
+        }
+      ],
+      "dispense_events": []
+    },
+    {
+      "clips": [
+        "lsv_mv/CP-Left-Front-249-269.mp4"
+      ],
+      "mode": "new-draw",
+      "coverage": [
+        {
+          "frames": 200,
+          "landmarked_frames": 176,
+          "usable_thumb_frames": 49
+        }
+      ],
+      "dispenses": 1,
+      "labels": {
+        "first": 0,
+        "second": 0,
+        "unknown": 1
+      },
+      "events_unchanged_except_stop_and_delivery_order": true,
+      "presses": [
+        {
+          "cam": 0,
+          "start": 11.1,
+          "end": 14.1,
+          "hand": "left",
+          "depth": 0.26197985371570087,
+          "stop": "unknown",
+          "reason": "incomplete_or_occluded"
+        }
+      ],
+      "dispense_events": [
+        {
+          "t": 4.4,
+          "source": "vision",
+          "kind": "dispense",
+          "object": null,
+          "hand": "left",
+          "step": null,
+          "confidence": 0.3,
+          "detail": {
+            "cam": 0,
+            "cams": [
+              0
+            ],
+            "start": 3.7,
+            "end": 4.4,
+            "hint": true,
+            "stop": "unknown"
+          }
+        }
+      ]
+    },
+    {
+      "clips": [
+        "lsv_mv/CP-Right-Front-249-269.mp4"
+      ],
+      "mode": "new-draw",
+      "coverage": [
+        {
+          "frames": 200,
+          "landmarked_frames": 185,
+          "usable_thumb_frames": 103
+        }
+      ],
+      "dispenses": 0,
+      "labels": {
+        "first": 0,
+        "second": 0,
+        "unknown": 0
+      },
+      "events_unchanged_except_stop_and_delivery_order": true,
+      "presses": [
+        {
+          "cam": 0,
+          "start": 19.6,
+          "end": 20.0,
+          "hand": "left",
+          "depth": 0.4491644934529714,
+          "stop": "unknown",
+          "reason": "incomplete_or_occluded"
+        }
+      ],
+      "dispense_events": []
+    },
+    {
+      "clips": [
+        "lsv_mv/CP-Left-Front-249-269.mp4",
+        "lsv_mv/CP-Right-Front-249-269.mp4"
+      ],
+      "mode": "new-draw",
+      "coverage": [
+        {
+          "frames": 200,
+          "landmarked_frames": 176,
+          "usable_thumb_frames": 49
+        },
+        {
+          "frames": 200,
+          "landmarked_frames": 185,
+          "usable_thumb_frames": 103
+        }
+      ],
+      "dispenses": 2,
+      "labels": {
+        "first": 0,
+        "second": 0,
+        "unknown": 2
+      },
+      "events_unchanged_except_stop_and_delivery_order": true,
+      "presses": [
+        {
+          "cam": 0,
+          "start": 11.1,
+          "end": 14.1,
+          "hand": "left",
+          "depth": 0.26197985371570087,
+          "stop": "unknown",
+          "reason": "incomplete_or_occluded"
+        },
+        {
+          "cam": 1,
+          "start": 19.6,
+          "end": 20.0,
+          "hand": "left",
+          "depth": 0.4491644934529714,
+          "stop": "unknown",
+          "reason": "incomplete_or_occluded"
+        }
+      ],
+      "dispense_events": [
+        {
+          "t": 4.4,
+          "source": "vision",
+          "kind": "dispense",
+          "object": null,
+          "hand": "left",
+          "step": null,
+          "confidence": 0.3,
+          "detail": {
+            "cam": 0,
+            "cams": [
+              0
+            ],
+            "start": 3.7,
+            "end": 4.4,
+            "hint": true,
+            "stop": "unknown"
+          }
+        },
+        {
+          "t": 10.8,
+          "source": "vision",
+          "kind": "dispense",
+          "object": null,
+          "hand": "left",
+          "step": null,
+          "confidence": 0.8,
+          "detail": {
+            "cam": 1,
+            "cams": [
+              1
+            ],
+            "start": 8.1,
+            "end": 10.8,
+            "hint": true,
+            "stop": "unknown"
+          }
+        }
+      ]
+    },
+    {
+      "clips": [
+        "lsv_mv/CP-Left-Front-414-445.mp4"
+      ],
+      "mode": "legacy",
+      "coverage": [
+        {
+          "frames": 310,
+          "landmarked_frames": 305,
+          "usable_thumb_frames": 54
+        }
+      ],
+      "dispenses": 0,
+      "labels": {
+        "first": 0,
+        "second": 0,
+        "unknown": 0
+      },
+      "events_unchanged_except_stop_and_delivery_order": true,
+      "presses": [],
+      "dispense_events": []
+    },
+    {
+      "clips": [
+        "lsv_mv/CP-Right-Front-414-445.mp4"
+      ],
+      "mode": "legacy",
+      "coverage": [
+        {
+          "frames": 310,
+          "landmarked_frames": 310,
+          "usable_thumb_frames": 119
+        }
+      ],
+      "dispenses": 0,
+      "labels": {
+        "first": 0,
+        "second": 0,
+        "unknown": 0
+      },
+      "events_unchanged_except_stop_and_delivery_order": true,
+      "presses": [
+        {
+          "cam": 0,
+          "start": 29.6,
+          "end": 31.0,
+          "hand": "left",
+          "depth": 0.6477485544927584,
+          "stop": "unknown",
+          "reason": "incomplete_or_occluded"
+        }
+      ],
+      "dispense_events": []
+    },
+    {
+      "clips": [
+        "lsv_mv/CP-Left-Front-414-445.mp4",
+        "lsv_mv/CP-Right-Front-414-445.mp4"
+      ],
+      "mode": "legacy",
+      "coverage": [
+        {
+          "frames": 310,
+          "landmarked_frames": 305,
+          "usable_thumb_frames": 54
+        },
+        {
+          "frames": 310,
+          "landmarked_frames": 310,
+          "usable_thumb_frames": 119
+        }
+      ],
+      "dispenses": 0,
+      "labels": {
+        "first": 0,
+        "second": 0,
+        "unknown": 0
+      },
+      "events_unchanged_except_stop_and_delivery_order": true,
+      "presses": [
+        {
+          "cam": 1,
+          "start": 29.6,
+          "end": 31.0,
+          "hand": "left",
+          "depth": 0.6477485544927584,
+          "stop": "unknown",
+          "reason": "incomplete_or_occluded"
+        }
+      ],
+      "dispense_events": []
+    },
+    {
+      "clips": [
+        "lsv_mv/CP-Left-Front-414-445.mp4"
+      ],
+      "mode": "new-draw",
+      "coverage": [
+        {
+          "frames": 310,
+          "landmarked_frames": 305,
+          "usable_thumb_frames": 54
+        }
+      ],
+      "dispenses": 4,
+      "labels": {
+        "first": 0,
+        "second": 0,
+        "unknown": 4
+      },
+      "events_unchanged_except_stop_and_delivery_order": true,
+      "presses": [],
+      "dispense_events": [
+        {
+          "t": 9.2,
+          "source": "vision",
+          "kind": "dispense",
+          "object": null,
+          "hand": "left",
+          "step": null,
+          "confidence": 0.5,
+          "detail": {
+            "cam": 0,
+            "cams": [
+              0
+            ],
+            "start": 8.1,
+            "end": 9.2,
+            "hint": true,
+            "stop": "unknown"
+          }
+        },
+        {
+          "t": 23.2,
+          "source": "vision",
+          "kind": "dispense",
+          "object": null,
+          "hand": "right",
+          "step": null,
+          "confidence": 0.8,
+          "detail": {
+            "cam": 0,
+            "cams": [
+              0
+            ],
+            "start": 21.3,
+            "end": 23.2,
+            "hint": true,
+            "stop": "unknown"
+          }
+        },
+        {
+          "t": 25.7,
+          "source": "vision",
+          "kind": "dispense",
+          "object": null,
+          "hand": "left",
+          "step": null,
+          "confidence": 0.8,
+          "detail": {
+            "cam": 0,
+            "cams": [
+              0
+            ],
+            "start": 25.3,
+            "end": 25.7,
+            "hint": true,
+            "stop": "unknown"
+          }
+        },
+        {
+          "t": 29.6,
+          "source": "vision",
+          "kind": "dispense",
+          "object": null,
+          "hand": "left",
+          "step": null,
+          "confidence": 0.3,
+          "detail": {
+            "cam": 0,
+            "cams": [
+              0
+            ],
+            "start": 29.3,
+            "end": 29.6,
+            "hint": true,
+            "stop": "unknown"
+          }
+        }
+      ]
+    },
+    {
+      "clips": [
+        "lsv_mv/CP-Right-Front-414-445.mp4"
+      ],
+      "mode": "new-draw",
+      "coverage": [
+        {
+          "frames": 310,
+          "landmarked_frames": 310,
+          "usable_thumb_frames": 119
+        }
+      ],
+      "dispenses": 1,
+      "labels": {
+        "first": 0,
+        "second": 0,
+        "unknown": 1
+      },
+      "events_unchanged_except_stop_and_delivery_order": true,
+      "presses": [
+        {
+          "cam": 0,
+          "start": 29.6,
+          "end": 31.0,
+          "hand": "left",
+          "depth": 0.6477485544927584,
+          "stop": "unknown",
+          "reason": "incomplete_or_occluded"
+        }
+      ],
+      "dispense_events": [
+        {
+          "t": 28.4,
+          "source": "vision",
+          "kind": "dispense",
+          "object": "tube",
+          "hand": "left",
+          "step": null,
+          "confidence": 0.6,
+          "detail": {
+            "cam": 0,
+            "cams": [
+              0
+            ],
+            "start": 25.3,
+            "end": 28.4,
+            "hint": true,
+            "stop": "unknown"
+          }
+        }
+      ]
+    },
+    {
+      "clips": [
+        "lsv_mv/CP-Left-Front-414-445.mp4",
+        "lsv_mv/CP-Right-Front-414-445.mp4"
+      ],
+      "mode": "new-draw",
+      "coverage": [
+        {
+          "frames": 310,
+          "landmarked_frames": 305,
+          "usable_thumb_frames": 54
+        },
+        {
+          "frames": 310,
+          "landmarked_frames": 310,
+          "usable_thumb_frames": 119
+        }
+      ],
+      "dispenses": 5,
+      "labels": {
+        "first": 0,
+        "second": 0,
+        "unknown": 5
+      },
+      "events_unchanged_except_stop_and_delivery_order": true,
+      "presses": [
+        {
+          "cam": 1,
+          "start": 29.6,
+          "end": 31.0,
+          "hand": "left",
+          "depth": 0.6477485544927584,
+          "stop": "unknown",
+          "reason": "incomplete_or_occluded"
+        }
+      ],
+      "dispense_events": [
+        {
+          "t": 16.0,
+          "source": "vision",
+          "kind": "dispense",
+          "object": "bottle",
+          "hand": "right",
+          "step": null,
+          "confidence": 0.5,
+          "detail": {
+            "cam": 1,
+            "cams": [
+              1
+            ],
+            "start": 15.7,
+            "end": 16.0,
+            "hint": true,
+            "stop": "unknown"
+          }
+        },
+        {
+          "t": 23.2,
+          "source": "vision",
+          "kind": "dispense",
+          "object": null,
+          "hand": "right",
+          "step": null,
+          "confidence": 0.8,
+          "detail": {
+            "cam": 0,
+            "cams": [
+              0
+            ],
+            "start": 21.3,
+            "end": 23.2,
+            "hint": true,
+            "stop": "unknown"
+          }
+        },
+        {
+          "t": 25.7,
+          "source": "vision",
+          "kind": "dispense",
+          "object": null,
+          "hand": "left",
+          "step": null,
+          "confidence": 0.8,
+          "detail": {
+            "cam": 0,
+            "cams": [
+              0
+            ],
+            "start": 25.3,
+            "end": 25.7,
+            "hint": true,
+            "stop": "unknown"
+          }
+        },
+        {
+          "t": 28.8,
+          "source": "vision",
+          "kind": "dispense",
+          "object": "beaker",
+          "hand": "right",
+          "step": null,
+          "confidence": 0.5,
+          "detail": {
+            "cam": 1,
+            "cams": [
+              1
+            ],
+            "start": 28.5,
+            "end": 28.8,
+            "hint": true,
+            "stop": "unknown"
+          }
+        },
+        {
+          "t": 30.8,
+          "source": "vision",
+          "kind": "dispense",
+          "object": null,
+          "hand": "left",
+          "step": null,
+          "confidence": 0.5,
+          "detail": {
+            "cam": 0,
+            "cams": [
+              0
+            ],
+            "start": 30.1,
+            "end": 30.8,
+            "hint": true,
+            "stop": "unknown"
+          }
+        }
+      ]
+    }
+  ]
+}

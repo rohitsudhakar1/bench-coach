@@ -1,0 +1,17 @@
+{
+  "method": "Manual inspection of 12 evenly spaced full-frame views per emitted paired-replay hint, plus 18 native-source hand crops for each of the five micropipette windows. Single reviewer; no mechanical stop ground truth.",
+  "events_inspected": 8,
+  "events_with_visually_checkable_stop_count": 0,
+  "accuracy": null,
+  "coordinate_system": "Crop bounds x1,y1,x2,y2 at frame width 640; scale all coordinates by native width / 640 before cropping. Crops are for inspection only and never enter detection.",
+  "rows": [
+    {"clip": "lsv_mv/CP-Left-Front-12-27.mp4", "event_t": 6.4, "review_start": 4.5, "review_end": 7.0, "stop_truth": null, "reason": "Glove handling; no held micropipette press to score."},
+    {"clip": "lsv_mv/CP-Left-Front-249-269.mp4", "event_t": 4.4, "review_start": 3.3, "review_end": 5.0, "stop_truth": null, "reason": "Serological pipette controller and long pipette; not a two-stop micropipette plunger."},
+    {"clip": "lsv_mv/CP-Right-Front-249-269.mp4", "event_t": 10.8, "review_start": 7.7, "review_end": 11.4, "stop_truth": null, "reason": "Serological pipette controller; grip changes cannot establish a micropipette stop count."},
+    {"clip": "lsv_mv/CP-Right-Front-414-445.mp4", "event_t": 16.0, "review_start": 15.3, "review_end": 16.6, "crop": [80, 0, 290, 155], "stop_truth": null, "reason": "Plunger is partly above the frame at the start; later visible thumb motion lacks readable complete travel and mechanical stops."},
+    {"clip": "lsv_mv/CP-Left-Front-414-445.mp4", "event_t": 23.2, "review_start": 20.9, "review_end": 23.8, "crop": [145, 85, 255, 190], "stop_truth": null, "reason": "Gloved grip obscures the plunger; hand repositioning is visible but first versus second stop is not."},
+    {"clip": "lsv_mv/CP-Left-Front-414-445.mp4", "event_t": 25.7, "review_start": 24.9, "review_end": 26.3, "crop": [145, 85, 255, 190], "stop_truth": null, "reason": "Plunger under the thumb is obscured; lowering into a bottle does not reveal stop depth."},
+    {"clip": "lsv_mv/CP-Right-Front-414-445.mp4", "event_t": 28.8, "review_start": 28.1, "review_end": 29.4, "crop": [80, 0, 290, 155], "stop_truth": null, "reason": "Thumb and plunger cap are partly visible, but this window does not show a complete measurable press through distinct depths."},
+    {"clip": "lsv_mv/CP-Left-Front-414-445.mp4", "event_t": 30.8, "review_start": 29.7, "review_end": 30.95, "crop": [145, 85, 255, 190], "stop_truth": null, "reason": "Gloved grip obscures plunger travel and the clip ends without a readable complete press."}
+  ]
+}

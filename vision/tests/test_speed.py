@@ -233,7 +233,7 @@ def test_file_loop_batches_both_views_and_finishes_remaining_view(monkeypatch):
     class Vision:
         def __init__(self, *args, **kwargs):
             pass
-        def step(self, cam, t, w, h, landmarked, raw):
+        def step(self, cam, t, w, h, landmarked, raw, raw_t=None):
             visits.append((cam, t, raw[0].box[0]))
             return []
         def finish(self):
