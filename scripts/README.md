@@ -34,6 +34,8 @@ Angle starts on capture's two feeds and consumes vision boxes by default. Set
 `--calibration angle/calibration.json`. The ROI must surround the actual shaft.
 Uncalibrated estimates are image projections, not physical 3D tilt.
 
+`--fake-vision` starts `scripts/fake_vision.py` in vision's place: a scripted 50-second session with one tilt, one reused tip and one skipped dispense, replayed on every Start; `--fake-speed 3` plays it three times faster. Without `--angle-roi`, angle gets `--need-box` and measures only inside vision's pipette box. See `REHEARSAL.md`.
+
 `--without vision angle` excludes parts; it can be repeated. `--base-port N` moves
 all six ports together, keeping the event-contract offsets. All service URLs and the
 hub's environment-based probes follow the new ports. Use only 8800–8899 for checks.
