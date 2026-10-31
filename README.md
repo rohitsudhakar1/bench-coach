@@ -54,9 +54,9 @@ flowchart LR
     Launcher[Scripts launcher and preflight] -.-> Hub
 ```
 
-The [event contract](docs/EVENTS.md) defines the ports, events and shared Unix epoch clock. Capture writes `cam0.mp4`, `cam1.mp4`, `mic.wav` and `timing.jsonl` to `runs/<run>/`. The hub adds `events.jsonl`, and note builds the lab note when the run stops. Producers print undelivered events to stdout when the hub is down.
+The [event contract](docs/EVENTS.md) defines the ports, events and shared Unix epoch clock. Capture writes `cam0.mp4`, `cam1.mp4`, `mic.wav` and `timing.jsonl` to `runs/<run>/`. The hub adds `events.jsonl`, and note builds the lab note when the run stops. Producers print undelivered events to stdout when the hub is down. Each event also carries a `bench` id, which is `"1"` unless classroom mode runs several benches on one hub.
 
-The coach follows the protocol from the event stream, listens through local speech recognition, counts spoken confirmations as "said" evidence, asks about vision hints in hint mode, and warns about reused tips, skipped steps and tilt. On the scripted demo it marked all 8 steps as planned and warned on all 3 planned mistakes; it has not yet been run with real vision, real capture and a real mic together. The launcher skips parts that are missing, so check the part dots on the page before a demo.
+The coach follows the protocol from the event stream, listens through local speech recognition, counts spoken confirmations as "said" evidence, asks about vision hints in hint mode, and warns about reused tips, skipped steps and tilt. On the scripted demo it marked all 8 steps as planned and warned on all 3 planned mistakes; it has not yet been run with real vision, real capture and a real mic together. Speech hearing was tuned on October 31. The coach now opens its noise gate a little sooner and gives Whisper a short list of lab words. Three reused recordings at two speeds and three noise levels went from 12 of 18 right to 18 of 18, but those recordings were also used for the tuning. A larger set made with eight computer voices was only scored for about 100 clips each way, almost all in one voice, and went from 81 of 99 right to 90 of 107. That is a small gain, and the other seven voices are close to unmeasured. See the [voice report](coach/VOICEROBUST-REPORT.md). The launcher skips parts that are missing, so check the part dots on the page before a demo.
 
 ## Run the demo
 
@@ -75,7 +75,7 @@ Choose one of these three commands. Stop it with Ctrl-C before starting another.
 ./scripts/demo.sh --replay app/samples/demo.jsonl --without capture vision angle coach note
 ```
 
-Wait for **Demo ready**, then open <http://127.0.0.1:8700>. For live cameras or sample videos, review the protocol, choose **Start run**, then **Stop**, and open **Lab note**. Check that capture recorded as well as the hub logging events. Logs are in `runs/logs/`, and Ctrl-C stops the launcher's processes. Speaker playback is off by default.
+Wait for **Demo ready**, then open <http://127.0.0.1:8700>. For live cameras or sample videos, review the protocol, choose **Start run**, then **Stop**, and open **Lab note**. The Lab note tab offers the PDF, a run ZIP, Benchling HTML, an eLabFTW `.eln` archive and a steps CSV. They are built from the saved note with no network call. A real Benchling paste and a real eLabFTW import have not been tried; see the [export report](note/ELNEXPORT-REPORT.md). Check that capture recorded as well as the hub logging events. Logs are in `runs/logs/`, and Ctrl-C stops the launcher's processes. Speaker playback is off by default.
 
 The bundled replay ticks off the first two steps and shows three lines in the conversation. Its angle reading, warning and question reach the event history but not the page, because the page shows those only during a run and a replay has no run. Its camera panels stay empty and it produces no recording or lab note. It does not measure recognition. For a saved log containing run events, use the [app replay guide](app/README.md) with an existing hub instead. The launcher's direct replay retains run events, which the rebuilt hub rejects through its event endpoint.
 
@@ -90,10 +90,13 @@ Open these paths on the running hub. They share the same run and event history.
 | `/trainer` | Review saved runs by protocol and student, with duration, done/skipped/unsure/unfinished counts, tip reuse and angles over the limit. Select one protocol to see its most missed steps. |
 | `/step` | Show the current instruction in large type, the next step, the latest warning and a Done button. Done sends a confirmation to the coach and records said evidence. |
 | `/calibrate` | Preview checkerboard corners from both capture feeds, collect pairs, compute a camera fit and save a good result. |
+| `/class` | Classroom overview when the launcher runs several benches. One card per bench shows the student, current instruction and last warning, and benches with a warning or an open question come first. Each card opens that bench's own page at `/benches/<id>/`. |
 
 Enter an optional student name on the bench page before Start. Refresh the trainer after a run or note changes. Its missed-step counts include unfinished steps in active runs and reflect recorded outcomes, not measured bench skill. Note links need the note service. See the [trainer guide](app/README.md#trainer-view).
 
 For a physical phone, use the reachable hub address with `/step`. The hub binds to loopback by default; configure its `--host` for the lab network first. It has no authentication. The button waits for the coach to advance the step, so check coach health if it stays waiting. All devices control the same run; avoid confirming from several at once.
+
+For a class, `./scripts/demo.sh --benches 3 ...` starts one capture, vision, angle, coach and note per bench and a single hub. Every bench keeps its own run, history, warnings and recordings. It was checked with three benches on scripted vision and sample videos, where each bench reached all eight step outcomes and kept only its own events. Physical cameras per bench, live speech per bench and more than three benches were not tried. Microphones are silent in classroom mode, so students confirm with their phone's Done button. It has no login. See the [classroom guide](app/README.md#classroom) and the [launcher guide](scripts/README.md#several-benches).
 
 The [teaching library](protocols/README.md) adds five protocols alongside `pipetting-demo.yaml`.
 
@@ -111,11 +114,17 @@ For calibration, keep capture camera slots 0 and 1 running and open `/calibrate`
 
 ## Vision rules
 
-Angle accepts vision boxes only when their `held` field is explicitly true. Vision requires current hand adjacency and more than 0.5 s of evidence in the last second. Stationary boxes at the frame edge or inferred bench line become unheld after 2 s. Missing held metadata is rejected by angle. This check leaves draw tracking unchanged; a manual angle ROI remains a separate explicit input.
+Angle accepts vision boxes only when their `held` field is explicitly true. Vision requires current hand adjacency and more than 0.5 s of evidence in the last second. Stationary boxes at the frame edge or inferred bench line become unheld after 2 s. Missing held metadata is rejected by angle. This rule exists because vision's pipette box landed on a camera tripod in both 12-27 sample views, and angle then warned about a tilt that was not there. On the cached replay of those clips it took angle's crops on known tripods and other wrong things from 10 to 0. That means angle also measured nothing useful there. In the October 31 sweep, hint mode on the same clips still produced tilt warnings of about 55 and 89 degrees with no pipette in hand, so the problem is smaller, not gone. This check leaves draw tracking unchanged; a manual angle ROI remains a separate explicit input.
 
 The tip pick-up rule needs a tip box seen in about the same place on at least three detector runs. Its region extends half its height downward to include tips below the lid. The lower end of an upright pipette enters that region and is later seen out or higher up, producing `tip_on` at most once in 5 s. Tip ejects and touches still use the older rules. A tip event is a visual estimate, not proof that a fresh tip attached.
 
 Vision's `--new-draw` mode sends hints that never complete a step alone. The opt-in vision flag `--dispense-min-dwell 0.4` suppresses dispense hints with less than 0.4 s of dwell, while still flipping the draw/dispense turn. It is off by default. The [dispense report](vision/DISPENSE-REPORT.md) gives precision 0.42 to 0.54 against chance 0.30 to 0.33, but recall falls from 0.45 to 0.32 and right hint questions fall from 8 of 17 to 6 of 15. The scorecard below uses the unchanged default.
+
+`python -m vision --detector` picks the box model. Grounding DINO tiny stays the default. Florence-2 base (`--detector florence2`) draws better boxes on the held-out labelled frames, finding the pipette on 42 of 58 against 38 of 58, with fewer boxes on the wrong thing. But on the held-out clips it made draw and dispense hints worse, down to about what random timing gives (draws found 7 of 18 against 15 of 18 for tiny). It is also too slow for two cameras. On the Mac's GPU, with both cameras sharing one detector, tiny gets 4.04 runs a second per camera and Florence-2 2.15, against a target of 3. Grounding DINO base, OWLv2 and YOLOE were also compared, and each found the pipette less often than tiny. YOLOE is AGPL and is left out of the default install. See the [detector report](vision/DETECTOR2-REPORT.md), the [Florence-2 report](vision/FLORENCE-REPORT.md) and the [speed report](vision/SPEED-REPORT.md).
+
+A small pipette detector was also trained on bench footage. It runs ten times faster and draws far fewer wrong boxes, but the live code found the held pipette on only 30 of 58 held-out frames with it, against 38 of 58 with tiny. It was not adopted. The code and rebuild script are kept in `vision/tipmodel/`; see the [tip model report](vision/TIPMODEL-REPORT.md).
+
+Table mode was reworked to cope with coloured light, dim light, hue shifts, shadows, clutter, shake and a tilted camera. On 60 drawn runs over 15 such conditions it went from 142 of 360 events found to 360 of 360. Those drawn runs were also used while making the changes, so this shows it copes with these pictures, not that it works on a real table. See the [table robustness report](vision/TABLEROBUST-REPORT.md).
 
 ## At the table
 
@@ -135,7 +144,7 @@ This table gathers the parts' reported dependencies. The linked guides contain s
 | --- | --- | --- |
 | Shared services | Python, FastAPI, Starlette, Pydantic, Uvicorn, HTTPX, websockets, PyYAML, pytest | Python PSF-2.0; FastAPI, Pydantic, PyYAML and pytest MIT; Starlette, Uvicorn, HTTPX and websockets BSD-3-Clause |
 | [Capture](capture/README.md) | OpenCV, FFmpeg, NumPy, sounddevice, PortAudio, qrcode, OpenSSL | OpenCV Apache-2.0 with MIT wheel packaging; FFmpeg LGPL-2.1-or-later or GPL depending on build; NumPy and qrcode BSD-3-Clause; sounddevice and PortAudio MIT; OpenSSL 3+ Apache-2.0, older builds under OpenSSL/SSLeay terms |
-| [Vision](vision/README.md) | MediaPipe Hand Landmarker, Grounding DINO tiny, Transformers, PyTorch, OpenCV, NumPy, Anthropic SDK | MediaPipe, Grounding DINO, Transformers and OpenCV Apache-2.0; PyTorch and NumPy BSD-3-Clause; Anthropic SDK MIT |
+| [Vision](vision/README.md) | MediaPipe Hand Landmarker, Grounding DINO tiny, Transformers, PyTorch, OpenCV, NumPy, Anthropic SDK; opt-in Grounding DINO base, OWLv2, Florence-2 base and YOLOE; torchvision Faster R-CNN for the unadopted tip model | MediaPipe, Grounding DINO, OWLv2, Transformers and OpenCV Apache-2.0; Florence-2 and Anthropic SDK MIT; PyTorch, torchvision and NumPy BSD-3-Clause; YOLOE (ultralytics) AGPL-3.0, not in the default install |
 | [Angle](angle/README.md) | OpenCV LSD, CSRT and stereo calibration; NumPy | OpenCV Apache-2.0; NumPy BSD-3-Clause with bundled notices listed in the part guide |
 | [Coach](coach/README.md) | faster-whisper, Whisper small.en, Silero VAD, Anthropic SDK, Google Gen AI SDK, sounddevice, NumPy | Whisper stack, Anthropic SDK and sounddevice MIT; Google SDK Apache-2.0; NumPy BSD-3-Clause; hosted Claude and Gemini under service terms |
 | [App](app/README.md) | Shared service libraries; original HTML/CSS/JavaScript; Playwright and Node.js for checks | Playwright Apache-2.0; Node.js MIT with bundled notices; no bundled Tailwind or shadcn code |
@@ -157,7 +166,7 @@ Nebius and NVIDIA Brev are planned GPU hosts only. Vision supports `VISION_DEVIC
 
 ## Evidence and limits
 
-The current [scorecard](SCORECARD.md) was written on October 30, 2026 at 22.40 EDT. The selected result and chance cells below quote it as written. A dash means no baseline was reported. Precision is the share of events that matched; recall is the share of labelled actions found.
+The current [scorecard](SCORECARD.md) was written on October 31, 2026 at 03.33 EDT. The selected result and chance cells below quote it as written. The capture frame and sample counts move by about one frame between reruns. A dash means no baseline was reported. Precision is the share of events that matched; recall is the share of labelled actions found.
 
 | Check | Data | Result | Chance |
 | --- | --- | --- | --- |
@@ -180,7 +189,7 @@ Angle's tuning stills gave “9 of 12 measured; mean error 1.3 deg, worst 4.9 de
 
 The scripted coach check got 8 of 8 step results right and warned on all three planned mistakes; its clean script got 8 of 8 done and 0 warnings. The scripted note matched 8 of 8 step results and built in 3 ms. No chance baseline is reported for those scripts. Protocol conversion classified camera-checkable steps correctly on 23 of 23 and action kinds on 16 of 16 checkable steps; calling every step a draw or dispense gets 16 of 23 on checkable-or-not. Tube names, volumes and timings were not scored.
 
-These are small reused sets, not a new independent benchmark. Earlier hint filters were chosen after looking at held-out scores, so those results may be optimistic. General vision cannot name tube A/B/C. Table mode knows saved regions but has only been scored on drawn pictures. Capture timestamps measure delivery, not synchronized exposure, and recording can drop data under load.
+The scorecard also has a table of numbers quoted from the October 30 and 31 part reports, which its script does not rerun. They cover the detector comparison, GPU speed, the trained tip model, table robustness on drawn runs, the voice checks and the mode sweep. These are small reused sets, not a new independent benchmark. Earlier hint filters were chosen after looking at held-out scores, so those results may be optimistic. General vision cannot name tube A/B/C. Table mode knows saved regions but has only been scored on drawn pictures. Capture timestamps measure delivery, not synchronized exposure, and recording can drop data under load.
 
 Neither camera mode proves liquid transfer, volume, reagent identity or sterility. The note inherits mistakes in events and step tracking. Protocol conversion may treat sub-actions as alternatives. The scorecard does not measure live speech, hosted calls, real cameras, a real bench, real users or the complete demo end to end. Review the evidence labels, warnings and final note before keeping it as a lab record.
 
@@ -190,4 +199,10 @@ Neither camera mode proves liquid transfer, volume, reagent identity or sterilit
 
 ```sh
 "${BENCH_PY:-python3}" -m pytest tests/test_rehearsal.py -q -p no:cacheprovider
+```
+
+`tests/test_modes_smoke.py` runs every launcher mode the same way (scripted vision, real vision, hints, table on a generated overhead video, three benches and the bundled replay). Each one starts a run, stops it, fetches the note and its downloads and the NVIDIA tasks, opens every page, and checks for tracebacks and port release. All six passed in 111 s on October 31. Without `BENCH_SAMPLES` only replay and table run; real vision and hints also skip when the models are not cached. It checks that the modes work, not that recognition is right. The [sweep report](SWEEP-REPORT.md) has the results and what is still open.
+
+```sh
+"${BENCH_PY:-python3}" -m pytest tests/test_modes_smoke.py -q -p no:cacheprovider
 ```

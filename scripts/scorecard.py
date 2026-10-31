@@ -851,7 +851,7 @@ def render(rows, seconds, coach):
              "| Spoken questions, 3 recordings at 2 speeds over bench noise at 3 levels | tuning | 12 of 18 right "
              "before, 18 of 18 after | - | [voice](coach/VOICEROBUST-REPORT.md) |",
              "| Spoken questions, made with 8 computer voices | synthetic | before 81 of 99 "
-             "right (82%), after 90 of 107 (84%). Scoring stopped after about 100 clips, almost all one voice "
+             "right, after 90 of 107. Scoring stopped after about 100 clips, almost all one voice "
              "(Samantha), so other voices are unmeasured | - | [voice](coach/VOICEROBUST-REPORT.md) |",
              "| Every launcher mode end to end (scripted, real vision, hints, table, three benches, replay) | "
              "scripted and real video | 6 of 6 modes started, ran, stopped and served their pages and downloads; "
