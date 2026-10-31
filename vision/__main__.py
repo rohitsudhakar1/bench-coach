@@ -33,6 +33,8 @@ def parse(argv=None):
     p.add_argument("--quiet-objects", action="store_true", help="do not print objects events")
     p.add_argument("--new-draw", action="store_true",
                    help="tip-into-container draw/dispense tracker; its events carry detail.hint = true")
+    p.add_argument("--dispense-min-dwell", type=float, default=0.0,
+                   help="--new-draw: send a dispense hint only when the tip stayed in this long (0.4 tried; off by default)")
     p.add_argument("--containers-every", type=int, default=1, help="container prompt every n-th detector run")
     p.add_argument("--no-verify", action="store_true", help="never ask Claude about hints")
     p.add_argument("--verify-per-minute", type=int, default=20)
@@ -70,7 +72,8 @@ def main(argv=None):
         sources = [HttpSource.for_cam(a.capture, i, a.fps, a.max_side) for i in range(a.cams)]
     n = len(sources)
     new_draw = a.new_draw and not a.no_detector
-    vis = Vision(n, new_draw)
+    from .draw import DrawRules
+    vis = Vision(n, new_draw, draw=DrawRules(disp_min_dwell=a.dispense_min_dwell))
     trackers = [HandTracker(mirrored=a.mirrored) for _ in range(n)]
     sink = Sink(None if a.hub == "none" else a.hub, a.log, a.quiet_objects)
 

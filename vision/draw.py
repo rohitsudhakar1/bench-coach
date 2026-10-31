@@ -37,6 +37,17 @@ class DrawRules:
     max_pre_speed: float = 1.5  # 0 turns the filter off
     pre_win: float = 0.5
     fuse_gap: float = 1.0
+    # Naming checks (vision/DISPENSE-REPORT.md). 0 turns each off.
+    merge_gap: float = 0.0  # a group starting this soon after the last named one is the same action: no event
+    merge_move: float = 0.0  # ...and only when it is within this many container sizes of it (0: anywhere)
+    same_place: float = 0.0  # loaded and back at the draw's place, or empty and back at the dispense's: no event
+    by_place: float = 0.0  # name by place, not by turn: within this many container sizes of the source is a draw
+    follow_source: bool = False  # by_place: every draw moves the source (else it stays at the first draw after a tip)
+    near_last: float = 0.0  # name by distance: within this many container sizes of the last entry since a tip is a dispense
+    # Dispense checks: the turn still flips (so draws keep their names), the dispense hint is just not sent.
+    disp_near: float = 0.0  # send a dispense only within this many container sizes of the entry before it, same camera
+    disp_min_gap: float = 0.0  # ...and only when it starts at least this long after the entry before it
+    disp_min_dwell: float = 0.0  # ...and only when the tip stayed in at least this long
 
 
 @dataclass
@@ -211,9 +222,18 @@ class Sequencer:
         self.r = rules or DrawRules()
         self.pending: list = []
         self.loaded = False
+        self.last = None  # (t1, {cam: entry}) of the last named group
+        self.place = {}  # "draw" / "dispense": {cam: entry} where the last one of each was
 
     def tip_on(self):
         self.loaded = False
+        self.last, self.place = None, {}
+
+    @staticmethod
+    def _moved(g, where) -> float | None:
+        """Shortest distance from g's entries to the entries in `where` on the same camera, in container sizes."""
+        d = [dist(e.xy, where[e.cam].xy) / max(e.size, where[e.cam].size, 1.0) for e in g.by_cam.values() if e.cam in where]
+        return min(d) if d else None
 
     def push(self, e: Entry):
         for g in self.pending:
@@ -234,8 +254,56 @@ class Sequencer:
         if any(e.label == TIP_BOX for e in g.by_cam.values()):
             self.tip_on()  # tip end in the tip box: a fresh tip, so the next entry is a draw
             return []
+        r = self.r
+        if r.merge_gap and self.last is not None and g.t0 - self.last[0] <= r.merge_gap:
+            m = self._moved(g, self.last[1])
+            if not r.merge_move or (m is not None and m <= r.merge_move):
+                self.last = (max(self.last[0], g.t1), {**self.last[1], **g.by_cam})
+                return []  # one dip seen as two: keep the name it already has
         kind = "dispense" if self.loaded else "draw"
+        if r.near_last:
+            m = self._moved(g, self.last[1]) if self.last is not None else None
+            kind = "dispense" if m is not None and m <= r.near_last else "draw"
+            self.loaded = kind == "draw"
+            self.last = (g.t1, dict(g.by_cam))
+            return self._event(g, kind)
+        if r.by_place:
+            src = self.place.get("source")
+            m = self._moved(g, src) if src else None
+            kind = "draw" if src is None or (m is not None and m <= r.by_place) else "dispense"
+            if src is None or (kind == "draw" and r.follow_source):
+                self.place["source"] = {**(src or {}), **g.by_cam}
+            self.loaded = kind == "draw"
+            self.last = (g.t1, dict(g.by_cam))
+            self.place[kind] = dict(g.by_cam)
+            return self._event(g, kind)
+        if r.same_place:
+            m = self._moved(g, self.place.get("draw" if self.loaded else "dispense", {}))
+            if m is not None and m <= r.same_place:
+                self.last = (g.t1, dict(g.by_cam))
+                return []  # back where the last draw (or dispense) was: more of that, not the next action
+        prev = self.last
         self.loaded = not self.loaded
+        self.last = (g.t1, dict(g.by_cam))
+        self.place[kind] = dict(g.by_cam)
+        if kind == "dispense" and not self._dispense_ok(g, prev):
+            return []
+        return self._event(g, kind)
+
+    def _dispense_ok(self, g, prev) -> bool:
+        r = self.r
+        if r.disp_min_dwell and max(e.t1 - e.t0 for e in g.by_cam.values()) < r.disp_min_dwell:
+            return False
+        if prev is None:
+            return not (r.disp_near or r.disp_min_gap)
+        if r.disp_min_gap and g.t0 - prev[0] < r.disp_min_gap:
+            return False
+        if r.disp_near:
+            m = self._moved(g, prev[1])
+            return m is not None and m <= r.disp_near
+        return True
+
+    def _event(self, g, kind) -> list:
         best = max(g.by_cam.values(), key=lambda e: e.score)
         named = [e for e in g.by_cam.values() if e.label != "spot"]
         obj = max(named, key=lambda e: e.score).label if named else None

@@ -84,3 +84,48 @@ def test_tip_box_resets_to_draw():
 def test_still_tip_without_box_counts():
     entries = run(DipTracker(0), dip_path(500, n_in=10), [])
     assert len(entries) == 1 and entries[0].label == "spot"
+
+
+def _entry(cam, t0, t1, x, label="tube"):
+    from vision.draw import Entry
+    return Entry(cam, t0, t1, label, (x, 300), 40)
+
+
+def _named(rules, entries):
+    seq = Sequencer(rules)
+    out = []
+    for e in entries:
+        seq.push(e)
+        out += seq.flush(e.t1 + 5)
+    return [ev["kind"] for ev in out + seq.flush(0, final=True)]
+
+
+def test_short_dispense_not_sent_but_turn_still_flips():
+    es = [_entry(0, 0, 1.0, 100), _entry(0, 3, 3.3, 200), _entry(0, 6, 7.0, 100), _entry(0, 9, 10.0, 200)]
+    assert _named(DrawRules(), es) == ["draw", "dispense", "draw", "dispense"]
+    assert _named(DrawRules(disp_min_dwell=0.4), es) == ["draw", "draw", "dispense"]
+
+
+def test_dispense_near_previous_entry():
+    es = [_entry(0, 0, 1.0, 100), _entry(0, 3, 4.0, 500)]  # 10 container sizes away
+    assert _named(DrawRules(disp_near=3.0), es) == ["draw"]
+    assert _named(DrawRules(disp_near=3.0), [es[0], _entry(0, 3, 4.0, 160)]) == ["draw", "dispense"]
+
+
+def test_merge_gap_keeps_the_name():
+    es = [_entry(0, 0, 1.0, 100), _entry(0, 1.2, 1.8, 105), _entry(0, 4, 5, 300)]
+    assert _named(DrawRules(), es) == ["draw", "dispense", "draw"]
+    assert _named(DrawRules(merge_gap=0.4), es) == ["draw", "dispense"]
+
+
+def test_by_place_names_the_source_a_draw():
+    es = [_entry(0, 0, 1, 100), _entry(0, 3, 4, 400), _entry(0, 6, 7, 102), _entry(0, 9, 10, 104)]
+    assert _named(DrawRules(by_place=1.0), es) == ["draw", "dispense", "draw", "draw"]
+
+
+def test_entries_record_thumb_and_lean():
+    trk = DipTracker(0)
+    es = run(trk, dip_path(110), [TUBE])
+    assert len(es) == 1
+    assert 0 < es[0].lean < 1  # 20 px wide, 120 px tall
+    assert es[0].thumb_min is None or isinstance(es[0].thumb_min, float)
