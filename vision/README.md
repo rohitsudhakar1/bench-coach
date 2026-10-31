@@ -138,6 +138,10 @@ tried are in [TIP-REPORT.md](TIP-REPORT.md).
 Both scorers replay through the same `Vision` class (`pipeline.py`) the live part runs, and both
 print chance numbers next to precision and recall. Results are in `REPORT.md`.
 
+A small trained pipette detector (`vision/tipmodel/`) was compared with Grounding DINO on
+held-out clips in [TIPMODEL-REPORT.md](TIPMODEL-REPORT.md). It draws far fewer wrong boxes and
+runs in 17 ms, but the live code finds the pipette less often with it, so it is not an option yet.
+
 Dispense signals and naming checks are measured in `DISPENSE-REPORT.md`
 (`vision.eval.dispense_signals`, `vision.eval.sweep_dispense`, `vision.eval.hint_dispense`).
 
@@ -162,6 +166,8 @@ geometry. If no such box exists, only the frame-edge test and older static filte
   Downloaded on first run to `vision/models/` (not committed).
 - Grounding DINO tiny, `IDEA-Research/grounding-dino-tiny`, Apache-2.0.
   https://huggingface.co/IDEA-Research/grounding-dino-tiny. Object boxes from text prompts.
+- torchvision Faster R-CNN MobileNetV3-Large FPN with COCO weights, BSD-3-Clause,
+  https://github.com/pytorch/vision. The tip model in `vision/tipmodel/` (weights not committed).
 - Hugging Face transformers, Apache-2.0, https://github.com/huggingface/transformers. Runs the detector.
 - PyTorch, BSD-3-Clause, https://pytorch.org. Model runtime (CUDA, MPS or CPU).
 - OpenCV, Apache-2.0, https://opencv.org. Video reading, colour masks, drawing, debug video.
