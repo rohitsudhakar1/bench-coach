@@ -1,0 +1,404 @@
+{
+ "about": "Tip pick-ups, tip ejects and hand touches in the sample clips, found by looking at contact sheets (vision/eval/sheet.py, 0.5 s steps, 0.2 s around unclear moments). Times are seconds into the video, one camera per clip (two views of one moment are two clips). tip_on = the pipette lifts out of the tip box with a tip on. tip_off = the tip leaves the pipette (eject), or, where the eject is off frame, the moment the pipette swings to the waste side. touch = [time, object] when a hand closes on a tube, tube rack, tip box, plate or waste it was not already holding. tip_on and tip_off times start from vision/eval/actions.json; splits are the same as there.",
+ "clips": {
+  "mv414L": {
+   "path": "lsv_mv/CP-Left-Front-414-445.mp4",
+   "seconds": 31,
+   "split": "hold",
+   "tip_on": [
+    6.5
+   ],
+   "tip_off": [],
+   "touch": [
+    [
+     3.2,
+     "tip box"
+    ]
+   ],
+   "notes": "Touch: the tip box lid opened at ~3.2 s. Tip lifted 6.5 s."
+  },
+  "mv414R": {
+   "path": "lsv_mv/CP-Right-Front-414-445.mp4",
+   "seconds": 31,
+   "split": "hold",
+   "tip_on": [
+    6.5
+   ],
+   "tip_off": [],
+   "touch": [
+    [
+     3.2,
+     "tip box"
+    ]
+   ],
+   "notes": "Touch: the tip box lid opened at ~3.2 s. Tip lifted 6.5 s."
+  },
+  "mv12R": {
+   "path": "lsv_mv/CP-Right-Front-12-27.mp4",
+   "seconds": 15,
+   "split": "hold",
+   "tip_on": [],
+   "tip_off": [],
+   "touch": [],
+   "notes": ""
+  },
+  "mv249R": {
+   "path": "lsv_mv/CP-Right-Front-249-269.mp4",
+   "seconds": 20,
+   "split": "hold",
+   "tip_on": [],
+   "tip_off": [],
+   "touch": [],
+   "notes": ""
+  },
+  "serial52": {
+   "path": "lsv_dji/serial_xm052.mp4",
+   "seconds": 78,
+   "split": "tune",
+   "tip_on": [
+    8.2,
+    32.7
+   ],
+   "tip_off": [
+    31.2,
+    71.1
+   ],
+   "touch": [],
+   "notes": ""
+  },
+  "serial55": {
+   "path": "lsv_dji/serial_xm055.mp4",
+   "seconds": 57,
+   "split": "hold",
+   "tip_on": [
+    8.3,
+    31.0
+   ],
+   "tip_off": [
+    27.9
+   ],
+   "touch": [
+    [
+     2.0,
+     "tube rack"
+    ],
+    [
+     9.0,
+     "tube rack"
+    ],
+    [
+     13.0,
+     "tube"
+    ],
+    [
+     28.5,
+     "tube rack"
+    ],
+    [
+     31.5,
+     "tube"
+    ],
+    [
+     35.0,
+     "tube rack"
+    ],
+    [
+     37.5,
+     "tube"
+    ],
+    [
+     50.0,
+     "tube rack"
+    ]
+   ],
+   "notes": "Touches: the free (left) hand arriving at and closing on a rack or a tube in it, from 0.5 s contact sheets; the hand moves between the two racks every 2-4 s, so times are +-0.5 s and tube vs rack is a guess."
+  },
+  "pcr48": {
+   "path": "lsv_dji/pcr_xm048.mp4",
+   "seconds": 60,
+   "split": "tune",
+   "tip_on": [
+    4.0,
+    13.2,
+    23.8,
+    33.4
+   ],
+   "tip_off": [
+    12.3,
+    22.4,
+    32.3,
+    44.5
+   ],
+   "touch": [
+    [
+     1.0,
+     "tube rack"
+    ],
+    [
+     8.5,
+     "tube rack"
+    ],
+    [
+     16.0,
+     "tube rack"
+    ],
+    [
+     18.0,
+     "tube rack"
+    ],
+    [
+     25.0,
+     "tube rack"
+    ],
+    [
+     29.0,
+     "tube rack"
+    ],
+    [
+     35.0,
+     "tube"
+    ],
+    [
+     40.0,
+     "tube rack"
+    ]
+   ],
+   "notes": "Touches: the free (left) hand arriving at and closing on a rack or a tube in it, from 0.5 s contact sheets; the hand moves between the two racks every 2-4 s, so times are +-0.5 s and tube vs rack is a guess."
+  },
+  "pcr49": {
+   "path": "lsv_dji/pcr_xm049.mp4",
+   "seconds": 54,
+   "split": "hold",
+   "tip_on": [
+    1.5,
+    10.6,
+    20.0,
+    29.0
+   ],
+   "tip_off": [
+    9.8,
+    19.2,
+    28.2,
+    36.8
+   ],
+   "touch": [
+    [
+     2.5,
+     "tube"
+    ],
+    [
+     6.0,
+     "tube rack"
+    ],
+    [
+     9.5,
+     "tube rack"
+    ],
+    [
+     12.0,
+     "tube"
+    ],
+    [
+     15.0,
+     "tube rack"
+    ],
+    [
+     19.0,
+     "tube rack"
+    ],
+    [
+     22.0,
+     "tube"
+    ],
+    [
+     25.0,
+     "tube rack"
+    ],
+    [
+     29.5,
+     "tube rack"
+    ],
+    [
+     31.0,
+     "tube"
+    ],
+    [
+     33.5,
+     "tube rack"
+    ],
+    [
+     38.0,
+     "tube"
+    ]
+   ],
+   "notes": "Touches: the free (left) hand arriving at and closing on a rack or a tube in it, from 0.5 s contact sheets; the hand moves between the two racks every 2-4 s, so times are +-0.5 s and tube vs rack is a guess."
+  },
+  "pcr50": {
+   "path": "lsv_dji/pcr_xm050.mp4",
+   "seconds": 48,
+   "split": "tune",
+   "tip_on": [
+    0.8,
+    9.6,
+    20.6
+   ],
+   "tip_off": [
+    8.5,
+    19.3,
+    30.0
+   ],
+   "touch": [
+    [
+     2.0,
+     "tube rack"
+    ],
+    [
+     4.5,
+     "tube rack"
+    ],
+    [
+     6.5,
+     "tube rack"
+    ],
+    [
+     8.5,
+     "tube rack"
+    ],
+    [
+     11.0,
+     "tube rack"
+    ],
+    [
+     14.0,
+     "tube rack"
+    ],
+    [
+     16.0,
+     "tube rack"
+    ],
+    [
+     19.0,
+     "tube rack"
+    ],
+    [
+     23.0,
+     "tube rack"
+    ],
+    [
+     26.0,
+     "tube rack"
+    ]
+   ],
+   "notes": "Touches: the free (left) hand arriving at and closing on a rack or a tube in it, from 0.5 s contact sheets; the hand moves between the two racks every 2-4 s, so times are +-0.5 s and tube vs rack is a guess."
+  },
+  "pcr51": {
+   "path": "lsv_dji/pcr_xm051.mp4",
+   "seconds": 47,
+   "split": "hold",
+   "tip_on": [
+    1.0,
+    10.1,
+    19.0,
+    29.0
+   ],
+   "tip_off": [
+    9.0,
+    18.0,
+    27.6,
+    37.0
+   ],
+   "touch": [
+    [
+     2.5,
+     "tube rack"
+    ],
+    [
+     5.5,
+     "tube rack"
+    ],
+    [
+     7.0,
+     "tube rack"
+    ],
+    [
+     9.0,
+     "tube rack"
+    ],
+    [
+     11.0,
+     "tube rack"
+    ],
+    [
+     14.0,
+     "tube rack"
+    ],
+    [
+     18.0,
+     "tube rack"
+    ],
+    [
+     22.0,
+     "tube"
+    ],
+    [
+     24.0,
+     "tube rack"
+    ],
+    [
+     30.0,
+     "tube rack"
+    ],
+    [
+     33.0,
+     "tube rack"
+    ]
+   ],
+   "notes": "Touches: the free (left) hand arriving at and closing on a rack or a tube in it, from 0.5 s contact sheets; the hand moves between the two racks every 2-4 s, so times are +-0.5 s and tube vs rack is a guess."
+  },
+  "pcr105": {
+   "path": "lsv_dji/pcr_105.mp4",
+   "seconds": 122,
+   "split": "tune",
+   "tip_on": [
+    4.1,
+    19.1,
+    35.0,
+    44.9,
+    60.8
+   ],
+   "tip_off": [],
+   "touch": [],
+   "notes": ""
+  },
+  "hood033": {
+   "path": "lsv_hood/cas9_hood_033.mp4",
+   "seconds": 100,
+   "split": "hold",
+   "tip_on": [
+    17.8,
+    69.0
+   ],
+   "tip_off": [
+    13.8,
+    61.5
+   ],
+   "touch": [],
+   "notes": ""
+  },
+  "hood034": {
+   "path": "lsv_hood/cas9_hood_034.mp4",
+   "seconds": 95,
+   "split": "hold",
+   "tip_on": [
+    34.3,
+    51.8
+   ],
+   "tip_off": [
+    32.5,
+    48.2
+   ],
+   "touch": [],
+   "notes": "Hood camera, looked at in 0.5 s steps. 32.5 pipette held upright over the waste beaker at the right (eject), 33-34 pressed upright into the tip box, lifted 34.3. 48.0-48.5 upright over the beaker again (eject), then the pipette is put down and a second pipette is pressed into a box at 51.0-51.5 and lifted ~51.8. The tip itself is too small to see; an earlier upright visit at 1.5-3.5 is left out as unclear. Touches not labelled."
+  }
+ }
+}
