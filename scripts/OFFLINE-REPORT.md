@@ -91,6 +91,4 @@ tests stub the model check so they stay fast and need no models. Full suite: 492
 
 ## Git log
 
-```
-(this last commit adds the log itself)
-```
+The commit list that was here was removed when the repo moved to Rohit's account; see the README's history note.
