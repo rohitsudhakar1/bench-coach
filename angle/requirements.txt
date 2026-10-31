@@ -1,0 +1,7 @@
+numpy
+opencv-contrib-python
+fastapi
+uvicorn
+httpx
+websockets
+pytest
