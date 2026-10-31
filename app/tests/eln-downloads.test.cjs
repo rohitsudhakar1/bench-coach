@@ -7,7 +7,7 @@ const code = source.slice(source.indexOf('async function renderNote()'), source.
 test('notebook links follow the displayed run and hide for empty or inline notes', async () => {
   const elements = {};
   const element = () => ({hidden: false, append(){}, replaceChildren(){}, setAttribute(){}});
-  const context = {noteAttempt: 0, state: {run: 'fake-run', note: {path: '/note/fake-run'}},
+  const context = {noteAttempt: 0, benchPrefix: '', state: {run: 'fake-run', note: {path: '/note/fake-run'}},
     $: id => elements[id] ||= element(), document: {createElement: element},
     fetch: async () => ({ok: true, text: async () => '<p>Note</p>'})};
   vm.createContext(context);
