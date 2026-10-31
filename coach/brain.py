@@ -79,6 +79,7 @@ class Brain:
         self.answerer = answerer   # optional callable(brain, question, rule_answer) -> str
         self.hints = hints
         self.clock = clock
+        self.stopped = False   # after the hub's run stop: no more step tracking until the next start
         self.reset()
 
     # ---------- state ----------
@@ -195,11 +196,18 @@ class Brain:
         if ev.get("source") == "coach":
             return []   # our own events coming back from the hub
         self.now = float(ev.get("t") or self.clock())
-        outs = self.tick(self.now)
         kind = ev.get("kind")
-        self._remember(ev)
         if kind == "run":
-            return outs + self._on_run(ev)
+            self._remember(ev)
+            if (ev.get("detail") or {}).get("status") == "stop":
+                self.stopped, self.question = True, None
+                return []
+            self.stopped = False
+            return self._on_run(ev)
+        if self.stopped and kind != "speech":
+            return []   # rehearsal: it kept asking and warning about camera events after Stop
+        outs = self.tick(self.now)
+        self._remember(ev)
         if kind == "speech":
             return outs + self.hear((ev.get("detail") or {}).get("text", ""), emit=False)
         if kind == "angle":
@@ -256,6 +264,8 @@ class Brain:
         """Close an unanswered question and give the 'say done' reminder, even in silence."""
         self.now = max(self.now, now)
         outs = []
+        if self.stopped:
+            return outs
         q = self.question
         if q is not None and self.now - q["t"] >= self.hint_wait:
             self.question = None
@@ -431,7 +441,9 @@ class Brain:
         if not (d.get("ok") is False or (limit is not None and deg > limit)):
             return []
         keep = f" Keep it under {int(limit)}." if limit else ""
-        return self._warn(f"Pipette looks tilted about {int(round(deg))} degrees.{keep}", "angle",
+        # one uncalibrated camera can be far off; the angle part marks that rough, so hedge
+        looks = "may be" if d.get("rough") else "looks"
+        return self._warn(f"Pipette {looks} tilted about {int(round(deg))} degrees.{keep}", "angle",
                           step=None if step is None else self.current)
 
     def _check_tip(self, kind, obj, strong: bool) -> list[Out]:
