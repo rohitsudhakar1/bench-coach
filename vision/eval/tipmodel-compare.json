@@ -1,0 +1,91 @@
+{
+ "frames": {
+  "dino": {
+   "pipette_found": [
+    28,
+    58
+   ],
+   "wrong_boxes": [
+    95,
+    144
+   ],
+   "tip_end_median_px": 187.0,
+   "tip_end_within_20px": [
+    2,
+    27
+   ],
+   "tip_end_no_box": 0,
+   "ms_median": 178.2
+  },
+  "tipmodel": {
+   "pipette_found": [
+    31,
+    58
+   ],
+   "wrong_boxes": [
+    3,
+    35
+   ],
+   "tip_end_median_px": 43.8,
+   "tip_end_within_20px": [
+    2,
+    27
+   ],
+   "tip_end_no_box": 2,
+   "ms_median": 17.3
+  }
+ },
+ "live": {
+  "dino": {
+   "pipette_found": [
+    38,
+    58
+   ],
+   "pipette_wrong": [
+    5,
+    12
+   ],
+   "pipette_tip_wrong": [
+    25,
+    64
+   ],
+   "press_events": {
+    "fired": 0,
+    "right": 0,
+    "scored": 0,
+    "runs": 3,
+    "found": 0,
+    "precision": null,
+    "recall": 0.0,
+    "chance_precision": null,
+    "chance_recall": 0.0
+   }
+  },
+  "tipmodel": {
+   "pipette_found": [
+    30,
+    58
+   ],
+   "pipette_wrong": [
+    2,
+    21
+   ],
+   "pipette_tip_wrong": [
+    0,
+    0
+   ],
+   "press_events": {
+    "fired": 0,
+    "right": 0,
+    "scored": 0,
+    "runs": 3,
+    "found": 0,
+    "precision": null,
+    "recall": 0.0,
+    "chance_precision": null,
+    "chance_recall": 0.0
+   }
+  }
+ },
+ "threshold": 0.5
+}

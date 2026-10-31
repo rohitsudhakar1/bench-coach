@@ -1,0 +1,113 @@
+{
+ "about": "Pipette tip end (the lowest point of the tip, or of the nose cone with no tip) in held-out labelled frames of labels.json, in the same 640-long-side pixels. Marked by eye from 3x gridded crops; about 5 px of reading error. Frames whose tip end was hidden, blurred out of the crop or ambiguous (serological pipettes in mv249L, the pipette aid in mv12R, mv414L 5.2 s) are left out. Checked once more on 4x crops with the point drawn, and eight points moved by 2 to 9 px.",
+ "points": {
+  "mv414L_002.20": [
+   217,
+   178
+  ],
+  "mv414L_003.80": [
+   188,
+   234
+  ],
+  "mv414L_006.80": [
+   137,
+   208
+  ],
+  "mv414L_008.20": [
+   234,
+   223
+  ],
+  "mv414L_009.80": [
+   248,
+   230
+  ],
+  "mv414L_011.20": [
+   243,
+   212
+  ],
+  "mv414L_012.80": [
+   241,
+   213
+  ],
+  "mv414L_014.20": [
+   242,
+   215
+  ],
+  "mv414L_015.80": [
+   246,
+   227
+  ],
+  "mv414L_017.20": [
+   244,
+   262
+  ],
+  "mv414L_018.80": [
+   246,
+   258
+  ],
+  "mv414L_020.20": [
+   232,
+   214
+  ],
+  "mv414L_021.80": [
+   233,
+   211
+  ],
+  "mv414L_023.20": [
+   270,
+   248
+  ],
+  "mv414L_024.80": [
+   249,
+   220
+  ],
+  "mv414L_026.20": [
+   244,
+   247
+  ],
+  "mv414L_027.80": [
+   246,
+   250
+  ],
+  "mv414L_029.20": [
+   263,
+   240
+  ],
+  "mv414L_030.80": [
+   248,
+   218
+  ],
+  "hood033_021.50": [
+   394,
+   163
+  ],
+  "hood033_024.50": [
+   385,
+   168
+  ],
+  "hood033_027.50": [
+   398,
+   174
+  ],
+  "hood033_030.50": [
+   409,
+   161
+  ],
+  "hood033_033.50": [
+   394,
+   166
+  ],
+  "hood033_036.50": [
+   419,
+   154
+  ],
+  "hood033_039.50": [
+   388,
+   183
+  ],
+  "hood033_042.50": [
+   414,
+   176
+  ]
+ }
+}
