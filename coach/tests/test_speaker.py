@@ -55,6 +55,8 @@ def test_printed_lines_never_mute_the_mic(capsys):
     assert not s.busy()
 
 
+# Requires an installed system speech voice, even though output is file-only.
+@pytest.mark.models
 @pytest.mark.skipif(not shutil.which("say") or not shutil.which("afinfo"), reason="macOS only")
 def test_speak_to_writes_audio_files_and_plays_nothing(tmp_path):
     s = Speaker(backend="file", out_dir=str(tmp_path), sync=True)

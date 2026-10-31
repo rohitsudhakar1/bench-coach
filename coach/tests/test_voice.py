@@ -24,7 +24,8 @@ def whisper_cached() -> bool:
     return (hub / "models--Systran--faster-whisper-small.en").is_dir()
 
 
-pytestmark = pytest.mark.skipif(not whisper_cached(), reason="Whisper small.en not on disk")
+pytestmark = [pytest.mark.models,
+              pytest.mark.skipif(not whisper_cached(), reason="Whisper small.en not on disk")]
 
 # what each question must come back as, and what the coach must answer (on step 1 of the demo)
 EXPECT = {

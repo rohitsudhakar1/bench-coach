@@ -89,6 +89,7 @@ def test_pipeline_new_draw_marks_hints():
     assert len(hints) == 1 and hints[0]["detail"]["hint"] is True
 
 
+@pytest.mark.models
 @pytest.mark.skipif(sample("lsv_mv/CP-Left-Front-414-445.mp4") is None, reason="BENCH_SAMPLES not set")
 def test_cli_runs_alone_on_two_files():
     a = sample("lsv_mv/CP-Left-Front-414-445.mp4")
