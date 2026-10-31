@@ -642,7 +642,7 @@ def render(out: Path, videos, names, analysis, log, protocol, note, credits, cod
                 view = cv2.resize(last[i], (r.w, r.h), interpolation=cv2.INTER_AREA)
             else:
                 view = np.zeros((r.h, r.w, 3), np.uint8)
-            draw_objects(view, L.boxes_at(snaps[i], s), sizes[i], here, sprites)
+            draw_objects(view, L.dedupe(L.boxes_at(snaps[i], s)), sizes[i], here, sprites)
             draw_hands(view, L.hands_at(hands[i], s), sizes[i], here, sprites)
             sprites.blit(view, cam_tag(i, names[i], sprites), 14, 14, here)
             canvas[r.y:r.y2, r.x:r.x2] = view

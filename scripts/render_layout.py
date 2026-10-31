@@ -227,3 +227,12 @@ def wrap(text: str, width: float, measure) -> list[str]:
     if cur:
         lines.append(cur)
     return lines
+
+
+def dedupe(boxes: list, overlap: float = 0.5) -> list:
+    """Drop a box when a higher-scoring box with the same label covers most of it."""
+    keep = []
+    for d in sorted(boxes, key=lambda d: -d.get("score", 0)):
+        if not any(k["label"] == d["label"] and iou(k["box"], d["box"]) >= overlap for k in keep):
+            keep.append(d)
+    return keep

@@ -163,3 +163,13 @@ def test_wrap_keeps_words_whole_and_within_width():
 
 def test_clock():
     assert L.clock(0) == "0:00" and L.clock(75.9) == "1:15" and L.clock(-3) == "0:00"
+
+
+def test_dedupe_drops_doubled_boxes_of_one_label_only():
+    boxes = [{"label": "pipette tip", "box": (0, 0, 10, 10), "score": 0.3},
+             {"label": "pipette tip", "box": (1, 1, 11, 11), "score": 0.5},
+             {"label": "tube", "box": (1, 1, 11, 11), "score": 0.2},
+             {"label": "pipette tip", "box": (50, 50, 60, 60), "score": 0.1}]
+    got = L.dedupe(boxes)
+    assert len(got) == 3
+    assert {"label": "pipette tip", "box": (1, 1, 11, 11), "score": 0.5} in got
