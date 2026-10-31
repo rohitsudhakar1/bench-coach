@@ -11,9 +11,9 @@ import time
 import cv2
 import httpx
 import numpy as np
+import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
-BASE = 8860
 EXPECTED = ['done', 'done', 'done', 'skipped', 'skipped', 'done', 'skipped', 'done']
 OBSERVATIONS = [('tip_on', 'tip box'), ('draw', 'tube A'), ('dispense', 'tube B'),
                 ('draw', 'tube C'), ('tip_off', 'waste')]
@@ -46,8 +46,27 @@ def make_video(path):
         writer.release()
 
 
-def assert_ports_free():
-    for port in range(BASE, BASE + 6):
+def free_port_block():
+    # Probe the whole block together; never adopt or stop another test's server.
+    for base in range(8800, 8895, 6):
+        sockets = []
+        try:
+            for port in range(base, base + 6):
+                sock = socket.socket()
+                sockets.append(sock)
+                sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                sock.bind(('127.0.0.1', port))
+            return base
+        except OSError:
+            continue
+        finally:
+            for sock in sockets:
+                sock.close()
+    pytest.skip('no free block of six test ports in 8800-8899')
+
+
+def assert_ports_free(base):
+    for port in range(base, base + 6):
         with socket.socket() as sock:
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             sock.bind(('127.0.0.1', port))
@@ -56,7 +75,7 @@ def assert_ports_free():
 def test_table_e2e(tmp_path):
     started_at = time.monotonic()
     deadline = started_at + 90
-    assert_ports_free()  # Never adopt or stop somebody else's service.
+    base = free_port_block()
     video, config = tmp_path / 'table.avi', tmp_path / 'table.json'
     make_video(video)
     python = os.environ.get('BENCH_PY') or sys.executable
@@ -71,7 +90,7 @@ def test_table_e2e(tmp_path):
     for name, x in [('tube A', 100), ('tube B', 220), ('tube C', 340)]:
         assert abs(layout['regions'][name][0] - x) < 2
     runs, output = tmp_path / 'runs', tmp_path / 'launcher.log'
-    command = [python, '-u', 'scripts/run_demo.py', '--table', 'on', '--base-port', str(BASE),
+    command = [python, '-u', 'scripts/run_demo.py', '--table', 'on', '--base-port', str(base),
                '--table-source', 'capture:0', '--table-config', str(config),
                '--source', str(video), str(video), '--without', 'angle',
                '--runs', str(runs), '--timeout', '15']
@@ -88,7 +107,7 @@ def test_table_e2e(tmp_path):
                     return result
                 time.sleep(.1)
             raise AssertionError('90-second deadline exceeded\n' + diagnostics())
-        hub = f'http://127.0.0.1:{BASE}'
+        hub = f'http://127.0.0.1:{base}'
         def get(path):
             response = client.get(hub + path)
             response.raise_for_status()
@@ -101,7 +120,7 @@ def test_table_e2e(tmp_path):
             wait(lambda: 'Demo ready' in output.read_text())
             assert not [e for e in get('/events') if e['source'] == 'vision']
             for cam in (0, 1):
-                frame = client.get(f'http://127.0.0.1:{BASE+1}/cam/{cam}/frame.jpg')
+                frame = client.get(f'http://127.0.0.1:{base+1}/cam/{cam}/frame.jpg')
                 frame.raise_for_status()
                 assert frame.content.startswith(b'\xff\xd8')
                 assert abs(time.time() - float(frame.headers['X-Frame-Time'])) < 2
@@ -138,7 +157,7 @@ def test_table_e2e(tmp_path):
             frame_times = {row['t'] for row in timing if row.get('kind') == 'frame' and row.get('cam') == 0}
             assert all(e['t'] in frame_times for e in seen)
             assert not get('/state')['recording']
-            wait(lambda: client.get(f'http://127.0.0.1:{BASE+2}/health').json()['run'] is None)
+            wait(lambda: client.get(f'http://127.0.0.1:{base+2}/health').json()['run'] is None)
         finally:
             child.send_signal(signal.SIGINT)
             try:
@@ -147,5 +166,5 @@ def test_table_e2e(tmp_path):
                 child.terminate()
                 child.wait(timeout=5)
         assert child.returncode == 0, diagnostics()
-    assert_ports_free()
+    assert_ports_free(base)
     assert time.monotonic() - started_at < 120

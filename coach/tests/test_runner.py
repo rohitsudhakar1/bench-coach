@@ -109,6 +109,7 @@ def whisper_cached():
     return (hub / "models--Systran--faster-whisper-small.en").is_dir()
 
 
+@pytest.mark.models
 @pytest.mark.skipif(not whisper_cached(), reason="Whisper small.en not on disk")
 def test_a_file_as_the_mic(tmp_path):
     from coach.tests.voice_session import session, write_wav
@@ -124,6 +125,7 @@ def test_a_file_as_the_mic(tmp_path):
     assert "[coach says] Next: draw 100 microlitres of water from tube A." in r.stderr
 
 
+@pytest.mark.models
 @pytest.mark.skipif(not os.environ.get("BENCH_SAMPLES"), reason="BENCH_SAMPLES not set")
 def test_a_sample_video_as_the_mic_runs_alone():
     clip = Path(os.environ["BENCH_SAMPLES"]) / "lsv_mv" / "CP-Left-Front-414-445.mp4"
