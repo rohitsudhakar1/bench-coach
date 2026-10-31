@@ -1,0 +1,17 @@
+{
+  "method": "Manual visible-shaft endpoints, labeled by the builder before running the detector. Pixel y is image down. These are projected axes, not known physical angles. ROIs are endpoint bounds plus 10 pixels, except the wide pipette body needs 22 pixels.",
+  "samples": [
+    {"file":"414-445-Left-2.jpg", "axis":[[451,366],[453,441]], "padding":10},
+    {"file":"414-445-Right-2.jpg", "axis":[[595,211],[634,294]], "padding":10},
+    {"file":"414-445-Left-6.jpg", "axis":[[235,362],[208,518]], "padding":22},
+    {"file":"414-445-Right-6.jpg", "axis":[[946,349],[947,403]], "padding":10},
+    {"file":"414-445-Left-10.jpg", "axis":[[473,343],[507,462]], "padding":10},
+    {"file":"414-445-Right-10.jpg", "axis":[[547,188],[608,315]], "padding":10},
+    {"file":"249-269-Left-2.jpg", "axis":[[471,385],[555,477]], "padding":10},
+    {"file":"249-269-Right-2.jpg", "axis":[[694,237],[699,303]], "padding":10},
+    {"file":"249-269-Left-6.jpg", "axis":[[362,326],[620,478]], "padding":10},
+    {"file":"249-269-Right-6.jpg", "axis":[[646,186],[725,266]], "padding":10},
+    {"file":"249-269-Left-10.jpg", "axis":[[345,296],[553,423]], "padding":10},
+    {"file":"249-269-Right-10.jpg", "axis":[[631,141],[771,231]], "padding":10}
+  ]
+}

@@ -1,0 +1,172 @@
+{
+  "sample_count": 12,
+  "detected": 9,
+  "missing": 3,
+  "mae_deg": 1.3154059245975194,
+  "max_deg": 4.913513863774295,
+  "rows": [
+    {
+      "file": "414-445-Left-2.jpg",
+      "roi": [
+        441,
+        356,
+        22,
+        95
+      ],
+      "reference_deg": 1.5275254422129318,
+      "predicted_deg": 6.441039305987227,
+      "error_deg": 4.913513863774295
+    },
+    {
+      "file": "414-445-Right-2.jpg",
+      "roi": [
+        585,
+        201,
+        59,
+        103
+      ],
+      "reference_deg": 25.167870149781614,
+      "predicted_deg": 25.105193744303865,
+      "error_deg": 0.06267640547774889
+    },
+    {
+      "file": "414-445-Left-6.jpg",
+      "roi": [
+        186,
+        340,
+        71,
+        200
+      ],
+      "reference_deg": 9.81930063875793,
+      "predicted_deg": null,
+      "error_deg": null
+    },
+    {
+      "file": "414-445-Right-6.jpg",
+      "roi": [
+        936,
+        339,
+        21,
+        74
+      ],
+      "reference_deg": 1.0609116902641509,
+      "predicted_deg": 1.6708383649014633,
+      "error_deg": 0.6099266746373124
+    },
+    {
+      "file": "414-445-Left-10.jpg",
+      "roi": [
+        463,
+        333,
+        54,
+        139
+      ],
+      "reference_deg": 15.945395900922858,
+      "predicted_deg": 15.711947272198705,
+      "error_deg": 0.23344862872415284
+    },
+    {
+      "file": "414-445-Right-10.jpg",
+      "roi": [
+        537,
+        178,
+        81,
+        147
+      ],
+      "reference_deg": 25.655670727878853,
+      "predicted_deg": 27.61497652624355,
+      "error_deg": 1.9593057983646958
+    },
+    {
+      "file": "249-269-Left-2.jpg",
+      "roi": [
+        461,
+        375,
+        104,
+        112
+      ],
+      "reference_deg": 42.397437797500196,
+      "predicted_deg": 44.96350071031696,
+      "error_deg": 2.5660629128167614
+    },
+    {
+      "file": "249-269-Right-2.jpg",
+      "roi": [
+        684,
+        227,
+        25,
+        86
+      ],
+      "reference_deg": 4.332313983188556,
+      "predicted_deg": null,
+      "error_deg": null
+    },
+    {
+      "file": "249-269-Left-6.jpg",
+      "roi": [
+        352,
+        316,
+        278,
+        172
+      ],
+      "reference_deg": 59.495649953040996,
+      "predicted_deg": 59.31921176250026,
+      "error_deg": 0.17643819054073617
+    },
+    {
+      "file": "249-269-Right-6.jpg",
+      "roi": [
+        636,
+        176,
+        99,
+        100
+      ],
+      "reference_deg": 44.63965393661277,
+      "predicted_deg": 43.44823121993798,
+      "error_deg": 1.1914227166747864
+    },
+    {
+      "file": "249-269-Left-10.jpg",
+      "roi": [
+        335,
+        286,
+        228,
+        147
+      ],
+      "reference_deg": 58.59272412514306,
+      "predicted_deg": 58.71858225551024,
+      "error_deg": 0.12585813036718463
+    },
+    {
+      "file": "249-269-Right-10.jpg",
+      "roi": [
+        621,
+        131,
+        160,
+        110
+      ],
+      "reference_deg": 57.2647737278924,
+      "predicted_deg": null,
+      "error_deg": null
+    }
+  ],
+  "meaning": "Projected angle on inherited hand-cropped development stills, not physical tilt accuracy.",
+  "synthetic_clean": {
+    "attempted": 1000,
+    "accepted": 794,
+    "rejected": 206,
+    "mae_deg": 1.11857399217767e-13,
+    "p95_deg": 3.467004461299438e-13,
+    "max_deg": 1.7233298121865914e-12,
+    "pixel_noise_sigma": 0.0
+  },
+  "synthetic_noisy": {
+    "attempted": 1000,
+    "accepted": 791,
+    "rejected": 209,
+    "mae_deg": 0.871028526916261,
+    "p95_deg": 2.6776277681629344,
+    "max_deg": 5.035940408867948,
+    "pixel_noise_sigma": 0.5
+  }
+}
