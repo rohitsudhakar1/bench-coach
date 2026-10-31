@@ -1,0 +1,36 @@
+{
+  "detector": "florence2",
+  "mode": "auto",
+  "dtype": "float32",
+  "pairs": 12,
+  "segments": [
+    "12-27",
+    "249-269",
+    "414-445"
+  ],
+  "device": "cpu",
+  "threads": 1,
+  "load_average": [
+    6.2998046875,
+    6.9228515625,
+    7.701171875
+  ],
+  "seconds": 28.878427792107686,
+  "processor_size": "SizeDict(height=768, width=768, longest_edge=None, shortest_edge=None, max_height=None, max_width=None, min_pixels=None, max_pixels=None)",
+  "per_camera_hz": 0.4155350868262826,
+  "median_pair_ms": 2394.406875013374,
+  "pair_seconds": [
+    2.403935583017301,
+    2.3822262920439243,
+    2.4079440420027822,
+    2.328527500038035,
+    2.370375042024534,
+    2.4149937499896623,
+    2.38440358301159,
+    2.3848781670094468,
+    2.3740722080110572,
+    2.454327832965646,
+    2.43502679199446,
+    2.5377169999992475
+  ]
+}

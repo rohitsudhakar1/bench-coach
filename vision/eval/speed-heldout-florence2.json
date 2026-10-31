@@ -1,0 +1,72 @@
+{
+  "seconds": 90.0,
+  "boxes": {
+    "pipette": {
+      "right": 34,
+      "wrong": 9
+    },
+    "pipette tip": {
+      "right": 5,
+      "wrong": 0
+    },
+    "tip box": {
+      "right": 44,
+      "wrong": 20
+    },
+    "waste": {
+      "right": 0,
+      "wrong": 36
+    }
+  },
+  "pipette_found": [
+    42,
+    58
+  ],
+  "events": {
+    "hand_touch": {
+      "fired": 9,
+      "right": 0,
+      "scored": 7,
+      "runs": 4,
+      "found": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "chance_precision": 0.0,
+      "chance_recall": 0.0
+    },
+    "tip_on": {
+      "fired": 1,
+      "right": 0,
+      "scored": 1,
+      "runs": 1,
+      "found": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "chance_precision": 0.04,
+      "chance_recall": 0.04
+    },
+    "tip_off": {
+      "fired": 0,
+      "right": 0,
+      "scored": 0,
+      "runs": 0,
+      "found": 0,
+      "precision": null,
+      "recall": null,
+      "chance_precision": null,
+      "chance_recall": null
+    },
+    "press": {
+      "fired": 0,
+      "right": 0,
+      "scored": 0,
+      "runs": 3,
+      "found": 0,
+      "precision": null,
+      "recall": 0.0,
+      "chance_precision": null,
+      "chance_recall": 0.0
+    }
+  },
+  "wrong_box_rate": 0.44
+}

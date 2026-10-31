@@ -1,0 +1,18 @@
+[
+  {
+    "detector": "gdino-tiny",
+    "new_draw": false,
+    "source_seconds": 2,
+    "elapsed_seconds": 18.718293374986388,
+    "objects": 6,
+    "summary": "# vision done in 6.9s: cam 0: 20 frames at 2.98 fps, 5 detector runs, cam 1: 20 frames at 2.98 fps, 5 detector runs, 6 events"
+  },
+  {
+    "detector": "florence2",
+    "new_draw": true,
+    "source_seconds": 1.2,
+    "elapsed_seconds": 27.789466249989346,
+    "objects": 4,
+    "summary": "# vision done in 15.4s: cam 0: 11 frames at 0.72 fps, 3 detector runs, cam 1: 11 frames at 0.72 fps, 3 detector runs, 4 events"
+  }
+]

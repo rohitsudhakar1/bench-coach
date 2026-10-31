@@ -99,14 +99,20 @@ class Owl2:
 
 
 class Florence2:
+    batch_on_cpu = False
+
     def __init__(self, device: str | None = None, raw: bool = False, prompts: dict | None = None,
-                 model_id: str = FLORENCE_ID):
+                 model_id: str = FLORENCE_ID, dtype: str = "float32"):
         import torch
         from transformers import AutoProcessor, Florence2ForConditionalGeneration
         self.torch = torch
         self.device = device or pick_device()
         self.proc = AutoProcessor.from_pretrained(model_id)
-        self.model = Florence2ForConditionalGeneration.from_pretrained(model_id).to(self.device).eval()
+        if dtype not in ("float32", "float16"):
+            raise ValueError("dtype must be float32 or float16")
+        self.dtype = getattr(torch, dtype)
+        self.model = Florence2ForConditionalGeneration.from_pretrained(model_id).to(
+            device=self.device, dtype=self.dtype).eval()
         self.raw = raw
         self.last_parts: list = []  # per box of the last raw call: the numbers behind its score
         self.set_prompts(prompts or PROMPTS)
@@ -121,10 +127,21 @@ class Florence2:
         return other
 
     def __call__(self, bgr) -> list:
-        h, w = bgr.shape[:2]
+        return self.batch([bgr])[0]
+
+    def batch(self, frames) -> list:
+        """Detections for each camera's frame, in order."""
+        if not frames:
+            return []
         task = "<CAPTION_TO_PHRASE_GROUNDING>"
+        # Florence-2 runs one frame at a time so each box keeps its own confidence score.
+        return [self._one(bgr, task) for bgr in frames]
+
+    def _one(self, bgr, task) -> list:
+        h, w = bgr.shape[:2]
         inp = self.proc(text=task + self.caption, images=cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB),
                         return_tensors="pt").to(self.device)
+        inp["pixel_values"] = inp["pixel_values"].to(dtype=self.dtype)
         steps = []
 
         def keep(_ids, logits):  # every step's token probabilities, to score the boxes afterwards

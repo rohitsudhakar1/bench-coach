@@ -120,3 +120,16 @@ on held-out. Draw and dispense scores are unchanged.
 See [TABLEROBUST-REPORT.md](TABLEROBUST-REPORT.md) for calibration and tracking changes,
 per-condition before/after counts, tests, limits and the current empty branch commit audit.
 No additional event contract change is proposed by this follow-up.
+
+
+## Speed work
+
+The batching and motion changes are in [SPEED-REPORT.md](SPEED-REPORT.md). No new event contract
+change is proposed. CPU tiny improved from 0.749 to 0.811 detector runs/s per camera; Florence
+changed from 0.411 to 0.416 with its serial CPU fallback. MPS was unavailable in the execution
+session, so three runs per camera and half precision remain unverified. The fresh original and
+batched tiny held-out replays both find 38/58 pipettes with 132/200 wrong boxes; Florence's new
+CPU replay finds 42/58 with 65/148 wrong boxes. See the speed report for the older-cache
+discrepancy and the limits of these CPU comparisons. Files are uncommitted.
+
+Speed date audit: `git log --format='%h %an %aI %cI' main..HEAD` returned no output.

@@ -79,6 +79,8 @@ def main(argv=None):
     trackers = [HandTracker(mirrored=a.mirrored) for _ in range(n)]
     sink = Sink(None if a.hub == "none" else a.hub, a.log, a.quiet_objects)
 
+    from .detector import MotionGate, detect_batch
+    motion = MotionGate()
     detect = adet = None
     if not a.no_detector:
         from .detector import WithContainers
@@ -125,6 +127,7 @@ def main(argv=None):
     wall0 = time.time()
     try:
         while not all(done) and not stop:
+            round_frames = []
             for i, src in enumerate(sources):
                 if done[i]:
                     continue
@@ -132,17 +135,30 @@ def main(argv=None):
                 if frame is None or (a.source and a.seconds and t - t0 > a.seconds):
                     done[i] = True
                     continue
+                round_frames.append((i, t, frame))
+            detected = {}
+            if adet:
+                adet.submit_batch(round_frames)
+            elif detect:
+                jobs = [(i, t, f) for i, t, f in round_frames
+                        if t - last_detect[i] >= a.detect_every and motion.needs_detection(i, t, f)]
+                frames = [f for _, _, f in jobs]
+                boxes = (detect.batch(frames, [i for i, _, _ in jobs]) if new_draw
+                         else detect_batch(detect, frames))
+                for (i, t, frame), raw in zip(jobs, boxes):
+                    last_detect[i], det_t[i] = t, t
+                    motion.remember(i, t, frame)
+                    detected[i] = raw
+            for i, t, frame in round_frames:
+                src = sources[i]
                 if rings:
                     rings[i].add(t, frame)
-                raw = None
+                raw = detected.get(i)
                 if adet:
-                    adet.submit(i, t, frame)
                     v, (dt, d) = adet.latest(i)
                     if v != seen_version[i]:
                         seen_version[i], raw, det_t[i] = v, d, dt
-                elif detect and t - last_detect[i] >= a.detect_every:
-                    last_detect[i], det_t[i] = t, t
-                    raw = detect(frame, i) if new_draw else detect(frame)
+
                 if raw is not None:
                     stats["detections"][i] += 1
                 h, w = frame.shape[:2]
