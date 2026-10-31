@@ -39,5 +39,10 @@ Screenshots (headless Chromium, looked at): kept outside the repo in the plan fo
 ## Git log
 
 ```
-GITLOG
+814ded5 Rohit Sudhakar 2026-10-31T19:42:09-04:00 2026-10-31T19:42:09-04:00
+e78fcdc Rohit Sudhakar 2026-10-31T19:42:05-04:00 2026-10-31T19:42:05-04:00
+f66a23c Rohit Sudhakar 2026-10-31T19:40:37-04:00 2026-10-31T19:40:37-04:00
+72930b3 Rohit Sudhakar 2026-10-31T19:36:44-04:00 2026-10-31T19:36:44-04:00
+061b59b Rohit Sudhakar 2026-10-31T19:35:45-04:00 2026-10-31T19:35:45-04:00
+(plus the commit that adds this log)
 ```
