@@ -92,20 +92,27 @@ class Owl2:
 
 
 class Florence2:
+    batch_on_cpu = False
+
     def __init__(self, device: str | None = None, raw: bool = False, prompts: dict | None = None,
-                 model_id: str = FLORENCE_ID):
+                 model_id: str = FLORENCE_ID, dtype: str = "float32"):
         import torch
         from transformers import AutoProcessor, Florence2ForConditionalGeneration
         self.torch = torch
         self.device = device or pick_device()
         self.proc = AutoProcessor.from_pretrained(model_id)
-        self.model = Florence2ForConditionalGeneration.from_pretrained(model_id).to(self.device).eval()
+        if dtype not in ("float32", "float16"):
+            raise ValueError("dtype must be float32 or float16")
+        self.dtype = getattr(torch, dtype)
+        self.model = Florence2ForConditionalGeneration.from_pretrained(model_id).to(
+            device=self.device, dtype=self.dtype).eval()
         self.raw = raw
         self.set_prompts(prompts or PROMPTS)
 
     def set_prompts(self, prompts: dict):
         self.prompts = dict(prompts)
         self.caption = ". ".join(self.prompts) + "."
+        self._text_inputs = {}
 
     def with_prompts(self, prompts: dict) -> "Florence2":
         other = copy.copy(self)
@@ -113,21 +120,38 @@ class Florence2:
         return other
 
     def __call__(self, bgr) -> list:
-        h, w = bgr.shape[:2]
+        return self.batch([bgr])[0]
+
+    def batch(self, frames) -> list:
+        """One generation for all cameras; text tensors are reused at each batch size."""
+        if not frames:
+            return []
         task = "<CAPTION_TO_PHRASE_GROUNDING>"
-        inp = self.proc(text=task + self.caption, images=cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB),
-                        return_tensors="pt").to(self.device)
-        with self.torch.no_grad():
-            ids = self.model.generate(input_ids=inp["input_ids"], pixel_values=inp["pixel_values"],
+        images = [cv2.cvtColor(f, cv2.COLOR_BGR2RGB) for f in frames]
+        n = len(images)
+        if n not in self._text_inputs:
+            inp = self.proc(text=[task + self.caption] * n, images=images,
+                            return_tensors="pt").to(self.device)
+            self._text_inputs[n] = inp["input_ids"]
+            pixels = inp["pixel_values"]
+        else:
+            pixels = self.proc.image_processor(images=images, return_tensors="pt")["pixel_values"]
+        with self.torch.inference_mode():
+            ids = self.model.generate(input_ids=self._text_inputs[n],
+                                      pixel_values=pixels.to(device=self.device, dtype=self.dtype),
                                       max_new_tokens=256, num_beams=1, do_sample=False)
-        text = self.proc.batch_decode(ids, skip_special_tokens=False)[0]
-        res = self.proc.post_process_generation(text, task=task, image_size=(w, h))[task]
-        dets = []
-        for lab, box in zip(res.get("labels", []), res.get("bboxes", [])):
-            name = canonical(str(lab), self.prompts)
-            if name:
-                dets.append(Det(name, tuple(float(v) for v in box), FLORENCE_SCORE))
-        return dets if self.raw else clean(dets, w, h)
+        texts = self.proc.batch_decode(ids, skip_special_tokens=False)
+        results = []
+        for bgr, text in zip(frames, texts):
+            h, w = bgr.shape[:2]
+            res = self.proc.post_process_generation(text, task=task, image_size=(w, h))[task]
+            dets = []
+            for lab, box in zip(res.get("labels", []), res.get("bboxes", [])):
+                name = canonical(str(lab), self.prompts)
+                if name:
+                    dets.append(Det(name, tuple(float(v) for v in box), FLORENCE_SCORE))
+            results.append(dets if self.raw else clean(dets, w, h))
+        return results
 
 
 YOLOE_WEIGHTS = "yoloe-26l-seg.pt"

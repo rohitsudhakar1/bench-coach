@@ -12,6 +12,7 @@ import threading
 import time
 
 import cv2
+import numpy as np
 
 from .core import HAND, PIPETTE, PIPETTE_TIP, PLATE, RACK, TIP_BOX, TUBE, WASTE, Det, area, iou
 
@@ -79,6 +80,7 @@ class GroundingDino:
     def set_prompts(self, prompts: dict):
         self.prompts = dict(prompts)
         self.text = " . ".join(self.prompts) + " ."
+        self._text_inputs = {}
 
     def with_prompts(self, prompts: dict) -> "GroundingDino":
         """The same loaded model asked for other things."""
@@ -87,18 +89,34 @@ class GroundingDino:
         return other
 
     def __call__(self, bgr) -> list:
-        h, w = bgr.shape[:2]
-        inp = self.proc(images=cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB), text=self.text, return_tensors="pt").to(self.device)
-        with self.torch.no_grad():
+        return self.batch([bgr])[0]
+
+    def batch(self, frames) -> list:
+        if not frames:
+            return []
+        images = [cv2.cvtColor(f, cv2.COLOR_BGR2RGB) for f in frames]
+        n = len(images)
+        if n not in self._text_inputs:
+            inp = self.proc(images=images, text=[self.text] * n, return_tensors="pt").to(self.device)
+            self._text_inputs[n] = {k: v for k, v in inp.items() if k not in ("pixel_values", "pixel_mask")}
+        else:
+            inp = self.proc.image_processor(images=images, return_tensors="pt").to(self.device)
+            inp.update(self._text_inputs[n])
+        with self.torch.inference_mode():
             out = self.model(**inp)
-        res = self.proc.post_process_grounded_object_detection(
-            out, inp.input_ids, threshold=self.bt, text_threshold=self.tt, target_sizes=[(h, w)])[0]
-        dets = []
-        for lab, box, score in zip(res["text_labels"], res["boxes"], res["scores"]):
-            name = canonical(str(lab), self.prompts)
-            if name:
-                dets.append(Det(name, tuple(float(v) for v in box.tolist()), float(score)))
-        return dets if self.raw else clean(dets, w, h)
+        results = self.proc.post_process_grounded_object_detection(
+            out, inp["input_ids"], threshold=self.bt, text_threshold=self.tt,
+            target_sizes=[f.shape[:2] for f in frames])
+        batch = []
+        for frame, res in zip(frames, results):
+            h, w = frame.shape[:2]
+            dets = []
+            for lab, box, score in zip(res["text_labels"], res["boxes"], res["scores"]):
+                name = canonical(str(lab), self.prompts)
+                if name:
+                    dets.append(Det(name, tuple(float(v) for v in box.tolist()), float(score)))
+            batch.append(dets if self.raw else clean(dets, w, h))
+        return batch
 
 
 class WithContainers:
@@ -110,16 +128,57 @@ class WithContainers:
         self.calls: dict = {}
 
     def __call__(self, bgr, cam: int = 0) -> list:
-        out = self.det(bgr)
-        n = self.calls.get(cam, 0)
-        self.calls[cam] = n + 1
-        if n % self.every == 0:
-            out += [Det(CONTAINER + d.label, d.box, d.score) for d in self.cdet(bgr)]
+        return self.batch([bgr], [cam])[0]
+
+    def batch(self, frames, cams=None) -> list:
+        cams = list(range(len(frames))) if cams is None else list(cams)
+        if len(cams) != len(frames):
+            raise ValueError("one camera ID per frame required")
+        out = detect_batch(self.det, frames)
+        if len(out) != len(frames):
+            raise ValueError("detector returned the wrong batch length")
+        selected = [i for i, cam in enumerate(cams) if self.calls.get(cam, 0) % self.every == 0]
+        extra = detect_batch(self.cdet, [frames[i] for i in selected])
+        if len(extra) != len(selected):
+            raise ValueError("container detector returned the wrong batch length")
+        for i, dets in zip(selected, extra):
+            out[i] = out[i] + [Det(CONTAINER + d.label, d.box, d.score) for d in dets]
+        for cam in cams:
+            self.calls[cam] = self.calls.get(cam, 0) + 1
         return out
 
 
+def detect_batch(detect, frames):
+    """Adapters without batching retain their serial behavior."""
+    if not frames:
+        return []
+    batch = getattr(detect, "batch", None)
+    # Florence CPU batching was slower; other measured backends use one model call.
+    use_batch = getattr(detect, "device", None) != "cpu" or getattr(detect, "batch_on_cpu", True)
+    return batch(frames) if batch and use_batch else [detect(frame) for frame in frames]
+
+
+class MotionGate:
+    """Skip only pixel-identical frames, relative to the last successful model call.
+
+    A full-resolution comparison avoids hiding slow tip movement or colour-only changes.
+    Refresh at least once a second so scene persistence still receives observations.
+    """
+    def __init__(self, refresh: float = 1.0):
+        self.refresh = refresh
+        self.previous = {}
+
+    def needs_detection(self, cam, t, frame):
+        old = self.previous.get(cam)
+        return (old is None or t < old[0] or t - old[0] >= self.refresh
+                or old[1].shape != frame.shape or not np.array_equal(old[1], frame))
+
+    def remember(self, cam, t, frame):
+        self.previous[cam] = (t, frame.copy())
+
+
 class AsyncDetector:
-    """Live mode: the detector runs in its own thread on the newest frame of each camera in turn,
+    """Live mode: one worker batches the newest pending frame from each camera,
     so hands and events keep the camera's frame rate."""
 
     def __init__(self, detect, n_cams: int):
@@ -128,13 +187,19 @@ class AsyncDetector:
         self.results = [(None, [])] * n_cams
         self.version = [0] * n_cams
         self.lock, self.wake = threading.Lock(), threading.Event()
-        self.stopping, self.next_cam = False, 0
+        self.stopping = False
+        self.motion = MotionGate()
         self.thread = threading.Thread(target=self._loop, daemon=True)
         self.thread.start()
 
     def submit(self, cam: int, t: float, frame):
+        self.submit_batch([(cam, t, frame)])
+
+    def submit_batch(self, jobs):
+        """Publish available camera frames atomically, with no extra batch-fill delay."""
         with self.lock:
-            self.pending[cam] = (t, frame)
+            for cam, t, frame in jobs:
+                self.pending[cam] = (t, frame)
         self.wake.set()
 
     def latest(self, cam: int):
@@ -144,30 +209,32 @@ class AsyncDetector:
     def _loop(self):
         while not self.stopping:
             self.wake.wait(0.2)
-            job = None
+            if self.stopping:
+                break
             with self.lock:
-                for k in range(self.n):
-                    c = (self.next_cam + k) % self.n
-                    if self.pending[c] is not None:
-                        job, self.pending[c] = (c, *self.pending[c]), None
-                        self.next_cam = (c + 1) % self.n
-                        break
-                if job is None:
-                    self.wake.clear()
-            if job is None:
+                jobs = [(cam, *job) for cam, job in enumerate(self.pending) if job is not None]
+                self.pending = [None] * self.n
+                self.wake.clear()
+            jobs = [(c, t, f) for c, t, f in jobs if self.motion.needs_detection(c, t, f)]
+            if not jobs:
                 continue
-            cam, t, frame = job
             try:
-                dets = self.detect(frame, cam) if isinstance(self.detect, WithContainers) else self.detect(frame)
+                frames = [f for _, _, f in jobs]
+                dets = (self.detect.batch(frames, [c for c, _, _ in jobs])
+                        if isinstance(self.detect, WithContainers) else detect_batch(self.detect, frames))
+                if len(dets) != len(jobs):
+                    raise ValueError("detector returned the wrong batch length")
             except Exception as e:  # keep hands running if the detector fails once
                 print(f"# detector error: {e}", flush=True)
                 time.sleep(0.5)
                 continue
             with self.lock:
-                self.results[cam] = (t, dets)
-                self.version[cam] += 1
+                for (cam, t, frame), boxes in zip(jobs, dets):
+                    self.motion.remember(cam, t, frame)
+                    self.results[cam] = (t, boxes)
+                    self.version[cam] += 1
 
     def close(self):
         self.stopping = True
         self.wake.set()
-        self.thread.join(timeout=2)
+        self.thread.join()

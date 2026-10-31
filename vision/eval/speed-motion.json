@@ -1,0 +1,32 @@
+{
+  "lsv_mv/CP-Left-Front-12-27.mp4": {
+    "eligible_frames": 38,
+    "skipped": 0
+  },
+  "lsv_mv/CP-Right-Front-12-27.mp4": {
+    "eligible_frames": 38,
+    "skipped": 0
+  },
+  "lsv_mv/CP-Left-Front-249-269.mp4": {
+    "eligible_frames": 50,
+    "skipped": 0
+  },
+  "lsv_mv/CP-Right-Front-249-269.mp4": {
+    "eligible_frames": 50,
+    "skipped": 0
+  },
+  "lsv_mv/CP-Left-Front-414-445.mp4": {
+    "eligible_frames": 78,
+    "skipped": 0
+  },
+  "lsv_mv/CP-Right-Front-414-445.mp4": {
+    "eligible_frames": 78,
+    "skipped": 0
+  },
+  "lsv_hood/cas9_hood_033.mp4": {
+    "start": 20,
+    "seconds": 24,
+    "eligible_frames": 60,
+    "skipped": 0
+  }
+}

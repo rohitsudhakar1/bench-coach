@@ -90,7 +90,8 @@ def test_pipeline_new_draw_marks_hints():
 
 
 @pytest.mark.models
-@pytest.mark.skipif(sample("lsv_mv/CP-Left-Front-414-445.mp4") is None, reason="BENCH_SAMPLES not set")
+@pytest.mark.skipif(any(sample(f"lsv_mv/CP-{side}-Front-414-445.mp4") is None
+                        for side in ("Left", "Right")), reason="BENCH_SAMPLES clips unavailable")
 def test_cli_runs_alone_on_two_files():
     a = sample("lsv_mv/CP-Left-Front-414-445.mp4")
     b = sample("lsv_mv/CP-Right-Front-414-445.mp4")

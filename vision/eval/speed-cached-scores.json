@@ -1,0 +1,128 @@
+{
+ "gdino-tiny": {
+  "cut": 0.25,
+  "tune": {
+   "pipette_found": [
+    33,
+    43
+   ],
+   "wrong_box_rate": 0.58,
+   "wrong": {
+    "pipette": [
+     6,
+     8
+    ],
+    "pipette tip": [
+     30,
+     66
+    ],
+    "tip box": [
+     17,
+     55
+    ],
+    "waste": [
+     53,
+     53
+    ]
+   },
+   "tip_box_precision": 0.69
+  },
+  "hold": {
+   "pipette_found": [
+    38,
+    58
+   ],
+   "wrong_box_rate": 0.65,
+   "wrong": {
+    "pipette": [
+     5,
+     12
+    ],
+    "pipette tip": [
+     25,
+     64
+    ],
+    "tip box": [
+     66,
+     89
+    ],
+    "waste": [
+     34,
+     34
+    ]
+   },
+   "tip_box_precision": 0.26
+  },
+  "tune_tries": {
+   "0.25": 0.187
+  },
+  "speed": {
+   "frames": 632,
+   "main_ms": 199.3,
+   "containers_ms": 194.7
+  }
+ },
+ "florence2": {
+  "cut": 0.0,
+  "tune": {
+   "pipette_found": [
+    36,
+    43
+   ],
+   "wrong_box_rate": 0.45,
+   "wrong": {
+    "pipette": [
+     14,
+     46
+    ],
+    "pipette tip": [
+     0,
+     0
+    ],
+    "tip box": [
+     8,
+     64
+    ],
+    "waste": [
+     51,
+     51
+    ]
+   },
+   "tip_box_precision": 0.88
+  },
+  "hold": {
+   "pipette_found": [
+    42,
+    58
+   ],
+   "wrong_box_rate": 0.45,
+   "wrong": {
+    "pipette": [
+     10,
+     44
+    ],
+    "pipette tip": [
+     0,
+     5
+    ],
+    "tip box": [
+     21,
+     64
+    ],
+    "waste": [
+     36,
+     36
+    ]
+   },
+   "tip_box_precision": 0.67
+  },
+  "tune_tries": {
+   "0.0": 0.387
+  },
+  "speed": {
+   "frames": 1300,
+   "main_ms": 254.0,
+   "containers_ms": 251.4
+  }
+ }
+}

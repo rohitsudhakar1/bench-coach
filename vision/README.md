@@ -28,13 +28,14 @@ keeps a copy, `--quiet-objects` keeps `objects` events off the printed log. Othe
 `yoloe`, or `ensemble:<a>+<b>` (both, overlapping boxes merged). `yoloe` needs
 `VISION_YOLO_DIR`, a folder for its weights. How they compare is in
 [DETECTOR2-REPORT.md](DETECTOR2-REPORT.md); Florence-2 boxes the pipette and tip box best but is
-too slow for two cameras, so the default did not change.
+the default remains tiny. The batching work and its limits are in
+[SPEED-REPORT.md](SPEED-REPORT.md); the three-runs-per-camera target is not yet verified.
 
 `VISION_DEVICE` picks where the detector runs (`cuda`, `mps` or `cpu`); without it the best one
 present is used.
 
-Tests: `$BENCH_PY -m pytest vision/tests` (about 2 s). The one test that runs the command on a
-real video is skipped when `BENCH_SAMPLES` is not set.
+Tests: `$BENCH_PY -m pytest vision/tests`. Sample-dependent tests skip when
+`BENCH_SAMPLES` is unset or the required clips are missing.
 
 ## How it works
 
@@ -90,6 +91,47 @@ real video is skipped when `BENCH_SAMPLES` is not set.
 
 All the numbers are in `Rules` (`events.py`), `SceneRules` (`scene.py`) and `DrawRules`
 (`draw.py`).
+
+## Detector batching
+
+The file loop and live worker collect one newest frame per camera and ask Grounding DINO or
+Florence-2 for the batch in one model call. The worker keeps at most one waiting frame per
+camera, retains each frame's original timestamp, and can process a single remaining camera.
+Container prompts have their own batch and per-camera cadence. Other detector adapters still
+run serially. Florence-2 uses serial calls on CPU because forcing batches was slower there;
+MPS and CUDA use batches. The default model is still Grounding DINO tiny.
+
+Fixed prompt tensors are cached separately for each prompt and batch size. Image pixels are
+processed afresh. Source frames retain the existing maximum side of 640 and the processors keep
+their existing model sizes; reducing them has not passed an accuracy check. The motion gate
+compares every pixel with the last successful detector input, skips exact duplicates for less
+than one second, and then refreshes. It does not manufacture a new timestamp or detector result
+for a skipped frame. Sensor noise will usually prevent skipping, which is deliberate: subtle tip
+movement must not disappear behind a global motion threshold.
+
+Float32 remains the default. Florence's Python constructor accepts `dtype="float16"` for the
+benchmark candidate, but half precision has not been accepted for live use. The evaluation
+commands run offline against cached weights and stop after a short budget; no package or weight
+download is needed. `BENCH_SAMPLES` must point to the sample folder.
+
+```sh
+# Run each command separately; timing excludes model loading and one warm-up pair.
+$BENCH_PY -m vision.eval.speed_pairs --detector gdino-tiny --mode legacy --json vision/eval/before.json
+$BENCH_PY -m vision.eval.speed_pairs --detector gdino-tiny --mode auto --json vision/eval/after.json
+$BENCH_PY -m vision.eval.speed_pairs --detector florence2 --mode auto --json vision/eval/florence.json
+# Repeat with offsets 0,16,32,48,64,80,96,112; one short model process at a time.
+$BENCH_PY -m vision.eval.speed_accuracy --detector florence2 --offset 0 --json vision/eval/agreement.json
+# Requires MPS. Accept only after all labelled chunks pass and held-out scores do not worsen.
+VISION_DEVICE=mps $BENCH_PY -m vision.eval.speed_accuracy --detector florence2 --dtype float16 --offset 0 --json vision/eval/half.json
+```
+
+Timing uses the synchronized left and right 12–27, 249–269 and 414–445 clips. `--mode legacy` retains the
+original processor/model calls, `serial` uses the updated single-frame calls, `batch` forces
+batch size two, and `auto` uses the runtime policy. `--threads` defaults to one for reproducible
+CPU comparisons; it does not change the live service's thread setting. Rates count genuine
+inferences per camera, not skipped or reused results. These timings exclude hands, event rules,
+video decoding and hub delivery. Use `--segments 414-445 --pairs 4` for a shorter check. Keep each budget below
+three minutes and check available memory between invocations.
 
 ## Table mode
 
@@ -160,6 +202,13 @@ Other detectors: `$BENCH_PY -m vision.eval.recache --detector florence2 --labels
 same saved frames (hands kept) into `vision/eval/cache-florence2/`; every scorer reads it with
 `VISION_EVAL_CACHE=cache-florence2`. `$BENCH_PY -m vision.eval.compare gdino-tiny florence2`
 scores them side by side and `$BENCH_PY -m vision.eval.speed gdino-tiny florence2` times them.
+
+For the speed regression check, `vision.eval.speed_recache --detector gdino-tiny` (or
+`florence2`) rebuilds at most 64 held-out detector frames per process. Repeat four times, then
+add `--score` to score only the held-out windows through the normal pipeline. `--mode legacy`
+builds a separate fresh baseline with the original calls. These caches copy hands and container
+boxes and replace **main detections only**; they are not new action or hint benchmarks. The
+scorer refuses a cache with pending frames. Results are in [SPEED-REPORT.md](SPEED-REPORT.md).
 
 Both scorers replay through the same `Vision` class (`pipeline.py`) the live part runs, and both
 print chance numbers next to precision and recall. Results are in `REPORT.md`.
