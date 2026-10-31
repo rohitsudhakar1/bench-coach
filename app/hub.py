@@ -22,6 +22,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from app.nvidia_jobs import install as install_nvidia
 from app.parts import PartStatus
 from protocols.convert import MAX_TEXT, convert_text, validate_protocol
 
@@ -190,6 +191,7 @@ def create_app(runs_dir=None, capture_url=None, note_service_url=None, protocols
         for name, port in [('vision', 8702), ('angle', 8703), ('coach', 8704)]}})
     hub = Hub(Path(runs_dir or RUNS), Path(protocols_dir or ROOT.parent / 'protocols'), parts)
     app.state.hub = hub
+    nvidia = install_nvidia(app, hub)
 
     @app.exception_handler(RequestValidationError)
     async def validation_error(request, exc):
@@ -318,6 +320,7 @@ def create_app(runs_dir=None, capture_url=None, note_service_url=None, protocols
             async with hub.lock:
                 hub.publish(make_event('run', dict(status='stop', run=run, protocol='protocols/' + hub.selected_file)))
                 hub.state['capture'] = result
+            nvidia.start(run, 'export')
             return {'run': run, 'capture': result}
 
     @app.post('/protocol')

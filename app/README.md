@@ -93,3 +93,45 @@ No packages were added. Dependencies already exist in the shared environment. No
 | Node.js standard library | https://github.com/nodejs/node | MIT, with bundled notices | JavaScript tests only |
 
 The visual component patterns are implemented locally; this app does not bundle shadcn or Tailwind code. Claude is an optional hosted service, separate from these library licences.
+
+## Training tasks in Lab note
+
+Stopping a run queues `nvidia.export_tasks.export_run` and the offline rules solver in a
+separate process. **Training tasks (NVIDIA)** lists each question, its checker, the mean
+rules-solver reward, and a ZIP of the complete Harbor task folder. The ZIP includes its
+answer key and reference solution, but no recordings or raw speech. The section works
+without the note service. Answer keys reflect the event log, not independent bench truth.
+
+**Make synthetic runs** generates 20 runs from the selected stopped run, with seed 0 and
+the synth module's default prior of 1. The table compares its smoothed recorded skip rates
+with the rates measured in the generated runs. With one recorded run and only 20 generated
+runs, differences can be large. The panel names the actual engine and note generator.
+`nvidia/.venv/bin/python` is selected for synthesis when present; otherwise the hub's Python
+is used. The synth module selects Data Designer when importable and the local NumPy generator
+otherwise. No packages are installed by the app. See `nvidia/README.md` for that optional
+environment, dependencies, licences, and NVIDIA API key behavior.
+
+| Route | Behavior |
+| --- | --- |
+| `GET /nvidia/{run}` | Export and synthesis states: idle, queued, running, ready, error. |
+| `POST /nvidia/{run}/export` | Queue an export or retry a failed one; returns 202. |
+| `POST /nvidia/{run}/synth` | Queue 20 synthetic runs or retry failure; returns 202. |
+| `GET /nvidia/{run}/tasks/{task}.zip` | Download one exported task folder. |
+
+Jobs run one at a time with a 170-second limit. Repeated requests share the pending job;
+completed results are reused. Closing the hub cancels jobs and kills its worker process.
+Successful results persist under `runs/<run>/nvidia-ui/`; task folders remain in
+`runs/<run>/tasks/`. Startup resumes an unfinished export for the latest stopped run.
+An interrupted synthesis can be retried with the button. Status polling does not use new
+event kinds or delay note generation. Run folders containing symbolic links are refused.
+
+Checks use fake run folders and mocked capture/note services:
+
+```sh
+$BENCH_PY -m pytest app/tests/test_nvidia_ui.py nvidia/tests -q -p no:cacheprovider
+```
+
+No new dependencies were added. This integration uses Python's asyncio subprocess and
+zipfile modules (PSF-2.0), the existing FastAPI routes, and the NVIDIA modules documented
+in `nvidia/README.md`. The optional browser check also covers task links and the synthesis
+table; it requires a working Chromium installation and permission to launch it.
