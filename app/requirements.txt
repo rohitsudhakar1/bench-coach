@@ -4,3 +4,5 @@ pydantic>=2
 httpx
 PyYAML
 pytest
+numpy
+opencv-contrib-python

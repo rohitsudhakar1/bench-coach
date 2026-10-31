@@ -22,6 +22,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from app.calibration import install as install_calibration
 from app.nvidia_jobs import install as install_nvidia
 from app.parts import PartStatus
 from app.trainer import overview
@@ -194,6 +195,7 @@ def create_app(runs_dir=None, capture_url=None, note_service_url=None, protocols
     hub = Hub(Path(runs_dir or RUNS), Path(protocols_dir or ROOT.parent / 'protocols'), parts)
     app.state.hub = hub
     nvidia = install_nvidia(app, hub)
+    install_calibration(app, capture, hub.runs)
 
     @app.exception_handler(RequestValidationError)
     async def validation_error(request, exc):

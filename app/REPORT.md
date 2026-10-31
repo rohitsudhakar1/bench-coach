@@ -85,3 +85,8 @@ No commits exist ahead of main. No commit, staging, push, date override, identit
 
 See [TRAINER-REPORT.md](TRAINER-REPORT.md) for the trainer implementation, contract
 proposal, three-run checks and browser limitation. Changes are left uncommitted.
+
+## Calibration page follow-up
+
+The calibui additions, synthetic fit measurements, verification and remaining angle
+restart requirement are recorded in [CALIBUI-REPORT.md](CALIBUI-REPORT.md).

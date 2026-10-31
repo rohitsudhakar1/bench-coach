@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Calibrate · Bench Coach</title><link rel="icon" href="/static/favicon.svg"><link rel="stylesheet" href="/static/style.css"><link rel="stylesheet" href="/static/calibrate.css"><script src="/static/calibrate.js" defer></script></head>
+<body>
+<header class="topbar"><a class="brand" href="/">BENCH / COACH</a><a href="/">Back to bench</a></header>
+<main class="calibration">
+<div class="eyebrow">CAMERA SETUP</div><h1>Calibrate both views.</h1>
+<p>Fix both cameras, focus and zoom. Use the <a href="/calibrate/board.png" download="checkerboard-25mm.png">printable checkerboard</a>: 10 × 7 squares, 9 × 6 inner corners. Print at 100% (270 × 195 mm), mount flat, and measure the 25 mm squares.</p>
+<ol class="instructions"><li>For the first pair, lay the board flat on a level surface. This sets gravity.</li><li>Keep the entire board visible in both views. Hold still, capture, then vary tilt by 20–40°, depth and position. Keep corner orientation consistent.</li><li>Collect at least 12 distinct poses; 20–25 is better. Compute, review the error, then use the good fit.</li></ol>
+<div class="calibration-views">
+<figure class="card"><figcaption>Camera 0 / left <span id="found0">Waiting for capture</span></figcaption><img id="view0" alt="Left camera with detected checkerboard corners" hidden><p id="empty0">Waiting for a fresh camera frame.</p></figure>
+<figure class="card"><figcaption>Camera 1 / right <span id="found1">Waiting for capture</span></figcaption><img id="view1" alt="Right camera with detected checkerboard corners" hidden><p id="empty1">Waiting for a fresh camera frame.</p></figure>
+</div>
+<p class="muted">Corners are drawn on the exact sampled frames. Preview updates at most twice a second; it pauses while computing. Delivery timestamps do not prove synchronized exposure.</p>
+<section class="card calibration-controls" aria-label="Calibration controls">
+<p id="progress" role="status">0 of 12 pairs · start with the level board</p>
+<label id="level-label"><input type="checkbox" id="level"> The first board is flat on a level surface.</label>
+<div class="calibration-actions"><button id="capture" class="primary" disabled>Capture pair</button><button id="compute" disabled>Compute</button><button id="use" disabled>Use this calibration</button><button id="reset">Start a new set</button></div>
+<p id="message" role="status">Connecting to capture…</p><p id="error" role="alert"></p>
+<h2 id="verdict">Collecting pairs</h2><p id="metrics">Reprojection error: not computed yet.</p>
+<p>Good means a camera fit within 2 pixels for both cameras, stereo, and each image. It does not establish physical tilt accuracy. After saving, restart angle with this calibration and complete the pencil check in <code>angle/CALIBRATE.md</code>. Keep camera order and resolution unchanged. Recalibrate if either camera moves.</p>
+</section>
+</main></body></html>

@@ -188,3 +188,68 @@ $BENCH_PY -m pytest app/tests/test_step.py protocols/tests -q -p no:cacheprovide
 node --test app/tests/step.test.cjs
 $BENCH_PY app/tests/step_browser.py  # optional browser layout check
 ```
+
+## Camera calibration page
+
+Open **Calibrate** in the bench top bar, or `/calibrate`. Capture must already serve
+camera slots 0 and 1; video sources work as well as live cameras. No terminal is
+needed to collect pairs, compute a fit, or save the calibration. No keys or sound
+are involved. Use the supplied 25 mm board with 9 × 6 inner corners. The page links
+the printable board and requires confirmation that the first pose is level, since
+that pose defines gravity. The software cannot check whether the surface is level.
+
+Each preview draws detected corners on the exact sampled JPEG. All tabs share one
+collection and a lock; detection runs only while the page polls, at most twice a
+second per camera. The browser pauses polling in hidden tabs. A capture request
+must name the displayed pair, contain two detected boards, and have advancing
+capture timestamps no older than one second and within 0.1 seconds of each other.
+Both image resolutions must match and stay fixed. Hold the board still; arrival
+timestamps cannot establish exposure synchronization.
+
+The page saves lossless copies of those JPEG frames and their detected corners to
+`runs/calibration-pairs/<session>/<pair>/` (under the configured runs directory).
+The first pair remains the gravity reference. Collect at least 12 distinct poses;
+20–25 with varied angle, depth and position is better. Collections are capped at
+40 pairs. **Start a new set** keeps previous images on disk and starts a fresh
+level reference. A browser reload preserves the hub's collection; a hub restart
+starts a new collection. Old sets remain on disk for review, without a resume UI.
+
+**Compute** runs the existing `angle.calibrate.fit` on saved corner observations
+in a child process, using the same board, distinct-pose, normal-spread, baseline
+and error checks as the CLI. No second round of corner detection is needed.
+Preview pauses during fitting. The child has a 170-second limit and is terminated
+when the hub closes. The page shows good/redo, camera and stereo RMS in pixels,
+and worst-image RMS for good fits. Failed-error fits report their RMS in the reason;
+fits that fail before an error can be measured say it is unavailable.
+
+**Use this calibration** atomically writes `angle/calibration.json` only after a
+good fit. Set `BENCH_CALIBRATION` on the hub to use a different destination and pass
+that same path to angle's `--calibration`. A failed fit or a new collection preserves
+the previous installed file. Angle currently reads the file only at startup: restart
+angle with `--calibration angle/calibration.json` after saving. This page does not
+restart angle or change the event contract. Complete the physical pencil check in
+`angle/CALIBRATE.md`; good reprojection error alone does not validate physical tilt.
+
+The app adds `/calibrate/state` and POST routes `/calibrate/capture`,
+`/calibrate/compute`, `/calibrate/use`, `/calibrate/reset`. The capture body is
+`{revision, level}`; revision comes from state and level confirms the first pose.
+These routes use the hub's existing local, single-worker trust model.
+
+OpenCV (https://github.com/opencv/opencv, Apache-2.0; Python wheel packaging
+https://github.com/opencv/opencv-python, MIT) supplies corner detection, overlays,
+image encoding and camera fitting. NumPy (https://github.com/numpy/numpy,
+BSD-3-Clause) holds and saves corner arrays. Both already exist in the shared
+environment; no package was installed. They are now listed in app requirements.
+
+```sh
+$BENCH_PY -m pytest app/tests/test_calibration_ui.py -q -s -p no:cacheprovider
+$BENCH_PY -m app.tests.calibration_browser_check
+node --check app/static/calibrate.js
+```
+
+Tests serve generated checkerboard JPEGs through a fake capture HTTP transport and
+exercise the real detector, saved pairs, background fitter and angle file reader.
+The optional browser check intercepts requests, starts no server and tests three
+viewport sizes and the capture/compute/use/reset controls. `CHROMIUM_PATH` can
+select an existing browser executable. Physical cameras and browser rendering still
+need verification on a machine that permits Chromium to launch.
