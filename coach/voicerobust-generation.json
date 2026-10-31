@@ -1,0 +1,20 @@
+{
+  "voices": [
+    "Samantha",
+    "Daniel",
+    "Karen",
+    "Moira",
+    "Rishi",
+    "Tessa",
+    "Fred",
+    "Aman"
+  ],
+  "rates": [
+    140,
+    210
+  ],
+  "phrases": 16,
+  "attempts": 256,
+  "usable": 0,
+  "failure": "All say outputs decoded to empty audio; no mixed trials could be made."
+}

@@ -99,7 +99,7 @@ step it says once "Say done when step N is finished." In hint mode `step` events
 - Sources: capture's `WS /mic` (JSON header `{t, n}` then 16 kHz mono int16), the laptop mic
   (`--mic local`, 20 ms blocks like capture), or a file through ffmpeg (`--source`). All go
   through the same loudness gate.
-- The gate opens when a sound is 4 times the background, above 0.03, for 0.12 s. In the first
+- The gate opens when a sound is 4 times the background, above 0.03, for 0.09 s. In the first
   2 s it learns how loud the room is, and after that a sound must also be 2.5 times that. It
   closes after 0.6 s of quiet judged on a 150 ms average, where quiet is near the background or
   under 0.4 of the speech's own level. Audio is judged in whole 30 ms frames whatever the piece
@@ -154,3 +154,43 @@ and mixed with bench audio from a sample video by the earlier draft.
 
 The rules and the gate follow what the team's earlier draft of this part ended up doing; the
 code here was written fresh for this rebuild.
+
+
+## Voice robustness checks
+
+The gate now accepts 0.18 s of voiced audio, with a 0.09 s onset. Whisper receives a
+short vocabulary prompt for pipetting and tubes A/B/C; confidence filters stay unchanged.
+Tube-letter joins and “aye” are recognized; explicit unknown letters stay distinct from
+unnamed claims. Mixing counts include six through ten and “free/for times”. These rules
+are covered by text tests; additional spoken voices remain unmeasured here.
+
+The silent matrix runner defines 16 questions/confirmations, eight macOS voices,
+140/210 words per minute, and bench-noise gains of 0.5/1/2 (relative amplitude, not SNR).
+It uses only `say -o` and FFmpeg decoding. No audio is played. Empty synthesis is recorded
+as a generation failure, never counted as a passing trial.
+
+```sh
+$BENCH_PY -m coach.eval_voicerobust prepare --directory coach/voicerobust-work/matrix
+$BENCH_PY -m coach.eval_voicerobust measure --directory coach/voicerobust-work/matrix --output coach/voicerobust-work/results.jsonl
+$BENCH_PY -m pytest coach/tests/test_voicerobust.py -q
+```
+
+Generation requires macOS voices and `BENCH_SAMPLES/lsv_dji/transform_skip3.mp4`.
+Measurement requires cached small.en weights; `BENCH_WHISPER_MODEL` can name a complete
+local model directory. Nothing downloads. Each invocation runs at most 24 trials with a
+140-second batch budget; repeat the measure command to resume. It pauses before loading
+weights if macOS reports less than 40% free memory. Use a fresh output name when changing
+models or settings; completed trial IDs are skipped.
+
+For the smaller available-recording check, prepare with `--fixtures`. This uses three
+bundled questions, FFmpeg tempo factors 140/170 and 210/170, and the same noise gains;
+it is not evidence for eight voices. Measure once with `--baseline` and once without,
+using separate outputs. Baseline restores the original gate and removes the vocabulary
+prompt; it does not restore old text rules. The compact pytest check runs these 18 trials
+in an 80-second subprocess timeout, skips without complete weights, and needs no samples.
+See [VOICEROBUST-REPORT.md](VOICEROBUST-REPORT.md) for measured limits.
+
+No dependencies added. Existing [FFmpeg](https://ffmpeg.org/legal.html) decodes and changes
+tempo (LGPL-2.1-or-later, or GPL depending on build); [NumPy](https://numpy.org/doc/stable/license.html)
+mixes PCM (BSD-3-Clause). macOS `say` supplies system voices under the macOS licence.
+The existing faster-whisper/Whisper licences above apply to transcription.

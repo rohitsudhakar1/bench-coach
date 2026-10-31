@@ -59,6 +59,14 @@ def test_printed_lines_never_mute_the_mic(capsys):
 @pytest.mark.models
 @pytest.mark.skipif(not shutil.which("say") or not shutil.which("afinfo"), reason="macOS only")
 def test_speak_to_writes_audio_files_and_plays_nothing(tmp_path):
+    # Check the system synthesizer independently of Speaker. Some restricted sessions
+    # report success from say but return a header with zero audio samples.
+    probe = tmp_path / "system-probe.aiff"
+    subprocess.run(["say", "-o", str(probe), "Testing speech."], check=True, timeout=15)
+    probe_info = subprocess.run(["afinfo", str(probe)], capture_output=True, text=True,
+                                check=True, timeout=10).stdout
+    if "audio bytes: 0" in probe_info:
+        pytest.skip("System say produces empty file audio in this session")
     s = Speaker(backend="file", out_dir=str(tmp_path), sync=True)
     s.submit("Next: dispense it into tube B.")
     assert len(s.files) == 1
