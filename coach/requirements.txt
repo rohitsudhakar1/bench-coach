@@ -1,0 +1,10 @@
+faster-whisper>=1.2
+numpy
+pyyaml
+websockets
+httpx
+fastapi
+uvicorn
+sounddevice
+anthropic
+google-genai>=2.34  # only for --voice gemini-live
