@@ -1,0 +1,76 @@
+{
+ "detector": "florence2",
+ "min_score": 0.0,
+ "files": {
+  "CP-Right-Front-12-27@0": {
+   "frames": 38,
+   "main_ms": 214.9,
+   "containers_ms": 207.8
+  },
+  "CP-Left-Front-12-27@0": {
+   "frames": 38,
+   "main_ms": 211.7,
+   "containers_ms": 207.4
+  },
+  "CP-Right-Front-249-269@0": {
+   "frames": 50,
+   "main_ms": 210.9,
+   "containers_ms": 230.1
+  },
+  "CP-Left-Front-249-269@0": {
+   "frames": 50,
+   "main_ms": 223.0,
+   "containers_ms": 215.5
+  },
+  "CP-Right-Front-414-445@0": {
+   "frames": 78,
+   "main_ms": 226.9,
+   "containers_ms": 220.2
+  },
+  "CP-Left-Front-414-445@0": {
+   "frames": 78,
+   "main_ms": 223.6,
+   "containers_ms": 221.3
+  },
+  "cas9_hood_033@0": {
+   "frames": 150,
+   "main_ms": 223.5,
+   "containers_ms": 222.6
+  },
+  "pcr_105@0": {
+   "frames": 150,
+   "main_ms": 219.7,
+   "containers_ms": 220.4
+  },
+  "cas9_hood_033@60": {
+   "frames": 100,
+   "main_ms": 231.5,
+   "containers_ms": 220.6
+  },
+  "cas9_hood_034@0": {
+   "frames": 150,
+   "main_ms": 231.4,
+   "containers_ms": 225.9
+  },
+  "cas9_hood_034@60": {
+   "frames": 89,
+   "main_ms": 225.7,
+   "containers_ms": 223.6
+  },
+  "pcr_xm049@0": {
+   "frames": 134,
+   "main_ms": 231.1,
+   "containers_ms": 235.7
+  },
+  "pcr_xm051@0": {
+   "frames": 119,
+   "main_ms": 226.7,
+   "containers_ms": 233.5
+  },
+  "serial_xm055@0": {
+   "frames": 143,
+   "main_ms": 241.5,
+   "containers_ms": 237.6
+  }
+ }
+}

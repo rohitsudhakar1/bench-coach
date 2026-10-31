@@ -31,6 +31,10 @@ GDINO_BASE = "IDEA-Research/grounding-dino-base"
 OWL_ID = "google/owlv2-base-patch16-ensemble"
 FLORENCE_ID = "florence-community/Florence-2-base"
 FLORENCE_SCORE = 0.5  # used only when the token probabilities cannot be lined up with the boxes
+# Per-name score cuts for the live (non-raw) output, picked on the tuning frames by
+# vision.eval.florence_cut. Waste is cut hard because no labelled clip has a waste bin, so every
+# waste box seen so far was wrong; on a bench that has one, check this first.
+FLORENCE_CUTS = {"tip box": 0.3, "waste": 0.9}
 FLORENCE_DUP = 0.1  # score multiplier for a box that copies an earlier box of another name
 
 # OWLv2 reads each phrase on its own, so it gets several phrasings per name.
@@ -158,7 +162,14 @@ class Florence2:
                 score = part["start"] * (FLORENCE_DUP if dup else 1.0)
             dets.append(Det(name, box, round(score, 3)))
             self.last_parts.append(part)
-        return dets if self.raw else clean(dets, w, h)
+        if self.raw:
+            return dets
+        return clean(present(dets), w, h)
+
+
+def present(dets: list, cuts: dict = FLORENCE_CUTS) -> list:
+    """Florence-2 boxes whose name's cut they reach (names with no cut are all kept)."""
+    return [d for d in dets if d.score >= cuts.get(d.label, 0.0)]
 
 
 def phrase_scores(toks: list, probs: list) -> list:

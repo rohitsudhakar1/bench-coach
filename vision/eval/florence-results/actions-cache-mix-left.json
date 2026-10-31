@@ -1,0 +1,86 @@
+{
+ "tune": {
+  "default": {
+   "draw": {
+    "right": 3,
+    "fired": 6,
+    "labelled": 20,
+    "precision": 0.5,
+    "recall": 0.15,
+    "chance_precision": 0.31,
+    "chance_recall": 0.09
+   },
+   "dispense": {
+    "right": 4,
+    "fired": 5,
+    "labelled": 20,
+    "precision": 0.8,
+    "recall": 0.2,
+    "chance_precision": 0.45,
+    "chance_recall": 0.11
+   }
+  },
+  "new-draw": {
+   "draw": {
+    "right": 12,
+    "fired": 27,
+    "labelled": 20,
+    "precision": 0.44,
+    "recall": 0.6,
+    "chance_precision": 0.26,
+    "chance_recall": 0.35
+   },
+   "dispense": {
+    "right": 9,
+    "fired": 23,
+    "labelled": 20,
+    "precision": 0.39,
+    "recall": 0.45,
+    "chance_precision": 0.31,
+    "chance_recall": 0.36
+   }
+  }
+ },
+ "hold": {
+  "default": {
+   "draw": {
+    "right": 4,
+    "fired": 8,
+    "labelled": 18,
+    "precision": 0.5,
+    "recall": 0.22,
+    "chance_precision": 0.31,
+    "chance_recall": 0.14
+   },
+   "dispense": {
+    "right": 1,
+    "fired": 6,
+    "labelled": 22,
+    "precision": 0.17,
+    "recall": 0.05,
+    "chance_precision": 0.38,
+    "chance_recall": 0.1
+   }
+  },
+  "new-draw": {
+   "draw": {
+    "right": 7,
+    "fired": 24,
+    "labelled": 18,
+    "precision": 0.29,
+    "recall": 0.39,
+    "chance_precision": 0.25,
+    "chance_recall": 0.35
+   },
+   "dispense": {
+    "right": 4,
+    "fired": 19,
+    "labelled": 22,
+    "precision": 0.21,
+    "recall": 0.18,
+    "chance_precision": 0.29,
+    "chance_recall": 0.26
+   }
+  }
+ }
+}

@@ -60,3 +60,11 @@ def test_florence_phrase_scores_line_up_with_boxes():
 def test_florence_phrase_scores_give_up_on_odd_output():
     from vision.zoo import phrase_scores
     assert phrase_scores(["<s>", "<loc_1>", "<loc_2>", "<loc_3>", "<loc_4>"], [1] * 5) == []
+
+
+def test_florence_cuts_drop_unsure_waste_and_tip_box():
+    from vision.zoo import present
+    dets = [Det("waste", (0, 0, 5, 5), 0.8), Det("waste", (9, 9, 20, 20), 0.95),
+            Det("tip box", (0, 0, 5, 5), 0.2), Det("pipette", (0, 0, 5, 5), 0.05)]
+    kept = present(dets)
+    assert [(d.label, d.score) for d in kept] == [("waste", 0.95), ("pipette", 0.05)]
