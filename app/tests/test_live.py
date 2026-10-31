@@ -188,3 +188,12 @@ def test_sample_clip_keeps_full_frame_rate_with_a_slow_detector():
     view.close()
     assert snap["fps"]["picture"] >= 24  # the clip is 30 fps; the picture does not wait for the model
     assert 2 <= snap["fps"]["detections"] <= 6
+
+
+def test_overlapping_labels_are_moved_apart():
+    objs = [{"label": "tube", "box": [50, 60, 150, 200], "score": 0.5, "outline": None},
+            {"label": "plate", "box": [55, 62, 150, 200], "score": 0.5, "outline": None}]
+    out = overlay(frame(), objs, [], scale=1.0)
+    # both chips are visible: each colour fills a run of pixels above or just inside the boxes
+    assert (out[40:100, 50:150] == COLORS["tube"]).all(axis=2).sum() > 200
+    assert (out[40:100, 50:150] == COLORS["plate"]).all(axis=2).sum() > 200

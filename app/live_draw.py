@@ -23,15 +23,23 @@ def color(label: str):
     return COLORS.get(label, OTHER)
 
 
-def _label(img, text, x, y, c, scale):
-    """A filled chip with dark text, kept inside the picture."""
+def _label(img, text, x, y, c, scale, taken=None):
+    """A filled chip with dark text, kept inside the picture. With `taken` (a list of chips already
+    drawn), a chip that would cover another is moved down until it does not (at most 4 times)."""
     fs, th = 0.42 * scale, max(1, round(scale))
     (tw, tht), base = cv2.getTextSize(text, FONT, fs, th)
     h, w = img.shape[:2]
+    ch = tht + base + 4
     x = int(min(max(0, x), max(0, w - tw - 8)))
-    y = int(min(max(tht + base + 4, y), h))
-    cv2.rectangle(img, (x, y - tht - base - 4), (x + tw + 8, y), c, -1)
+    y = int(min(max(ch, y), h))
+    for _ in range(4 if taken is not None else 0):
+        if not any(x < bx2 and bx1 < x + tw + 8 and y - ch < by2 and by1 < y for bx1, by1, bx2, by2 in taken):
+            break
+        y = int(min(y + ch + 2, h))
+    cv2.rectangle(img, (x, y - ch), (x + tw + 8, y), c, -1)
     cv2.putText(img, text, (x + 4, y - base - 2), FONT, fs, (20, 20, 20), th, cv2.LINE_AA)
+    if taken is not None:
+        taken.append((x, y - ch, x + tw + 8, y))
 
 
 def draw_objects(img, objects, scale: float = 1.0, fill: float = 0.25):
@@ -43,6 +51,7 @@ def draw_objects(img, objects, scale: float = 1.0, fill: float = 0.25):
             if o.get("outline"):
                 cv2.fillPoly(layer, [np.asarray(o["outline"], np.int32)], color(o["label"]))
         cv2.addWeighted(layer, fill, img, 1 - fill, 0, dst=img)
+    taken = []
     for o in objects:
         c = color(o["label"])
         x1, y1, x2, y2 = (int(round(v)) for v in o["box"])
@@ -51,7 +60,7 @@ def draw_objects(img, objects, scale: float = 1.0, fill: float = 0.25):
         else:
             cv2.rectangle(img, (x1, y1), (x2, y2), c, lw, cv2.LINE_AA)
         score = o.get("score")
-        _label(img, o["label"] if score is None else f"{o['label']} {score:.2f}", x1, y1, c, scale)
+        _label(img, o["label"] if score is None else f"{o['label']} {score:.2f}", x1, y1, c, scale, taken)
     return img
 
 
