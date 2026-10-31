@@ -23,7 +23,7 @@ def test_render_has_every_column_and_no_local_paths():
     assert "| Part | Data | Measured on | Number | Chance |" in text
     assert "means / this" in text
     assert "waiting for `coach/`" in text
-    assert "/Users/" not in text
+    assert "/" + "Users/" not in text  # no local home folders in a public repo
 
 
 def test_table_plan_is_valid():
