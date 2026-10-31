@@ -1,0 +1,3227 @@
+{
+ "grid": [
+  {
+   "settings": {},
+   "tune": {
+    "draw": {
+     "right": 14,
+     "fired": 29,
+     "labelled": 20,
+     "precision": 0.48,
+     "recall": 0.7,
+     "chance_precision": 0.26,
+     "chance_recall": 0.37,
+     "f1": 0.569
+    },
+    "dispense": {
+     "right": 11,
+     "fired": 25,
+     "labelled": 20,
+     "precision": 0.44,
+     "recall": 0.55,
+     "chance_precision": 0.31,
+     "chance_recall": 0.39,
+     "f1": 0.489
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 15,
+     "fired": 29,
+     "labelled": 18,
+     "precision": 0.52,
+     "recall": 0.83,
+     "chance_precision": 0.25,
+     "chance_recall": 0.41,
+     "f1": 0.639
+    },
+    "dispense": {
+     "right": 10,
+     "fired": 24,
+     "labelled": 22,
+     "precision": 0.42,
+     "recall": 0.45,
+     "chance_precision": 0.29,
+     "chance_recall": 0.31,
+     "f1": 0.434
+    }
+   }
+  },
+  {
+   "settings": {
+    "merge_gap": 0.2
+   },
+   "tune": {
+    "draw": {
+     "right": 10,
+     "fired": 26,
+     "labelled": 20,
+     "precision": 0.38,
+     "recall": 0.5,
+     "chance_precision": 0.26,
+     "chance_recall": 0.34,
+     "f1": 0.432
+    },
+    "dispense": {
+     "right": 10,
+     "fired": 24,
+     "labelled": 20,
+     "precision": 0.42,
+     "recall": 0.5,
+     "chance_precision": 0.32,
+     "chance_recall": 0.39,
+     "f1": 0.457
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 14,
+     "fired": 26,
+     "labelled": 18,
+     "precision": 0.54,
+     "recall": 0.78,
+     "chance_precision": 0.25,
+     "chance_recall": 0.37,
+     "f1": 0.638
+    },
+    "dispense": {
+     "right": 8,
+     "fired": 22,
+     "labelled": 22,
+     "precision": 0.36,
+     "recall": 0.36,
+     "chance_precision": 0.31,
+     "chance_recall": 0.3,
+     "f1": 0.36
+    }
+   }
+  },
+  {
+   "settings": {
+    "merge_gap": 0.4
+   },
+   "tune": {
+    "draw": {
+     "right": 10,
+     "fired": 26,
+     "labelled": 20,
+     "precision": 0.38,
+     "recall": 0.5,
+     "chance_precision": 0.26,
+     "chance_recall": 0.34,
+     "f1": 0.432
+    },
+    "dispense": {
+     "right": 10,
+     "fired": 23,
+     "labelled": 20,
+     "precision": 0.43,
+     "recall": 0.5,
+     "chance_precision": 0.32,
+     "chance_recall": 0.37,
+     "f1": 0.462
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 14,
+     "fired": 26,
+     "labelled": 18,
+     "precision": 0.54,
+     "recall": 0.78,
+     "chance_precision": 0.25,
+     "chance_recall": 0.37,
+     "f1": 0.638
+    },
+    "dispense": {
+     "right": 8,
+     "fired": 22,
+     "labelled": 22,
+     "precision": 0.36,
+     "recall": 0.36,
+     "chance_precision": 0.31,
+     "chance_recall": 0.3,
+     "f1": 0.36
+    }
+   }
+  },
+  {
+   "settings": {
+    "merge_gap": 0.6
+   },
+   "tune": {
+    "draw": {
+     "right": 7,
+     "fired": 17,
+     "labelled": 20,
+     "precision": 0.41,
+     "recall": 0.35,
+     "chance_precision": 0.29,
+     "chance_recall": 0.24,
+     "f1": 0.378
+    },
+    "dispense": {
+     "right": 7,
+     "fired": 17,
+     "labelled": 20,
+     "precision": 0.41,
+     "recall": 0.35,
+     "chance_precision": 0.34,
+     "chance_recall": 0.29,
+     "f1": 0.378
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 12,
+     "fired": 23,
+     "labelled": 18,
+     "precision": 0.52,
+     "recall": 0.67,
+     "chance_precision": 0.27,
+     "chance_recall": 0.34,
+     "f1": 0.586
+    },
+    "dispense": {
+     "right": 6,
+     "fired": 18,
+     "labelled": 22,
+     "precision": 0.33,
+     "recall": 0.27,
+     "chance_precision": 0.33,
+     "chance_recall": 0.28,
+     "f1": 0.297
+    }
+   }
+  },
+  {
+   "settings": {
+    "merge_gap": 0.8
+   },
+   "tune": {
+    "draw": {
+     "right": 7,
+     "fired": 17,
+     "labelled": 20,
+     "precision": 0.41,
+     "recall": 0.35,
+     "chance_precision": 0.29,
+     "chance_recall": 0.24,
+     "f1": 0.378
+    },
+    "dispense": {
+     "right": 7,
+     "fired": 17,
+     "labelled": 20,
+     "precision": 0.41,
+     "recall": 0.35,
+     "chance_precision": 0.34,
+     "chance_recall": 0.29,
+     "f1": 0.378
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 10,
+     "fired": 22,
+     "labelled": 18,
+     "precision": 0.45,
+     "recall": 0.56,
+     "chance_precision": 0.27,
+     "chance_recall": 0.32,
+     "f1": 0.499
+    },
+    "dispense": {
+     "right": 5,
+     "fired": 18,
+     "labelled": 22,
+     "precision": 0.28,
+     "recall": 0.23,
+     "chance_precision": 0.34,
+     "chance_recall": 0.29,
+     "f1": 0.253
+    }
+   }
+  },
+  {
+   "settings": {
+    "merge_gap": 1.0
+   },
+   "tune": {
+    "draw": {
+     "right": 6,
+     "fired": 16,
+     "labelled": 20,
+     "precision": 0.38,
+     "recall": 0.3,
+     "chance_precision": 0.29,
+     "chance_recall": 0.23,
+     "f1": 0.335
+    },
+    "dispense": {
+     "right": 5,
+     "fired": 16,
+     "labelled": 20,
+     "precision": 0.31,
+     "recall": 0.25,
+     "chance_precision": 0.32,
+     "chance_recall": 0.25,
+     "f1": 0.277
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 10,
+     "fired": 21,
+     "labelled": 18,
+     "precision": 0.48,
+     "recall": 0.56,
+     "chance_precision": 0.28,
+     "chance_recall": 0.32,
+     "f1": 0.517
+    },
+    "dispense": {
+     "right": 5,
+     "fired": 18,
+     "labelled": 22,
+     "precision": 0.28,
+     "recall": 0.23,
+     "chance_precision": 0.35,
+     "chance_recall": 0.28,
+     "f1": 0.253
+    }
+   }
+  },
+  {
+   "settings": {
+    "merge_gap": 0.4,
+    "merge_move": 0.5
+   },
+   "tune": {
+    "draw": {
+     "right": 14,
+     "fired": 29,
+     "labelled": 20,
+     "precision": 0.48,
+     "recall": 0.7,
+     "chance_precision": 0.26,
+     "chance_recall": 0.37,
+     "f1": 0.569
+    },
+    "dispense": {
+     "right": 11,
+     "fired": 25,
+     "labelled": 20,
+     "precision": 0.44,
+     "recall": 0.55,
+     "chance_precision": 0.31,
+     "chance_recall": 0.39,
+     "f1": 0.489
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 15,
+     "fired": 29,
+     "labelled": 18,
+     "precision": 0.52,
+     "recall": 0.83,
+     "chance_precision": 0.25,
+     "chance_recall": 0.41,
+     "f1": 0.639
+    },
+    "dispense": {
+     "right": 10,
+     "fired": 24,
+     "labelled": 22,
+     "precision": 0.42,
+     "recall": 0.45,
+     "chance_precision": 0.29,
+     "chance_recall": 0.31,
+     "f1": 0.434
+    }
+   }
+  },
+  {
+   "settings": {
+    "merge_gap": 0.4,
+    "merge_move": 1.0
+   },
+   "tune": {
+    "draw": {
+     "right": 13,
+     "fired": 27,
+     "labelled": 20,
+     "precision": 0.48,
+     "recall": 0.65,
+     "chance_precision": 0.27,
+     "chance_recall": 0.36,
+     "f1": 0.552
+    },
+    "dispense": {
+     "right": 10,
+     "fired": 24,
+     "labelled": 20,
+     "precision": 0.42,
+     "recall": 0.5,
+     "chance_precision": 0.3,
+     "chance_recall": 0.36,
+     "f1": 0.457
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 14,
+     "fired": 26,
+     "labelled": 18,
+     "precision": 0.54,
+     "recall": 0.78,
+     "chance_precision": 0.26,
+     "chance_recall": 0.39,
+     "f1": 0.638
+    },
+    "dispense": {
+     "right": 8,
+     "fired": 23,
+     "labelled": 22,
+     "precision": 0.35,
+     "recall": 0.36,
+     "chance_precision": 0.31,
+     "chance_recall": 0.32,
+     "f1": 0.355
+    }
+   }
+  },
+  {
+   "settings": {
+    "merge_gap": 0.4,
+    "merge_move": 2.0
+   },
+   "tune": {
+    "draw": {
+     "right": 10,
+     "fired": 26,
+     "labelled": 20,
+     "precision": 0.38,
+     "recall": 0.5,
+     "chance_precision": 0.26,
+     "chance_recall": 0.34,
+     "f1": 0.432
+    },
+    "dispense": {
+     "right": 10,
+     "fired": 23,
+     "labelled": 20,
+     "precision": 0.43,
+     "recall": 0.5,
+     "chance_precision": 0.32,
+     "chance_recall": 0.37,
+     "f1": 0.462
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 14,
+     "fired": 26,
+     "labelled": 18,
+     "precision": 0.54,
+     "recall": 0.78,
+     "chance_precision": 0.25,
+     "chance_recall": 0.37,
+     "f1": 0.638
+    },
+    "dispense": {
+     "right": 8,
+     "fired": 22,
+     "labelled": 22,
+     "precision": 0.36,
+     "recall": 0.36,
+     "chance_precision": 0.31,
+     "chance_recall": 0.3,
+     "f1": 0.36
+    }
+   }
+  },
+  {
+   "settings": {
+    "merge_gap": 0.6,
+    "merge_move": 0.5
+   },
+   "tune": {
+    "draw": {
+     "right": 11,
+     "fired": 28,
+     "labelled": 20,
+     "precision": 0.39,
+     "recall": 0.55,
+     "chance_precision": 0.24,
+     "chance_recall": 0.34,
+     "f1": 0.456
+    },
+    "dispense": {
+     "right": 10,
+     "fired": 24,
+     "labelled": 20,
+     "precision": 0.42,
+     "recall": 0.5,
+     "chance_precision": 0.32,
+     "chance_recall": 0.38,
+     "f1": 0.457
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 14,
+     "fired": 28,
+     "labelled": 18,
+     "precision": 0.5,
+     "recall": 0.78,
+     "chance_precision": 0.25,
+     "chance_recall": 0.4,
+     "f1": 0.609
+    },
+    "dispense": {
+     "right": 10,
+     "fired": 23,
+     "labelled": 22,
+     "precision": 0.43,
+     "recall": 0.45,
+     "chance_precision": 0.29,
+     "chance_recall": 0.3,
+     "f1": 0.44
+    }
+   }
+  },
+  {
+   "settings": {
+    "merge_gap": 0.6,
+    "merge_move": 1.0
+   },
+   "tune": {
+    "draw": {
+     "right": 10,
+     "fired": 24,
+     "labelled": 20,
+     "precision": 0.42,
+     "recall": 0.5,
+     "chance_precision": 0.26,
+     "chance_recall": 0.31,
+     "f1": 0.457
+    },
+    "dispense": {
+     "right": 9,
+     "fired": 21,
+     "labelled": 20,
+     "precision": 0.43,
+     "recall": 0.45,
+     "chance_precision": 0.31,
+     "chance_recall": 0.33,
+     "f1": 0.44
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 13,
+     "fired": 24,
+     "labelled": 18,
+     "precision": 0.54,
+     "recall": 0.72,
+     "chance_precision": 0.27,
+     "chance_recall": 0.36,
+     "f1": 0.617
+    },
+    "dispense": {
+     "right": 8,
+     "fired": 20,
+     "labelled": 22,
+     "precision": 0.4,
+     "recall": 0.36,
+     "chance_precision": 0.32,
+     "chance_recall": 0.3,
+     "f1": 0.379
+    }
+   }
+  },
+  {
+   "settings": {
+    "merge_gap": 0.6,
+    "merge_move": 2.0
+   },
+   "tune": {
+    "draw": {
+     "right": 6,
+     "fired": 21,
+     "labelled": 20,
+     "precision": 0.29,
+     "recall": 0.3,
+     "chance_precision": 0.27,
+     "chance_recall": 0.28,
+     "f1": 0.295
+    },
+    "dispense": {
+     "right": 7,
+     "fired": 18,
+     "labelled": 20,
+     "precision": 0.39,
+     "recall": 0.35,
+     "chance_precision": 0.33,
+     "chance_recall": 0.29,
+     "f1": 0.369
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 12,
+     "fired": 23,
+     "labelled": 18,
+     "precision": 0.52,
+     "recall": 0.67,
+     "chance_precision": 0.27,
+     "chance_recall": 0.34,
+     "f1": 0.586
+    },
+    "dispense": {
+     "right": 6,
+     "fired": 18,
+     "labelled": 22,
+     "precision": 0.33,
+     "recall": 0.27,
+     "chance_precision": 0.33,
+     "chance_recall": 0.28,
+     "f1": 0.297
+    }
+   }
+  },
+  {
+   "settings": {
+    "merge_gap": 1.0,
+    "merge_move": 0.5
+   },
+   "tune": {
+    "draw": {
+     "right": 11,
+     "fired": 28,
+     "labelled": 20,
+     "precision": 0.39,
+     "recall": 0.55,
+     "chance_precision": 0.24,
+     "chance_recall": 0.34,
+     "f1": 0.456
+    },
+    "dispense": {
+     "right": 10,
+     "fired": 24,
+     "labelled": 20,
+     "precision": 0.42,
+     "recall": 0.5,
+     "chance_precision": 0.32,
+     "chance_recall": 0.38,
+     "f1": 0.457
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 14,
+     "fired": 28,
+     "labelled": 18,
+     "precision": 0.5,
+     "recall": 0.78,
+     "chance_precision": 0.26,
+     "chance_recall": 0.4,
+     "f1": 0.609
+    },
+    "dispense": {
+     "right": 9,
+     "fired": 22,
+     "labelled": 22,
+     "precision": 0.41,
+     "recall": 0.41,
+     "chance_precision": 0.31,
+     "chance_recall": 0.3,
+     "f1": 0.41
+    }
+   }
+  },
+  {
+   "settings": {
+    "merge_gap": 1.0,
+    "merge_move": 1.0
+   },
+   "tune": {
+    "draw": {
+     "right": 10,
+     "fired": 24,
+     "labelled": 20,
+     "precision": 0.42,
+     "recall": 0.5,
+     "chance_precision": 0.26,
+     "chance_recall": 0.31,
+     "f1": 0.457
+    },
+    "dispense": {
+     "right": 9,
+     "fired": 21,
+     "labelled": 20,
+     "precision": 0.43,
+     "recall": 0.45,
+     "chance_precision": 0.31,
+     "chance_recall": 0.33,
+     "f1": 0.44
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 13,
+     "fired": 23,
+     "labelled": 18,
+     "precision": 0.57,
+     "recall": 0.72,
+     "chance_precision": 0.28,
+     "chance_recall": 0.35,
+     "f1": 0.636
+    },
+    "dispense": {
+     "right": 8,
+     "fired": 20,
+     "labelled": 22,
+     "precision": 0.4,
+     "recall": 0.36,
+     "chance_precision": 0.33,
+     "chance_recall": 0.29,
+     "f1": 0.379
+    }
+   }
+  },
+  {
+   "settings": {
+    "merge_gap": 1.0,
+    "merge_move": 2.0
+   },
+   "tune": {
+    "draw": {
+     "right": 6,
+     "fired": 21,
+     "labelled": 20,
+     "precision": 0.29,
+     "recall": 0.3,
+     "chance_precision": 0.27,
+     "chance_recall": 0.29,
+     "f1": 0.295
+    },
+    "dispense": {
+     "right": 6,
+     "fired": 17,
+     "labelled": 20,
+     "precision": 0.35,
+     "recall": 0.3,
+     "chance_precision": 0.32,
+     "chance_recall": 0.27,
+     "f1": 0.323
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 12,
+     "fired": 22,
+     "labelled": 18,
+     "precision": 0.55,
+     "recall": 0.67,
+     "chance_precision": 0.27,
+     "chance_recall": 0.32,
+     "f1": 0.604
+    },
+    "dispense": {
+     "right": 6,
+     "fired": 18,
+     "labelled": 22,
+     "precision": 0.33,
+     "recall": 0.27,
+     "chance_precision": 0.35,
+     "chance_recall": 0.28,
+     "f1": 0.297
+    }
+   }
+  },
+  {
+   "settings": {
+    "same_place": 0.25
+   },
+   "tune": {
+    "draw": {
+     "right": 10,
+     "fired": 26,
+     "labelled": 20,
+     "precision": 0.38,
+     "recall": 0.5,
+     "chance_precision": 0.25,
+     "chance_recall": 0.33,
+     "f1": 0.432
+    },
+    "dispense": {
+     "right": 10,
+     "fired": 23,
+     "labelled": 20,
+     "precision": 0.43,
+     "recall": 0.5,
+     "chance_precision": 0.32,
+     "chance_recall": 0.36,
+     "f1": 0.462
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 11,
+     "fired": 24,
+     "labelled": 18,
+     "precision": 0.46,
+     "recall": 0.61,
+     "chance_precision": 0.27,
+     "chance_recall": 0.36,
+     "f1": 0.524
+    },
+    "dispense": {
+     "right": 7,
+     "fired": 22,
+     "labelled": 22,
+     "precision": 0.32,
+     "recall": 0.32,
+     "chance_precision": 0.32,
+     "chance_recall": 0.31,
+     "f1": 0.32
+    }
+   }
+  },
+  {
+   "settings": {
+    "same_place": 0.5
+   },
+   "tune": {
+    "draw": {
+     "right": 11,
+     "fired": 25,
+     "labelled": 20,
+     "precision": 0.44,
+     "recall": 0.55,
+     "chance_precision": 0.26,
+     "chance_recall": 0.32,
+     "f1": 0.489
+    },
+    "dispense": {
+     "right": 9,
+     "fired": 23,
+     "labelled": 20,
+     "precision": 0.39,
+     "recall": 0.45,
+     "chance_precision": 0.3,
+     "chance_recall": 0.34,
+     "f1": 0.418
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 10,
+     "fired": 23,
+     "labelled": 18,
+     "precision": 0.43,
+     "recall": 0.56,
+     "chance_precision": 0.27,
+     "chance_recall": 0.34,
+     "f1": 0.486
+    },
+    "dispense": {
+     "right": 5,
+     "fired": 19,
+     "labelled": 22,
+     "precision": 0.26,
+     "recall": 0.23,
+     "chance_precision": 0.32,
+     "chance_recall": 0.27,
+     "f1": 0.244
+    }
+   }
+  },
+  {
+   "settings": {
+    "same_place": 0.75
+   },
+   "tune": {
+    "draw": {
+     "right": 9,
+     "fired": 19,
+     "labelled": 20,
+     "precision": 0.47,
+     "recall": 0.45,
+     "chance_precision": 0.27,
+     "chance_recall": 0.26,
+     "f1": 0.46
+    },
+    "dispense": {
+     "right": 6,
+     "fired": 18,
+     "labelled": 20,
+     "precision": 0.33,
+     "recall": 0.3,
+     "chance_precision": 0.31,
+     "chance_recall": 0.28,
+     "f1": 0.314
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 8,
+     "fired": 19,
+     "labelled": 18,
+     "precision": 0.42,
+     "recall": 0.44,
+     "chance_precision": 0.27,
+     "chance_recall": 0.28,
+     "f1": 0.43
+    },
+    "dispense": {
+     "right": 3,
+     "fired": 15,
+     "labelled": 22,
+     "precision": 0.2,
+     "recall": 0.14,
+     "chance_precision": 0.31,
+     "chance_recall": 0.21,
+     "f1": 0.165
+    }
+   }
+  },
+  {
+   "settings": {
+    "same_place": 1.0
+   },
+   "tune": {
+    "draw": {
+     "right": 6,
+     "fired": 16,
+     "labelled": 20,
+     "precision": 0.38,
+     "recall": 0.3,
+     "chance_precision": 0.27,
+     "chance_recall": 0.22,
+     "f1": 0.335
+    },
+    "dispense": {
+     "right": 4,
+     "fired": 13,
+     "labelled": 20,
+     "precision": 0.31,
+     "recall": 0.2,
+     "chance_precision": 0.32,
+     "chance_recall": 0.21,
+     "f1": 0.243
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 6,
+     "fired": 15,
+     "labelled": 18,
+     "precision": 0.4,
+     "recall": 0.33,
+     "chance_precision": 0.26,
+     "chance_recall": 0.22,
+     "f1": 0.362
+    },
+    "dispense": {
+     "right": 3,
+     "fired": 8,
+     "labelled": 22,
+     "precision": 0.38,
+     "recall": 0.14,
+     "chance_precision": 0.29,
+     "chance_recall": 0.1,
+     "f1": 0.205
+    }
+   }
+  },
+  {
+   "settings": {
+    "merge_gap": 0.4,
+    "same_place": 0.25
+   },
+   "tune": {
+    "draw": {
+     "right": 10,
+     "fired": 24,
+     "labelled": 20,
+     "precision": 0.42,
+     "recall": 0.5,
+     "chance_precision": 0.26,
+     "chance_recall": 0.32,
+     "f1": 0.457
+    },
+    "dispense": {
+     "right": 9,
+     "fired": 21,
+     "labelled": 20,
+     "precision": 0.43,
+     "recall": 0.45,
+     "chance_precision": 0.32,
+     "chance_recall": 0.33,
+     "f1": 0.44
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 10,
+     "fired": 22,
+     "labelled": 18,
+     "precision": 0.45,
+     "recall": 0.56,
+     "chance_precision": 0.27,
+     "chance_recall": 0.34,
+     "f1": 0.499
+    },
+    "dispense": {
+     "right": 6,
+     "fired": 19,
+     "labelled": 22,
+     "precision": 0.32,
+     "recall": 0.27,
+     "chance_precision": 0.32,
+     "chance_recall": 0.27,
+     "f1": 0.293
+    }
+   }
+  },
+  {
+   "settings": {
+    "merge_gap": 0.4,
+    "same_place": 0.5
+   },
+   "tune": {
+    "draw": {
+     "right": 9,
+     "fired": 24,
+     "labelled": 20,
+     "precision": 0.38,
+     "recall": 0.45,
+     "chance_precision": 0.27,
+     "chance_recall": 0.32,
+     "f1": 0.412
+    },
+    "dispense": {
+     "right": 9,
+     "fired": 20,
+     "labelled": 20,
+     "precision": 0.45,
+     "recall": 0.45,
+     "chance_precision": 0.32,
+     "chance_recall": 0.32,
+     "f1": 0.45
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 9,
+     "fired": 22,
+     "labelled": 18,
+     "precision": 0.41,
+     "recall": 0.5,
+     "chance_precision": 0.27,
+     "chance_recall": 0.33,
+     "f1": 0.451
+    },
+    "dispense": {
+     "right": 5,
+     "fired": 17,
+     "labelled": 22,
+     "precision": 0.29,
+     "recall": 0.23,
+     "chance_precision": 0.32,
+     "chance_recall": 0.25,
+     "f1": 0.257
+    }
+   }
+  },
+  {
+   "settings": {
+    "merge_gap": 0.6,
+    "same_place": 0.25
+   },
+   "tune": {
+    "draw": {
+     "right": 6,
+     "fired": 16,
+     "labelled": 20,
+     "precision": 0.38,
+     "recall": 0.3,
+     "chance_precision": 0.29,
+     "chance_recall": 0.23,
+     "f1": 0.335
+    },
+    "dispense": {
+     "right": 7,
+     "fired": 16,
+     "labelled": 20,
+     "precision": 0.44,
+     "recall": 0.35,
+     "chance_precision": 0.34,
+     "chance_recall": 0.27,
+     "f1": 0.39
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 8,
+     "fired": 20,
+     "labelled": 18,
+     "precision": 0.4,
+     "recall": 0.44,
+     "chance_precision": 0.27,
+     "chance_recall": 0.3,
+     "f1": 0.419
+    },
+    "dispense": {
+     "right": 3,
+     "fired": 14,
+     "labelled": 22,
+     "precision": 0.21,
+     "recall": 0.14,
+     "chance_precision": 0.33,
+     "chance_recall": 0.22,
+     "f1": 0.168
+    }
+   }
+  },
+  {
+   "settings": {
+    "merge_gap": 0.6,
+    "same_place": 0.5
+   },
+   "tune": {
+    "draw": {
+     "right": 6,
+     "fired": 15,
+     "labelled": 20,
+     "precision": 0.4,
+     "recall": 0.3,
+     "chance_precision": 0.29,
+     "chance_recall": 0.21,
+     "f1": 0.343
+    },
+    "dispense": {
+     "right": 6,
+     "fired": 14,
+     "labelled": 20,
+     "precision": 0.43,
+     "recall": 0.3,
+     "chance_precision": 0.33,
+     "chance_recall": 0.23,
+     "f1": 0.353
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 8,
+     "fired": 19,
+     "labelled": 18,
+     "precision": 0.42,
+     "recall": 0.44,
+     "chance_precision": 0.27,
+     "chance_recall": 0.28,
+     "f1": 0.43
+    },
+    "dispense": {
+     "right": 4,
+     "fired": 14,
+     "labelled": 22,
+     "precision": 0.29,
+     "recall": 0.18,
+     "chance_precision": 0.34,
+     "chance_recall": 0.21,
+     "f1": 0.222
+    }
+   }
+  },
+  {
+   "settings": {
+    "by_place": 0.25,
+    "follow_source": false
+   },
+   "tune": {
+    "draw": {
+     "right": 4,
+     "fired": 11,
+     "labelled": 20,
+     "precision": 0.36,
+     "recall": 0.2,
+     "chance_precision": 0.29,
+     "chance_recall": 0.16,
+     "f1": 0.257
+    },
+    "dispense": {
+     "right": 13,
+     "fired": 43,
+     "labelled": 20,
+     "precision": 0.3,
+     "recall": 0.65,
+     "chance_precision": 0.27,
+     "chance_recall": 0.57,
+     "f1": 0.411
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 5,
+     "fired": 12,
+     "labelled": 18,
+     "precision": 0.42,
+     "recall": 0.28,
+     "chance_precision": 0.29,
+     "chance_recall": 0.19,
+     "f1": 0.336
+    },
+    "dispense": {
+     "right": 10,
+     "fired": 41,
+     "labelled": 22,
+     "precision": 0.24,
+     "recall": 0.45,
+     "chance_precision": 0.25,
+     "chance_recall": 0.48,
+     "f1": 0.313
+    }
+   }
+  },
+  {
+   "settings": {
+    "by_place": 0.25,
+    "follow_source": true
+   },
+   "tune": {
+    "draw": {
+     "right": 4,
+     "fired": 12,
+     "labelled": 20,
+     "precision": 0.33,
+     "recall": 0.2,
+     "chance_precision": 0.28,
+     "chance_recall": 0.17,
+     "f1": 0.249
+    },
+    "dispense": {
+     "right": 13,
+     "fired": 42,
+     "labelled": 20,
+     "precision": 0.31,
+     "recall": 0.65,
+     "chance_precision": 0.27,
+     "chance_recall": 0.56,
+     "f1": 0.42
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 6,
+     "fired": 13,
+     "labelled": 18,
+     "precision": 0.46,
+     "recall": 0.33,
+     "chance_precision": 0.27,
+     "chance_recall": 0.2,
+     "f1": 0.384
+    },
+    "dispense": {
+     "right": 11,
+     "fired": 40,
+     "labelled": 22,
+     "precision": 0.28,
+     "recall": 0.5,
+     "chance_precision": 0.26,
+     "chance_recall": 0.48,
+     "f1": 0.359
+    }
+   }
+  },
+  {
+   "settings": {
+    "by_place": 0.5,
+    "follow_source": false
+   },
+   "tune": {
+    "draw": {
+     "right": 4,
+     "fired": 15,
+     "labelled": 20,
+     "precision": 0.27,
+     "recall": 0.2,
+     "chance_precision": 0.27,
+     "chance_recall": 0.21,
+     "f1": 0.23
+    },
+    "dispense": {
+     "right": 12,
+     "fired": 39,
+     "labelled": 20,
+     "precision": 0.31,
+     "recall": 0.6,
+     "chance_precision": 0.27,
+     "chance_recall": 0.53,
+     "f1": 0.409
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 10,
+     "fired": 21,
+     "labelled": 18,
+     "precision": 0.48,
+     "recall": 0.56,
+     "chance_precision": 0.28,
+     "chance_recall": 0.32,
+     "f1": 0.517
+    },
+    "dispense": {
+     "right": 8,
+     "fired": 32,
+     "labelled": 22,
+     "precision": 0.25,
+     "recall": 0.36,
+     "chance_precision": 0.27,
+     "chance_recall": 0.39,
+     "f1": 0.295
+    }
+   }
+  },
+  {
+   "settings": {
+    "by_place": 0.5,
+    "follow_source": true
+   },
+   "tune": {
+    "draw": {
+     "right": 4,
+     "fired": 13,
+     "labelled": 20,
+     "precision": 0.31,
+     "recall": 0.2,
+     "chance_precision": 0.29,
+     "chance_recall": 0.19,
+     "f1": 0.243
+    },
+    "dispense": {
+     "right": 13,
+     "fired": 41,
+     "labelled": 20,
+     "precision": 0.32,
+     "recall": 0.65,
+     "chance_precision": 0.27,
+     "chance_recall": 0.55,
+     "f1": 0.429
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 10,
+     "fired": 22,
+     "labelled": 18,
+     "precision": 0.45,
+     "recall": 0.56,
+     "chance_precision": 0.27,
+     "chance_recall": 0.33,
+     "f1": 0.499
+    },
+    "dispense": {
+     "right": 8,
+     "fired": 31,
+     "labelled": 22,
+     "precision": 0.26,
+     "recall": 0.36,
+     "chance_precision": 0.27,
+     "chance_recall": 0.38,
+     "f1": 0.302
+    }
+   }
+  },
+  {
+   "settings": {
+    "by_place": 0.75,
+    "follow_source": false
+   },
+   "tune": {
+    "draw": {
+     "right": 5,
+     "fired": 21,
+     "labelled": 20,
+     "precision": 0.24,
+     "recall": 0.25,
+     "chance_precision": 0.26,
+     "chance_recall": 0.27,
+     "f1": 0.245
+    },
+    "dispense": {
+     "right": 9,
+     "fired": 33,
+     "labelled": 20,
+     "precision": 0.27,
+     "recall": 0.45,
+     "chance_precision": 0.29,
+     "chance_recall": 0.47,
+     "f1": 0.338
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 12,
+     "fired": 24,
+     "labelled": 18,
+     "precision": 0.5,
+     "recall": 0.67,
+     "chance_precision": 0.26,
+     "chance_recall": 0.35,
+     "f1": 0.573
+    },
+    "dispense": {
+     "right": 8,
+     "fired": 29,
+     "labelled": 22,
+     "precision": 0.28,
+     "recall": 0.36,
+     "chance_precision": 0.26,
+     "chance_recall": 0.35,
+     "f1": 0.315
+    }
+   }
+  },
+  {
+   "settings": {
+    "by_place": 0.75,
+    "follow_source": true
+   },
+   "tune": {
+    "draw": {
+     "right": 7,
+     "fired": 21,
+     "labelled": 20,
+     "precision": 0.33,
+     "recall": 0.35,
+     "chance_precision": 0.26,
+     "chance_recall": 0.27,
+     "f1": 0.34
+    },
+    "dispense": {
+     "right": 9,
+     "fired": 33,
+     "labelled": 20,
+     "precision": 0.27,
+     "recall": 0.45,
+     "chance_precision": 0.29,
+     "chance_recall": 0.47,
+     "f1": 0.338
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 13,
+     "fired": 27,
+     "labelled": 18,
+     "precision": 0.48,
+     "recall": 0.72,
+     "chance_precision": 0.26,
+     "chance_recall": 0.39,
+     "f1": 0.576
+    },
+    "dispense": {
+     "right": 7,
+     "fired": 26,
+     "labelled": 22,
+     "precision": 0.27,
+     "recall": 0.32,
+     "chance_precision": 0.25,
+     "chance_recall": 0.3,
+     "f1": 0.293
+    }
+   }
+  },
+  {
+   "settings": {
+    "by_place": 1.0,
+    "follow_source": false
+   },
+   "tune": {
+    "draw": {
+     "right": 7,
+     "fired": 25,
+     "labelled": 20,
+     "precision": 0.28,
+     "recall": 0.35,
+     "chance_precision": 0.25,
+     "chance_recall": 0.31,
+     "f1": 0.311
+    },
+    "dispense": {
+     "right": 8,
+     "fired": 29,
+     "labelled": 20,
+     "precision": 0.28,
+     "recall": 0.4,
+     "chance_precision": 0.29,
+     "chance_recall": 0.42,
+     "f1": 0.329
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 15,
+     "fired": 33,
+     "labelled": 18,
+     "precision": 0.45,
+     "recall": 0.83,
+     "chance_precision": 0.25,
+     "chance_recall": 0.45,
+     "f1": 0.584
+    },
+    "dispense": {
+     "right": 7,
+     "fired": 20,
+     "labelled": 22,
+     "precision": 0.35,
+     "recall": 0.32,
+     "chance_precision": 0.25,
+     "chance_recall": 0.24,
+     "f1": 0.334
+    }
+   }
+  },
+  {
+   "settings": {
+    "by_place": 1.0,
+    "follow_source": true
+   },
+   "tune": {
+    "draw": {
+     "right": 9,
+     "fired": 25,
+     "labelled": 20,
+     "precision": 0.36,
+     "recall": 0.45,
+     "chance_precision": 0.25,
+     "chance_recall": 0.32,
+     "f1": 0.4
+    },
+    "dispense": {
+     "right": 9,
+     "fired": 29,
+     "labelled": 20,
+     "precision": 0.31,
+     "recall": 0.45,
+     "chance_precision": 0.29,
+     "chance_recall": 0.42,
+     "f1": 0.367
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 16,
+     "fired": 37,
+     "labelled": 18,
+     "precision": 0.43,
+     "recall": 0.89,
+     "chance_precision": 0.23,
+     "chance_recall": 0.48,
+     "f1": 0.58
+    },
+    "dispense": {
+     "right": 7,
+     "fired": 16,
+     "labelled": 22,
+     "precision": 0.44,
+     "recall": 0.32,
+     "chance_precision": 0.3,
+     "chance_recall": 0.22,
+     "f1": 0.371
+    }
+   }
+  },
+  {
+   "settings": {
+    "by_place": 1.5,
+    "follow_source": false
+   },
+   "tune": {
+    "draw": {
+     "right": 10,
+     "fired": 34,
+     "labelled": 20,
+     "precision": 0.29,
+     "recall": 0.5,
+     "chance_precision": 0.22,
+     "chance_recall": 0.38,
+     "f1": 0.367
+    },
+    "dispense": {
+     "right": 7,
+     "fired": 20,
+     "labelled": 20,
+     "precision": 0.35,
+     "recall": 0.35,
+     "chance_precision": 0.3,
+     "chance_recall": 0.3,
+     "f1": 0.35
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 16,
+     "fired": 43,
+     "labelled": 18,
+     "precision": 0.37,
+     "recall": 0.89,
+     "chance_precision": 0.22,
+     "chance_recall": 0.53,
+     "f1": 0.523
+    },
+    "dispense": {
+     "right": 5,
+     "fired": 10,
+     "labelled": 22,
+     "precision": 0.5,
+     "recall": 0.23,
+     "chance_precision": 0.31,
+     "chance_recall": 0.15,
+     "f1": 0.315
+    }
+   }
+  },
+  {
+   "settings": {
+    "by_place": 1.5,
+    "follow_source": true
+   },
+   "tune": {
+    "draw": {
+     "right": 10,
+     "fired": 31,
+     "labelled": 20,
+     "precision": 0.32,
+     "recall": 0.5,
+     "chance_precision": 0.24,
+     "chance_recall": 0.36,
+     "f1": 0.39
+    },
+    "dispense": {
+     "right": 8,
+     "fired": 23,
+     "labelled": 20,
+     "precision": 0.35,
+     "recall": 0.4,
+     "chance_precision": 0.31,
+     "chance_recall": 0.36,
+     "f1": 0.373
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 16,
+     "fired": 45,
+     "labelled": 18,
+     "precision": 0.36,
+     "recall": 0.89,
+     "chance_precision": 0.22,
+     "chance_recall": 0.55,
+     "f1": 0.513
+    },
+    "dispense": {
+     "right": 3,
+     "fired": 8,
+     "labelled": 22,
+     "precision": 0.38,
+     "recall": 0.14,
+     "chance_precision": 0.31,
+     "chance_recall": 0.12,
+     "f1": 0.205
+    }
+   }
+  },
+  {
+   "settings": {
+    "by_place": 2.0,
+    "follow_source": false
+   },
+   "tune": {
+    "draw": {
+     "right": 11,
+     "fired": 38,
+     "labelled": 20,
+     "precision": 0.29,
+     "recall": 0.55,
+     "chance_precision": 0.22,
+     "chance_recall": 0.42,
+     "f1": 0.38
+    },
+    "dispense": {
+     "right": 5,
+     "fired": 16,
+     "labelled": 20,
+     "precision": 0.31,
+     "recall": 0.25,
+     "chance_precision": 0.32,
+     "chance_recall": 0.26,
+     "f1": 0.277
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 16,
+     "fired": 45,
+     "labelled": 18,
+     "precision": 0.36,
+     "recall": 0.89,
+     "chance_precision": 0.22,
+     "chance_recall": 0.55,
+     "f1": 0.513
+    },
+    "dispense": {
+     "right": 4,
+     "fired": 8,
+     "labelled": 22,
+     "precision": 0.5,
+     "recall": 0.18,
+     "chance_precision": 0.3,
+     "chance_recall": 0.12,
+     "f1": 0.265
+    }
+   }
+  },
+  {
+   "settings": {
+    "by_place": 2.0,
+    "follow_source": true
+   },
+   "tune": {
+    "draw": {
+     "right": 12,
+     "fired": 38,
+     "labelled": 20,
+     "precision": 0.32,
+     "recall": 0.6,
+     "chance_precision": 0.24,
+     "chance_recall": 0.46,
+     "f1": 0.417
+    },
+    "dispense": {
+     "right": 3,
+     "fired": 16,
+     "labelled": 20,
+     "precision": 0.19,
+     "recall": 0.15,
+     "chance_precision": 0.3,
+     "chance_recall": 0.24,
+     "f1": 0.168
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 16,
+     "fired": 47,
+     "labelled": 18,
+     "precision": 0.34,
+     "recall": 0.89,
+     "chance_precision": 0.22,
+     "chance_recall": 0.56,
+     "f1": 0.492
+    },
+    "dispense": {
+     "right": 2,
+     "fired": 6,
+     "labelled": 22,
+     "precision": 0.33,
+     "recall": 0.09,
+     "chance_precision": 0.29,
+     "chance_recall": 0.08,
+     "f1": 0.141
+    }
+   }
+  },
+  {
+   "settings": {
+    "disp_near": 0.75
+   },
+   "tune": {
+    "draw": {
+     "right": 14,
+     "fired": 29,
+     "labelled": 20,
+     "precision": 0.48,
+     "recall": 0.7,
+     "chance_precision": 0.26,
+     "chance_recall": 0.37,
+     "f1": 0.569
+    },
+    "dispense": {
+     "right": 5,
+     "fired": 9,
+     "labelled": 20,
+     "precision": 0.56,
+     "recall": 0.25,
+     "chance_precision": 0.38,
+     "chance_recall": 0.17,
+     "f1": 0.346
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 15,
+     "fired": 29,
+     "labelled": 18,
+     "precision": 0.52,
+     "recall": 0.83,
+     "chance_precision": 0.25,
+     "chance_recall": 0.41,
+     "f1": 0.639
+    },
+    "dispense": {
+     "right": 6,
+     "fired": 11,
+     "labelled": 22,
+     "precision": 0.55,
+     "recall": 0.27,
+     "chance_precision": 0.35,
+     "chance_recall": 0.17,
+     "f1": 0.362
+    }
+   }
+  },
+  {
+   "settings": {
+    "disp_near": 1.0
+   },
+   "tune": {
+    "draw": {
+     "right": 14,
+     "fired": 29,
+     "labelled": 20,
+     "precision": 0.48,
+     "recall": 0.7,
+     "chance_precision": 0.26,
+     "chance_recall": 0.37,
+     "f1": 0.569
+    },
+    "dispense": {
+     "right": 6,
+     "fired": 11,
+     "labelled": 20,
+     "precision": 0.55,
+     "recall": 0.3,
+     "chance_precision": 0.36,
+     "chance_recall": 0.2,
+     "f1": 0.388
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 15,
+     "fired": 29,
+     "labelled": 18,
+     "precision": 0.52,
+     "recall": 0.83,
+     "chance_precision": 0.25,
+     "chance_recall": 0.41,
+     "f1": 0.639
+    },
+    "dispense": {
+     "right": 7,
+     "fired": 15,
+     "labelled": 22,
+     "precision": 0.47,
+     "recall": 0.32,
+     "chance_precision": 0.33,
+     "chance_recall": 0.22,
+     "f1": 0.381
+    }
+   }
+  },
+  {
+   "settings": {
+    "disp_near": 1.5
+   },
+   "tune": {
+    "draw": {
+     "right": 14,
+     "fired": 29,
+     "labelled": 20,
+     "precision": 0.48,
+     "recall": 0.7,
+     "chance_precision": 0.24,
+     "chance_recall": 0.35,
+     "f1": 0.569
+    },
+    "dispense": {
+     "right": 7,
+     "fired": 14,
+     "labelled": 20,
+     "precision": 0.5,
+     "recall": 0.35,
+     "chance_precision": 0.36,
+     "chance_recall": 0.25,
+     "f1": 0.412
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 15,
+     "fired": 29,
+     "labelled": 18,
+     "precision": 0.52,
+     "recall": 0.83,
+     "chance_precision": 0.26,
+     "chance_recall": 0.43,
+     "f1": 0.639
+    },
+    "dispense": {
+     "right": 8,
+     "fired": 19,
+     "labelled": 22,
+     "precision": 0.42,
+     "recall": 0.36,
+     "chance_precision": 0.31,
+     "chance_recall": 0.26,
+     "f1": 0.388
+    }
+   }
+  },
+  {
+   "settings": {
+    "disp_near": 2.0
+   },
+   "tune": {
+    "draw": {
+     "right": 14,
+     "fired": 29,
+     "labelled": 20,
+     "precision": 0.48,
+     "recall": 0.7,
+     "chance_precision": 0.27,
+     "chance_recall": 0.39,
+     "f1": 0.569
+    },
+    "dispense": {
+     "right": 8,
+     "fired": 18,
+     "labelled": 20,
+     "precision": 0.44,
+     "recall": 0.4,
+     "chance_precision": 0.35,
+     "chance_recall": 0.31,
+     "f1": 0.419
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 15,
+     "fired": 29,
+     "labelled": 18,
+     "precision": 0.52,
+     "recall": 0.83,
+     "chance_precision": 0.25,
+     "chance_recall": 0.41,
+     "f1": 0.639
+    },
+    "dispense": {
+     "right": 9,
+     "fired": 22,
+     "labelled": 22,
+     "precision": 0.41,
+     "recall": 0.41,
+     "chance_precision": 0.31,
+     "chance_recall": 0.3,
+     "f1": 0.41
+    }
+   }
+  },
+  {
+   "settings": {
+    "disp_near": 3.0
+   },
+   "tune": {
+    "draw": {
+     "right": 14,
+     "fired": 29,
+     "labelled": 20,
+     "precision": 0.48,
+     "recall": 0.7,
+     "chance_precision": 0.26,
+     "chance_recall": 0.37,
+     "f1": 0.569
+    },
+    "dispense": {
+     "right": 10,
+     "fired": 20,
+     "labelled": 20,
+     "precision": 0.5,
+     "recall": 0.5,
+     "chance_precision": 0.34,
+     "chance_recall": 0.34,
+     "f1": 0.5
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 15,
+     "fired": 29,
+     "labelled": 18,
+     "precision": 0.52,
+     "recall": 0.83,
+     "chance_precision": 0.25,
+     "chance_recall": 0.41,
+     "f1": 0.639
+    },
+    "dispense": {
+     "right": 9,
+     "fired": 22,
+     "labelled": 22,
+     "precision": 0.41,
+     "recall": 0.41,
+     "chance_precision": 0.31,
+     "chance_recall": 0.3,
+     "f1": 0.41
+    }
+   }
+  },
+  {
+   "settings": {
+    "disp_min_gap": 0.6
+   },
+   "tune": {
+    "draw": {
+     "right": 14,
+     "fired": 29,
+     "labelled": 20,
+     "precision": 0.48,
+     "recall": 0.7,
+     "chance_precision": 0.25,
+     "chance_recall": 0.37,
+     "f1": 0.569
+    },
+    "dispense": {
+     "right": 7,
+     "fired": 15,
+     "labelled": 20,
+     "precision": 0.47,
+     "recall": 0.35,
+     "chance_precision": 0.32,
+     "chance_recall": 0.24,
+     "f1": 0.401
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 15,
+     "fired": 29,
+     "labelled": 18,
+     "precision": 0.52,
+     "recall": 0.83,
+     "chance_precision": 0.26,
+     "chance_recall": 0.42,
+     "f1": 0.639
+    },
+    "dispense": {
+     "right": 9,
+     "fired": 19,
+     "labelled": 22,
+     "precision": 0.47,
+     "recall": 0.41,
+     "chance_precision": 0.33,
+     "chance_recall": 0.28,
+     "f1": 0.438
+    }
+   }
+  },
+  {
+   "settings": {
+    "disp_min_gap": 1.0
+   },
+   "tune": {
+    "draw": {
+     "right": 14,
+     "fired": 29,
+     "labelled": 20,
+     "precision": 0.48,
+     "recall": 0.7,
+     "chance_precision": 0.25,
+     "chance_recall": 0.36,
+     "f1": 0.569
+    },
+    "dispense": {
+     "right": 6,
+     "fired": 14,
+     "labelled": 20,
+     "precision": 0.43,
+     "recall": 0.3,
+     "chance_precision": 0.3,
+     "chance_recall": 0.21,
+     "f1": 0.353
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 15,
+     "fired": 29,
+     "labelled": 18,
+     "precision": 0.52,
+     "recall": 0.83,
+     "chance_precision": 0.26,
+     "chance_recall": 0.42,
+     "f1": 0.639
+    },
+    "dispense": {
+     "right": 9,
+     "fired": 19,
+     "labelled": 22,
+     "precision": 0.47,
+     "recall": 0.41,
+     "chance_precision": 0.33,
+     "chance_recall": 0.28,
+     "f1": 0.438
+    }
+   }
+  },
+  {
+   "settings": {
+    "disp_min_gap": 1.5
+   },
+   "tune": {
+    "draw": {
+     "right": 14,
+     "fired": 29,
+     "labelled": 20,
+     "precision": 0.48,
+     "recall": 0.7,
+     "chance_precision": 0.25,
+     "chance_recall": 0.36,
+     "f1": 0.569
+    },
+    "dispense": {
+     "right": 6,
+     "fired": 14,
+     "labelled": 20,
+     "precision": 0.43,
+     "recall": 0.3,
+     "chance_precision": 0.3,
+     "chance_recall": 0.21,
+     "f1": 0.353
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 15,
+     "fired": 29,
+     "labelled": 18,
+     "precision": 0.52,
+     "recall": 0.83,
+     "chance_precision": 0.25,
+     "chance_recall": 0.42,
+     "f1": 0.639
+    },
+    "dispense": {
+     "right": 9,
+     "fired": 18,
+     "labelled": 22,
+     "precision": 0.5,
+     "recall": 0.41,
+     "chance_precision": 0.33,
+     "chance_recall": 0.27,
+     "f1": 0.451
+    }
+   }
+  },
+  {
+   "settings": {
+    "disp_min_gap": 2.0
+   },
+   "tune": {
+    "draw": {
+     "right": 14,
+     "fired": 29,
+     "labelled": 20,
+     "precision": 0.48,
+     "recall": 0.7,
+     "chance_precision": 0.26,
+     "chance_recall": 0.37,
+     "f1": 0.569
+    },
+    "dispense": {
+     "right": 6,
+     "fired": 12,
+     "labelled": 20,
+     "precision": 0.5,
+     "recall": 0.3,
+     "chance_precision": 0.31,
+     "chance_recall": 0.19,
+     "f1": 0.375
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 15,
+     "fired": 29,
+     "labelled": 18,
+     "precision": 0.52,
+     "recall": 0.83,
+     "chance_precision": 0.26,
+     "chance_recall": 0.43,
+     "f1": 0.639
+    },
+    "dispense": {
+     "right": 8,
+     "fired": 16,
+     "labelled": 22,
+     "precision": 0.5,
+     "recall": 0.36,
+     "chance_precision": 0.34,
+     "chance_recall": 0.24,
+     "f1": 0.419
+    }
+   }
+  },
+  {
+   "settings": {
+    "disp_min_dwell": 0.4
+   },
+   "tune": {
+    "draw": {
+     "right": 14,
+     "fired": 29,
+     "labelled": 20,
+     "precision": 0.48,
+     "recall": 0.7,
+     "chance_precision": 0.26,
+     "chance_recall": 0.38,
+     "f1": 0.569
+    },
+    "dispense": {
+     "right": 10,
+     "fired": 16,
+     "labelled": 20,
+     "precision": 0.62,
+     "recall": 0.5,
+     "chance_precision": 0.34,
+     "chance_recall": 0.28,
+     "f1": 0.554
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 15,
+     "fired": 29,
+     "labelled": 18,
+     "precision": 0.52,
+     "recall": 0.83,
+     "chance_precision": 0.25,
+     "chance_recall": 0.42,
+     "f1": 0.639
+    },
+    "dispense": {
+     "right": 7,
+     "fired": 13,
+     "labelled": 22,
+     "precision": 0.54,
+     "recall": 0.32,
+     "chance_precision": 0.36,
+     "chance_recall": 0.21,
+     "f1": 0.402
+    }
+   }
+  },
+  {
+   "settings": {
+    "disp_min_dwell": 0.5
+   },
+   "tune": {
+    "draw": {
+     "right": 14,
+     "fired": 29,
+     "labelled": 20,
+     "precision": 0.48,
+     "recall": 0.7,
+     "chance_precision": 0.26,
+     "chance_recall": 0.38,
+     "f1": 0.569
+    },
+    "dispense": {
+     "right": 10,
+     "fired": 16,
+     "labelled": 20,
+     "precision": 0.62,
+     "recall": 0.5,
+     "chance_precision": 0.34,
+     "chance_recall": 0.28,
+     "f1": 0.554
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 15,
+     "fired": 29,
+     "labelled": 18,
+     "precision": 0.52,
+     "recall": 0.83,
+     "chance_precision": 0.26,
+     "chance_recall": 0.43,
+     "f1": 0.639
+    },
+    "dispense": {
+     "right": 7,
+     "fired": 12,
+     "labelled": 22,
+     "precision": 0.58,
+     "recall": 0.32,
+     "chance_precision": 0.35,
+     "chance_recall": 0.19,
+     "f1": 0.412
+    }
+   }
+  },
+  {
+   "settings": {
+    "disp_min_dwell": 0.7
+   },
+   "tune": {
+    "draw": {
+     "right": 14,
+     "fired": 29,
+     "labelled": 20,
+     "precision": 0.48,
+     "recall": 0.7,
+     "chance_precision": 0.26,
+     "chance_recall": 0.37,
+     "f1": 0.569
+    },
+    "dispense": {
+     "right": 8,
+     "fired": 13,
+     "labelled": 20,
+     "precision": 0.62,
+     "recall": 0.4,
+     "chance_precision": 0.34,
+     "chance_recall": 0.22,
+     "f1": 0.486
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 15,
+     "fired": 29,
+     "labelled": 18,
+     "precision": 0.52,
+     "recall": 0.83,
+     "chance_precision": 0.26,
+     "chance_recall": 0.42,
+     "f1": 0.639
+    },
+    "dispense": {
+     "right": 5,
+     "fired": 10,
+     "labelled": 22,
+     "precision": 0.5,
+     "recall": 0.23,
+     "chance_precision": 0.32,
+     "chance_recall": 0.14,
+     "f1": 0.315
+    }
+   }
+  },
+  {
+   "settings": {
+    "disp_near": 1.5,
+    "disp_min_gap": 0.6
+   },
+   "tune": {
+    "draw": {
+     "right": 14,
+     "fired": 29,
+     "labelled": 20,
+     "precision": 0.48,
+     "recall": 0.7,
+     "chance_precision": 0.25,
+     "chance_recall": 0.36,
+     "f1": 0.569
+    },
+    "dispense": {
+     "right": 4,
+     "fired": 9,
+     "labelled": 20,
+     "precision": 0.44,
+     "recall": 0.2,
+     "chance_precision": 0.31,
+     "chance_recall": 0.14,
+     "f1": 0.275
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 15,
+     "fired": 29,
+     "labelled": 18,
+     "precision": 0.52,
+     "recall": 0.83,
+     "chance_precision": 0.26,
+     "chance_recall": 0.43,
+     "f1": 0.639
+    },
+    "dispense": {
+     "right": 7,
+     "fired": 14,
+     "labelled": 22,
+     "precision": 0.5,
+     "recall": 0.32,
+     "chance_precision": 0.36,
+     "chance_recall": 0.22,
+     "f1": 0.39
+    }
+   }
+  },
+  {
+   "settings": {
+    "disp_near": 1.5,
+    "disp_min_gap": 1.0
+   },
+   "tune": {
+    "draw": {
+     "right": 14,
+     "fired": 29,
+     "labelled": 20,
+     "precision": 0.48,
+     "recall": 0.7,
+     "chance_precision": 0.26,
+     "chance_recall": 0.37,
+     "f1": 0.569
+    },
+    "dispense": {
+     "right": 3,
+     "fired": 8,
+     "labelled": 20,
+     "precision": 0.38,
+     "recall": 0.15,
+     "chance_precision": 0.3,
+     "chance_recall": 0.12,
+     "f1": 0.215
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 15,
+     "fired": 29,
+     "labelled": 18,
+     "precision": 0.52,
+     "recall": 0.83,
+     "chance_precision": 0.26,
+     "chance_recall": 0.43,
+     "f1": 0.639
+    },
+    "dispense": {
+     "right": 7,
+     "fired": 14,
+     "labelled": 22,
+     "precision": 0.5,
+     "recall": 0.32,
+     "chance_precision": 0.36,
+     "chance_recall": 0.22,
+     "f1": 0.39
+    }
+   }
+  },
+  {
+   "settings": {
+    "disp_near": 2.0,
+    "disp_min_gap": 0.6
+   },
+   "tune": {
+    "draw": {
+     "right": 14,
+     "fired": 29,
+     "labelled": 20,
+     "precision": 0.48,
+     "recall": 0.7,
+     "chance_precision": 0.26,
+     "chance_recall": 0.37,
+     "f1": 0.569
+    },
+    "dispense": {
+     "right": 5,
+     "fired": 10,
+     "labelled": 20,
+     "precision": 0.5,
+     "recall": 0.25,
+     "chance_precision": 0.32,
+     "chance_recall": 0.16,
+     "f1": 0.333
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 15,
+     "fired": 29,
+     "labelled": 18,
+     "precision": 0.52,
+     "recall": 0.83,
+     "chance_precision": 0.26,
+     "chance_recall": 0.42,
+     "f1": 0.639
+    },
+    "dispense": {
+     "right": 8,
+     "fired": 17,
+     "labelled": 22,
+     "precision": 0.47,
+     "recall": 0.36,
+     "chance_precision": 0.34,
+     "chance_recall": 0.26,
+     "f1": 0.408
+    }
+   }
+  },
+  {
+   "settings": {
+    "disp_near": 2.0,
+    "disp_min_gap": 1.0
+   },
+   "tune": {
+    "draw": {
+     "right": 14,
+     "fired": 29,
+     "labelled": 20,
+     "precision": 0.48,
+     "recall": 0.7,
+     "chance_precision": 0.25,
+     "chance_recall": 0.37,
+     "f1": 0.569
+    },
+    "dispense": {
+     "right": 4,
+     "fired": 9,
+     "labelled": 20,
+     "precision": 0.44,
+     "recall": 0.2,
+     "chance_precision": 0.33,
+     "chance_recall": 0.15,
+     "f1": 0.275
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 15,
+     "fired": 29,
+     "labelled": 18,
+     "precision": 0.52,
+     "recall": 0.83,
+     "chance_precision": 0.26,
+     "chance_recall": 0.42,
+     "f1": 0.639
+    },
+    "dispense": {
+     "right": 8,
+     "fired": 17,
+     "labelled": 22,
+     "precision": 0.47,
+     "recall": 0.36,
+     "chance_precision": 0.34,
+     "chance_recall": 0.26,
+     "f1": 0.408
+    }
+   }
+  },
+  {
+   "settings": {
+    "disp_near": 3.0,
+    "disp_min_gap": 0.6
+   },
+   "tune": {
+    "draw": {
+     "right": 14,
+     "fired": 29,
+     "labelled": 20,
+     "precision": 0.48,
+     "recall": 0.7,
+     "chance_precision": 0.25,
+     "chance_recall": 0.37,
+     "f1": 0.569
+    },
+    "dispense": {
+     "right": 6,
+     "fired": 11,
+     "labelled": 20,
+     "precision": 0.55,
+     "recall": 0.3,
+     "chance_precision": 0.35,
+     "chance_recall": 0.19,
+     "f1": 0.388
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 15,
+     "fired": 29,
+     "labelled": 18,
+     "precision": 0.52,
+     "recall": 0.83,
+     "chance_precision": 0.26,
+     "chance_recall": 0.42,
+     "f1": 0.639
+    },
+    "dispense": {
+     "right": 8,
+     "fired": 17,
+     "labelled": 22,
+     "precision": 0.47,
+     "recall": 0.36,
+     "chance_precision": 0.34,
+     "chance_recall": 0.26,
+     "f1": 0.408
+    }
+   }
+  },
+  {
+   "settings": {
+    "disp_near": 3.0,
+    "disp_min_gap": 1.0
+   },
+   "tune": {
+    "draw": {
+     "right": 14,
+     "fired": 29,
+     "labelled": 20,
+     "precision": 0.48,
+     "recall": 0.7,
+     "chance_precision": 0.26,
+     "chance_recall": 0.37,
+     "f1": 0.569
+    },
+    "dispense": {
+     "right": 5,
+     "fired": 10,
+     "labelled": 20,
+     "precision": 0.5,
+     "recall": 0.25,
+     "chance_precision": 0.34,
+     "chance_recall": 0.17,
+     "f1": 0.333
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 15,
+     "fired": 29,
+     "labelled": 18,
+     "precision": 0.52,
+     "recall": 0.83,
+     "chance_precision": 0.26,
+     "chance_recall": 0.42,
+     "f1": 0.639
+    },
+    "dispense": {
+     "right": 8,
+     "fired": 17,
+     "labelled": 22,
+     "precision": 0.47,
+     "recall": 0.36,
+     "chance_precision": 0.34,
+     "chance_recall": 0.26,
+     "f1": 0.408
+    }
+   }
+  },
+  {
+   "settings": {
+    "disp_near": 1.5,
+    "disp_min_dwell": 0.4
+   },
+   "tune": {
+    "draw": {
+     "right": 14,
+     "fired": 29,
+     "labelled": 20,
+     "precision": 0.48,
+     "recall": 0.7,
+     "chance_precision": 0.25,
+     "chance_recall": 0.37,
+     "f1": 0.569
+    },
+    "dispense": {
+     "right": 6,
+     "fired": 9,
+     "labelled": 20,
+     "precision": 0.67,
+     "recall": 0.3,
+     "chance_precision": 0.44,
+     "chance_recall": 0.2,
+     "f1": 0.414
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 15,
+     "fired": 29,
+     "labelled": 18,
+     "precision": 0.52,
+     "recall": 0.83,
+     "chance_precision": 0.26,
+     "chance_recall": 0.42,
+     "f1": 0.639
+    },
+    "dispense": {
+     "right": 6,
+     "fired": 11,
+     "labelled": 22,
+     "precision": 0.55,
+     "recall": 0.27,
+     "chance_precision": 0.31,
+     "chance_recall": 0.15,
+     "f1": 0.362
+    }
+   }
+  },
+  {
+   "settings": {
+    "disp_near": 1.5,
+    "disp_min_dwell": 0.5
+   },
+   "tune": {
+    "draw": {
+     "right": 14,
+     "fired": 29,
+     "labelled": 20,
+     "precision": 0.48,
+     "recall": 0.7,
+     "chance_precision": 0.25,
+     "chance_recall": 0.37,
+     "f1": 0.569
+    },
+    "dispense": {
+     "right": 6,
+     "fired": 9,
+     "labelled": 20,
+     "precision": 0.67,
+     "recall": 0.3,
+     "chance_precision": 0.44,
+     "chance_recall": 0.2,
+     "f1": 0.414
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 15,
+     "fired": 29,
+     "labelled": 18,
+     "precision": 0.52,
+     "recall": 0.83,
+     "chance_precision": 0.26,
+     "chance_recall": 0.42,
+     "f1": 0.639
+    },
+    "dispense": {
+     "right": 6,
+     "fired": 10,
+     "labelled": 22,
+     "precision": 0.6,
+     "recall": 0.27,
+     "chance_precision": 0.34,
+     "chance_recall": 0.15,
+     "f1": 0.372
+    }
+   }
+  },
+  {
+   "settings": {
+    "disp_near": 2.0,
+    "disp_min_dwell": 0.4
+   },
+   "tune": {
+    "draw": {
+     "right": 14,
+     "fired": 29,
+     "labelled": 20,
+     "precision": 0.48,
+     "recall": 0.7,
+     "chance_precision": 0.24,
+     "chance_recall": 0.35,
+     "f1": 0.569
+    },
+    "dispense": {
+     "right": 7,
+     "fired": 12,
+     "labelled": 20,
+     "precision": 0.58,
+     "recall": 0.35,
+     "chance_precision": 0.38,
+     "chance_recall": 0.23,
+     "f1": 0.437
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 15,
+     "fired": 29,
+     "labelled": 18,
+     "precision": 0.52,
+     "recall": 0.83,
+     "chance_precision": 0.25,
+     "chance_recall": 0.42,
+     "f1": 0.639
+    },
+    "dispense": {
+     "right": 7,
+     "fired": 13,
+     "labelled": 22,
+     "precision": 0.54,
+     "recall": 0.32,
+     "chance_precision": 0.36,
+     "chance_recall": 0.21,
+     "f1": 0.402
+    }
+   }
+  },
+  {
+   "settings": {
+    "disp_near": 2.0,
+    "disp_min_dwell": 0.5
+   },
+   "tune": {
+    "draw": {
+     "right": 14,
+     "fired": 29,
+     "labelled": 20,
+     "precision": 0.48,
+     "recall": 0.7,
+     "chance_precision": 0.24,
+     "chance_recall": 0.35,
+     "f1": 0.569
+    },
+    "dispense": {
+     "right": 7,
+     "fired": 12,
+     "labelled": 20,
+     "precision": 0.58,
+     "recall": 0.35,
+     "chance_precision": 0.38,
+     "chance_recall": 0.23,
+     "f1": 0.437
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 15,
+     "fired": 29,
+     "labelled": 18,
+     "precision": 0.52,
+     "recall": 0.83,
+     "chance_precision": 0.26,
+     "chance_recall": 0.43,
+     "f1": 0.639
+    },
+    "dispense": {
+     "right": 7,
+     "fired": 12,
+     "labelled": 22,
+     "precision": 0.58,
+     "recall": 0.32,
+     "chance_precision": 0.35,
+     "chance_recall": 0.19,
+     "f1": 0.412
+    }
+   }
+  },
+  {
+   "settings": {
+    "disp_near": 3.0,
+    "disp_min_dwell": 0.4
+   },
+   "tune": {
+    "draw": {
+     "right": 14,
+     "fired": 29,
+     "labelled": 20,
+     "precision": 0.48,
+     "recall": 0.7,
+     "chance_precision": 0.25,
+     "chance_recall": 0.37,
+     "f1": 0.569
+    },
+    "dispense": {
+     "right": 9,
+     "fired": 14,
+     "labelled": 20,
+     "precision": 0.64,
+     "recall": 0.45,
+     "chance_precision": 0.37,
+     "chance_recall": 0.26,
+     "f1": 0.528
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 15,
+     "fired": 29,
+     "labelled": 18,
+     "precision": 0.52,
+     "recall": 0.83,
+     "chance_precision": 0.25,
+     "chance_recall": 0.42,
+     "f1": 0.639
+    },
+    "dispense": {
+     "right": 7,
+     "fired": 13,
+     "labelled": 22,
+     "precision": 0.54,
+     "recall": 0.32,
+     "chance_precision": 0.36,
+     "chance_recall": 0.21,
+     "f1": 0.402
+    }
+   }
+  },
+  {
+   "settings": {
+    "disp_near": 3.0,
+    "disp_min_dwell": 0.5
+   },
+   "tune": {
+    "draw": {
+     "right": 14,
+     "fired": 29,
+     "labelled": 20,
+     "precision": 0.48,
+     "recall": 0.7,
+     "chance_precision": 0.25,
+     "chance_recall": 0.37,
+     "f1": 0.569
+    },
+    "dispense": {
+     "right": 9,
+     "fired": 14,
+     "labelled": 20,
+     "precision": 0.64,
+     "recall": 0.45,
+     "chance_precision": 0.37,
+     "chance_recall": 0.26,
+     "f1": 0.528
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 15,
+     "fired": 29,
+     "labelled": 18,
+     "precision": 0.52,
+     "recall": 0.83,
+     "chance_precision": 0.26,
+     "chance_recall": 0.43,
+     "f1": 0.639
+    },
+    "dispense": {
+     "right": 7,
+     "fired": 12,
+     "labelled": 22,
+     "precision": 0.58,
+     "recall": 0.32,
+     "chance_precision": 0.35,
+     "chance_recall": 0.19,
+     "f1": 0.412
+    }
+   }
+  },
+  {
+   "settings": {
+    "near_last": 0.5
+   },
+   "tune": {
+    "draw": {
+     "right": 13,
+     "fired": 47,
+     "labelled": 20,
+     "precision": 0.28,
+     "recall": 0.65,
+     "chance_precision": 0.22,
+     "chance_recall": 0.51,
+     "f1": 0.391
+    },
+    "dispense": {
+     "right": 5,
+     "fired": 7,
+     "labelled": 20,
+     "precision": 0.71,
+     "recall": 0.25,
+     "chance_precision": 0.41,
+     "chance_recall": 0.14,
+     "f1": 0.37
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 15,
+     "fired": 43,
+     "labelled": 18,
+     "precision": 0.35,
+     "recall": 0.83,
+     "chance_precision": 0.23,
+     "chance_recall": 0.54,
+     "f1": 0.492
+    },
+    "dispense": {
+     "right": 4,
+     "fired": 10,
+     "labelled": 22,
+     "precision": 0.4,
+     "recall": 0.18,
+     "chance_precision": 0.32,
+     "chance_recall": 0.16,
+     "f1": 0.248
+    }
+   }
+  },
+  {
+   "settings": {
+    "near_last": 0.75
+   },
+   "tune": {
+    "draw": {
+     "right": 10,
+     "fired": 36,
+     "labelled": 20,
+     "precision": 0.28,
+     "recall": 0.5,
+     "chance_precision": 0.22,
+     "chance_recall": 0.4,
+     "f1": 0.359
+    },
+    "dispense": {
+     "right": 9,
+     "fired": 18,
+     "labelled": 20,
+     "precision": 0.5,
+     "recall": 0.45,
+     "chance_precision": 0.34,
+     "chance_recall": 0.3,
+     "f1": 0.474
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 11,
+     "fired": 30,
+     "labelled": 18,
+     "precision": 0.37,
+     "recall": 0.61,
+     "chance_precision": 0.26,
+     "chance_recall": 0.42,
+     "f1": 0.461
+    },
+    "dispense": {
+     "right": 10,
+     "fired": 23,
+     "labelled": 22,
+     "precision": 0.43,
+     "recall": 0.45,
+     "chance_precision": 0.31,
+     "chance_recall": 0.33,
+     "f1": 0.44
+    }
+   }
+  },
+  {
+   "settings": {
+    "near_last": 1.0
+   },
+   "tune": {
+    "draw": {
+     "right": 10,
+     "fired": 32,
+     "labelled": 20,
+     "precision": 0.31,
+     "recall": 0.5,
+     "chance_precision": 0.24,
+     "chance_recall": 0.38,
+     "f1": 0.383
+    },
+    "dispense": {
+     "right": 10,
+     "fired": 22,
+     "labelled": 20,
+     "precision": 0.45,
+     "recall": 0.5,
+     "chance_precision": 0.33,
+     "chance_recall": 0.37,
+     "f1": 0.474
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 9,
+     "fired": 24,
+     "labelled": 18,
+     "precision": 0.38,
+     "recall": 0.5,
+     "chance_precision": 0.27,
+     "chance_recall": 0.35,
+     "f1": 0.432
+    },
+    "dispense": {
+     "right": 10,
+     "fired": 29,
+     "labelled": 22,
+     "precision": 0.34,
+     "recall": 0.45,
+     "chance_precision": 0.29,
+     "chance_recall": 0.38,
+     "f1": 0.387
+    }
+   }
+  },
+  {
+   "settings": {
+    "near_last": 1.25
+   },
+   "tune": {
+    "draw": {
+     "right": 8,
+     "fired": 30,
+     "labelled": 20,
+     "precision": 0.27,
+     "recall": 0.4,
+     "chance_precision": 0.24,
+     "chance_recall": 0.36,
+     "f1": 0.322
+    },
+    "dispense": {
+     "right": 10,
+     "fired": 24,
+     "labelled": 20,
+     "precision": 0.42,
+     "recall": 0.5,
+     "chance_precision": 0.32,
+     "chance_recall": 0.38,
+     "f1": 0.457
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 5,
+     "fired": 17,
+     "labelled": 18,
+     "precision": 0.29,
+     "recall": 0.28,
+     "chance_precision": 0.26,
+     "chance_recall": 0.24,
+     "f1": 0.285
+    },
+    "dispense": {
+     "right": 11,
+     "fired": 36,
+     "labelled": 22,
+     "precision": 0.31,
+     "recall": 0.5,
+     "chance_precision": 0.27,
+     "chance_recall": 0.45,
+     "f1": 0.383
+    }
+   }
+  },
+  {
+   "settings": {
+    "near_last": 1.5
+   },
+   "tune": {
+    "draw": {
+     "right": 7,
+     "fired": 26,
+     "labelled": 20,
+     "precision": 0.27,
+     "recall": 0.35,
+     "chance_precision": 0.24,
+     "chance_recall": 0.31,
+     "f1": 0.305
+    },
+    "dispense": {
+     "right": 10,
+     "fired": 28,
+     "labelled": 20,
+     "precision": 0.36,
+     "recall": 0.5,
+     "chance_precision": 0.3,
+     "chance_recall": 0.42,
+     "f1": 0.419
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 5,
+     "fired": 16,
+     "labelled": 18,
+     "precision": 0.31,
+     "recall": 0.28,
+     "chance_precision": 0.25,
+     "chance_recall": 0.22,
+     "f1": 0.294
+    },
+    "dispense": {
+     "right": 11,
+     "fired": 37,
+     "labelled": 22,
+     "precision": 0.3,
+     "recall": 0.5,
+     "chance_precision": 0.27,
+     "chance_recall": 0.45,
+     "f1": 0.375
+    }
+   }
+  },
+  {
+   "settings": {
+    "near_last": 2.0
+   },
+   "tune": {
+    "draw": {
+     "right": 6,
+     "fired": 20,
+     "labelled": 20,
+     "precision": 0.3,
+     "recall": 0.3,
+     "chance_precision": 0.23,
+     "chance_recall": 0.23,
+     "f1": 0.3
+    },
+    "dispense": {
+     "right": 11,
+     "fired": 34,
+     "labelled": 20,
+     "precision": 0.32,
+     "recall": 0.55,
+     "chance_precision": 0.29,
+     "chance_recall": 0.49,
+     "f1": 0.405
+    }
+   },
+   "hold": {
+    "draw": {
+     "right": 4,
+     "fired": 12,
+     "labelled": 18,
+     "precision": 0.33,
+     "recall": 0.22,
+     "chance_precision": 0.26,
+     "chance_recall": 0.17,
+     "f1": 0.264
+    },
+    "dispense": {
+     "right": 12,
+     "fired": 41,
+     "labelled": 22,
+     "precision": 0.29,
+     "recall": 0.55,
+     "chance_precision": 0.26,
+     "chance_recall": 0.49,
+     "f1": 0.38
+    }
+   }
+  }
+ ],
+ "picked": {
+  "disp_min_dwell": 0.4
+ }
+}
