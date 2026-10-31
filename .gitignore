@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+runs/
+node_modules/
+.env
+*.mp4
+*.wav
+!tests/voice/*.wav
+models/
+.DS_Store
+.pytest_cache/

@@ -1,0 +1,20 @@
+name: Pipetting demo
+steps:
+  - text: Put a fresh tip on the pipette.
+    expect: [{kind: tip_on}]
+  - text: Draw 100 microlitres of water from tube A.
+    expect: [{kind: draw, object: tube A}]
+    technique: {angle_max_deg: 20}
+  - text: Dispense it into tube B.
+    expect: [{kind: dispense, object: tube B}]
+  - text: Eject the tip.
+    expect: [{kind: tip_off}]
+  - text: Put a fresh tip on the pipette.
+    expect: [{kind: tip_on}]
+  - text: Draw 100 microlitres of dye from tube C.
+    expect: [{kind: draw, object: tube C}]
+    technique: {angle_max_deg: 20}
+  - text: Dispense it into tube B and mix by pipetting up and down three times.
+    expect: [{kind: dispense, object: tube B}]
+  - text: Eject the tip.
+    expect: [{kind: tip_off}]
