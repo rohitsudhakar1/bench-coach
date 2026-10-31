@@ -59,8 +59,10 @@ def draw_objects(img, objects, scale: float = 1.0, fill: float = 0.25):
             cv2.polylines(img, [np.asarray(o["outline"], np.int32)], True, c, lw, cv2.LINE_AA)
         else:
             cv2.rectangle(img, (x1, y1), (x2, y2), c, lw, cv2.LINE_AA)
+    for o in objects:  # labels after every shape, so no outline is drawn across a label
         score = o.get("score")
-        _label(img, o["label"] if score is None else f"{o['label']} {score:.2f}", x1, y1, c, scale, taken)
+        _label(img, o["label"] if score is None else f"{o['label']} {score:.2f}", int(o["box"][0]), int(o["box"][1]),
+               color(o["label"]), scale, taken)
     return img
 
 
