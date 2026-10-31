@@ -106,6 +106,14 @@ def main():
             assert not page.locator('#warning').is_visible()
             assert page.locator('#note-tab').get_attribute('aria-selected') == 'true'
             assert page.locator('#pdf').is_visible() and page.locator('#zip').is_visible()
+            for width, height in [(1920,1080), (1440,900), (390,844)]:
+                page.set_viewport_size({'width':width, 'height':height})
+                for export in ('benchling', 'eln', 'csv'):
+                    link = page.locator('#' + export)
+                    assert link.is_visible()
+                    assert link.get_attribute('href') == '/lab-note/demo?format=' + export
+                assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
+            page.set_viewport_size({'width':1440, 'height':900})
             page.get_by_text('Rules solver: 0.8 / 1 across 5 tasks.').wait_for()
             assert page.get_by_role('link',name='Download task ZIP').get_attribute('href') == '/nvidia/demo/tasks/demo-skipped.zip'
             page.get_by_role('button',name='Make synthetic runs').click()

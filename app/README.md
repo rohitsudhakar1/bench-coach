@@ -280,3 +280,10 @@ node --test app/tests/*.test.cjs
 The optional `app/tests/browser_check.py` also checks typing and dialog protection,
 help dismissal, tab keys, double-Space protection and Space on the focused run button.
 See [HOTKEYS-REPORT.md](HOTKEYS-REPORT.md) for results and browser limits.
+
+The Lab note downloads also include Benchling HTML, eLabFTW .eln and Steps CSV.
+`GET /lab-note/{run}?format=benchling|eln|csv` proxies these file downloads from the
+note service, retaining binary content and using attachment headers. The HTML
+entry is downloaded without the interactive note player. Buttons wrap on narrow
+screens and hide when no saved note is selected. See [notebook exports](../note/README.md#notebook-exports)
+for file contents, timing meanings and import instructions.
