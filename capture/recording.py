@@ -10,8 +10,10 @@ import wave
 
 import cv2
 from capture.media import RATE
+from capture.encoder import H264Writer
 
 DISK_RESERVE = 16 * 1024 * 1024
+QUEUE_BYTES = 32 * 1024 * 1024
 
 
 class Recorder:
@@ -53,13 +55,16 @@ class Recorder:
             try:
                 for cam in self.cameras:
                     h, w = cam.latest.image.shape[:2]
-                    for codec in ('avc1', 'mp4v'):
-                        writer = cv2.VideoWriter(str(folder / f'cam{cam.index}.mp4'),
-                                                cv2.VideoWriter_fourcc(*codec), cam.fps, (w, h))
-                        if writer.isOpened():
-                            break
-                        writer.release()
+                    path = str(folder / f'cam{cam.index}.mp4')
+                    if shutil.which('ffmpeg'):
+                        writer = H264Writer(path, cam.fps, (w, h))
+                        codec = 'avc1'
                     else:
+                        codec = 'mp4v'
+                        writer = cv2.VideoWriter(path, cv2.VideoWriter_fourcc(*codec),
+                                                 cam.fps, (w, h))
+                    if not writer.isOpened():
+                        writer.release()
                         raise OSError('MP4 encoder unavailable')
                     writers.append(writer)
                     codecs.append(codec)
@@ -67,18 +72,20 @@ class Recorder:
                 audio.setparams((1, 2, RATE, 0, 'NONE', 'not compressed'))
                 timing = (folder / 'timing.jsonl').open('x')
             except Exception:
-                for writer in writers:
-                    writer.release()
-                for resource in (audio, timing):
-                    if resource:
-                        resource.close()
+                # One failed encoder must not prevent the others from being reaped.
+                for close in [w.release for w in writers] + [
+                        r.close for r in (audio, timing) if r is not None]:
+                    try:
+                        close()
+                    except Exception:
+                        pass  # Preserve the original setup failure.
                 # Only files owned by this failed setup are removed; hub files stay.
                 for name in names:
                     (folder / name).unlink(missing_ok=True)
                 raise
             state = dict(run=run, path=str(folder), started=time.time(), recording=True,
                          dropped=0, error=None, codecs=codecs,
-                         _queue=queue.Queue(maxsize=256), _stop=threading.Event())
+                         _queue=queue.Queue(maxsize=256), _bytes=0, _stop=threading.Event())
             state['_thread'] = threading.Thread(target=self.write,
                 args=(state, writers, audio, timing), name='capture-writer', daemon=True)
             with self.lock:
@@ -92,7 +99,11 @@ class Recorder:
             state = self.active
             if state and not state['_stop'].is_set():
                 try:
-                    state['_queue'].put_nowait((kind, index, value))
+                    size = value.image.nbytes + len(value.jpeg) if kind == 'frame' else len(value[1])
+                    if state['_bytes'] + size > QUEUE_BYTES:
+                        raise queue.Full
+                    state['_queue'].put_nowait((kind, index, value, size))
+                    state['_bytes'] += size
                 except queue.Full:
                     state['dropped'] += 1
 
@@ -108,7 +119,9 @@ class Recorder:
                 if shutil.disk_usage(state['path']).free < DISK_RESERVE:
                     raise OSError('recording stopped: disk space below 16 MiB')
                 try:
-                    kind, index, value = state['_queue'].get(timeout=0.05)
+                    kind, index, value, size = state['_queue'].get(timeout=0.05)
+                    with self.lock:
+                        state['_bytes'] -= size
                 except queue.Empty:
                     continue
                 if kind == 'frame':
@@ -127,6 +140,9 @@ class Recorder:
             with self.lock:
                 state['_stop'].set()
                 state['dropped'] += state['_queue'].qsize()
+                while not state['_queue'].empty():
+                    state['_queue'].get_nowait()
+                state['_bytes'] = 0
             for close in [w.release for w in writers] + [audio.close]:
                 try:
                     close()
