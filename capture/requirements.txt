@@ -9,3 +9,4 @@ websockets
 pytest
 starlette
 pydantic
+psutil

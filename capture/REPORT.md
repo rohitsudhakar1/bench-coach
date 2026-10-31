@@ -76,3 +76,20 @@ git log --format='%h %an %aI %cI' main..HEAD
 Output: empty (zero lines; this branch has no commits beyond main).
 No commits, Git identity changes, date overrides or history rewrites were made.
 The lead can review and commit `capture/` with normal current timestamps.
+
+## Capture memory follow-up
+
+The captureleak follow-up replaces in-process H.264 encoding with bounded FFmpeg
+workers, adds a 32 MiB queue payload limit, and clears failed queues immediately.
+The repeated-recording regression and native/Python memory measurements are in
+[LEAK-REPORT.md](LEAK-REPORT.md). The targeted capture and note lifetime/service
+suite passed 27 tests; the final ten-recording memory and decode check also passed.
+Changes remain uncommitted. No event-contract change is proposed.
+
+Required history check for this follow-up:
+
+```sh
+git log --format='%h %an %aI %cI' main..HEAD
+```
+
+Output: empty (zero lines). No commits or history changes were made.

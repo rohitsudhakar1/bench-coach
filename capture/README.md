@@ -181,3 +181,30 @@ No Labprint source code was read or imported; supplied footage was read in place
 | https://github.com/encode/httpx | BSD-3-Clause | Delivery check and tests |
 | https://github.com/python-websockets/websockets | BSD-3-Clause | Delivery check and WSS tests |
 | https://github.com/pytest-dev/pytest | MIT | Tests |
+
+## Recording memory
+
+H.264 recording uses the installed `ffmpeg` executable with `libx264`, two encoder
+threads per camera and zero lookahead. Each recording owns two encoder processes;
+Stop drains the queue, closes their input and waits for them to exit. This releases
+native encoder allocations between runs. If ffmpeg is absent, OpenCV's `mp4v`
+encoder is used; that fallback may not play in every browser. An installed ffmpeg
+without libx264 reports a recording error. Install ffmpeg with libx264 for H.264.
+The disk queue holds at most 256 items and 32 MiB of image/JPEG/PCM payloads;
+overload drops incoming items and records the drop count. Failed writers discard
+their remaining queue immediately. Timing rows still stream directly to disk.
+
+Memory regression (ten three-second recordings; skips without sample footage):
+
+```sh
+"$BENCH_PY" -m pytest capture/tests/test_memory.py -q -s
+"$BENCH_PY" -m capture.leak_probe --output runs/capture-memory
+"$BENCH_PY" -m capture.note_leak_probe runs/capture-memory
+```
+
+The probe uses [psutil](https://github.com/giampaolo/psutil), BSD-3-Clause, to measure
+current RSS, including owned encoder PIDs, and Python's tracemalloc to compare
+allocations. FFmpeg and [x264](https://www.videolan.org/developers/x264.html) provide
+the H.264 subprocess encoder; x264 is GPL-2.0-or-later (commercial licensing is
+also available), and linking it makes the FFmpeg build GPL. Neither is vendored.
+See [LEAK-REPORT.md](LEAK-REPORT.md) for measurements and remaining limits.

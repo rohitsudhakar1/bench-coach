@@ -282,6 +282,7 @@ def test_supplied_footage(tmp_path, pair):
 
 def test_encoder_fallback_and_cleanup(tmp_path, monkeypatch):
     capture = seeded(tmp_path)
+    monkeypatch.setattr('capture.recording.shutil.which', lambda _: None)
     actual = cv2.VideoWriter
     attempted = []
     class Unavailable:
@@ -294,7 +295,7 @@ def test_encoder_fallback_and_cleanup(tmp_path, monkeypatch):
     result = capture.recorder.start('fallback')
     assert result['codecs'] == ['mp4v','mp4v']
     capture.recorder.stop()
-    assert len(attempted) == 4
+    assert len(attempted) == 2
     monkeypatch.setattr('capture.recording.cv2.VideoWriter', lambda *args: Unavailable())
     folder = tmp_path / 'failed'
     folder.mkdir()
@@ -305,6 +306,7 @@ def test_encoder_fallback_and_cleanup(tmp_path, monkeypatch):
 
 def test_queue_overload_reports_drops(tmp_path, monkeypatch):
     capture = seeded(tmp_path)
+    monkeypatch.setattr('capture.recording.shutil.which', lambda _: None)
     actual = cv2.VideoWriter
     entered, release = threading.Event(), threading.Event()
     class SlowWriter:
@@ -331,6 +333,7 @@ def test_queue_overload_reports_drops(tmp_path, monkeypatch):
 
 def test_writer_exception_closes_files(tmp_path, monkeypatch):
     capture = seeded(tmp_path)
+    monkeypatch.setattr('capture.recording.shutil.which', lambda _: None)
     actual = cv2.VideoWriter
     class BrokenWriter:
         def __init__(self, *args): self.writer = actual(*args)
@@ -357,3 +360,40 @@ def test_phone_stale_size_and_slot_validation(tmp_path):
     with pytest.raises(ValueError): cam.receive(jpeg(size=(2,1922)),time.time())
     assert capture.recorder.root == tmp_path
     assert Capture(['phone:0','phone:1'],fake_mic=True).recorder.root == Path(__file__).resolve().parents[2]/'runs'
+
+
+def test_queue_byte_limit_and_failed_writer_releases_frames(tmp_path, monkeypatch):
+    import weakref
+    from capture.media import Frame
+    capture = seeded(tmp_path)
+    entered, release = threading.Event(), threading.Event()
+    class FailingWriter:
+        def __init__(self, *args): pass
+        def isOpened(self): return True
+        def release(self): pass
+        def write(self, image):
+            entered.set()
+            assert release.wait(3)
+            raise OSError('injected encoder failure')
+    monkeypatch.setattr('capture.recording.shutil.which', lambda _: None)
+    monkeypatch.setattr('capture.recording.cv2.VideoWriter', FailingWriter)
+    monkeypatch.setattr('capture.recording.QUEUE_BYTES', 10000)
+    capture.recorder.start('bounded')
+    state = capture.recorder.active
+    capture.recorder.submit('frame', 0, capture.cameras[0].latest)
+    assert entered.wait(1)
+    frame = Frame(time.time(), 2, np.zeros((48, 64, 3), np.uint8), b'jpeg')
+    ref = weakref.ref(frame)
+    try:
+        capture.recorder.submit('frame', 0, frame)
+        capture.recorder.submit('frame', 0, frame)
+        assert state['_bytes'] <= 10000
+        assert state['dropped'] == 1
+        del frame
+    finally:
+        release.set()
+        result = capture.recorder.stop()
+    assert result['error'] == 'injected encoder failure'
+    assert result['dropped'] == 2
+    assert state['_queue'].empty() and state['_bytes'] == 0
+    assert ref() is None
