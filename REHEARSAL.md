@@ -229,13 +229,13 @@ Fixed, each with a test:
 
 Still open (for the part owners):
 
-10. Vision's "pipette" box lands on camera tripods in both 12-27 views. Partly fixed on
-    October 30. Each pipette box now says whether a hand is holding it, and angle only measures
-    held boxes. On the cached replay of these clips angle's crops on tripods and other wrong
-    things went from 10 to 0 (and so did its useful crops). The October 31 sweep still saw hint
-    mode warn "may be tilted about 55 degrees" and "about 89 degrees" with no pipette in hand, so
-    this is still open for the vision owner. The scripted demo or a chosen `--angle-roi` is still
-    the reliable way to show the gauge.
+10. Vision's "pipette" box lands on camera tripods in both 12-27 views. Fixed on October 31.
+    Each pipette box says whether a hand is holding it, and angle measures only a held pipette
+    during a draw or dispense, never after Stop; readings over 45 degrees are logged as likely
+    mis-detections instead of warned about (angle/TILTFIX-REPORT.md). The sweep's saved hint-mode
+    replay, which had warned about 55 and 89 degrees, now gives no tilt warning. A real bench with
+    a held pipette is still the only test of the gauge itself; the scripted demo or a chosen
+    `--angle-roi` remains the reliable way to show it on stage.
 11. Real vision found no draw or dispense in two minutes of these clips, which is correct
     here because there is no pipetting in them. Detection on real pipetting was not checked in
     this rehearsal; vision's REPORT.md has the labelled-frame numbers.
