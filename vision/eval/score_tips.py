@@ -1,6 +1,8 @@
 """Score tip_on, tip_off and hand_touch events against labelled moments (vision/eval/tips.json).
 
-    $BENCH_PY -m vision.eval.score_tips [--set '{"rules": {"touch_dwell": 0.5}}'] [--per-clip] [--json out.json]
+    $BENCH_PY -m vision.eval.score_tips [--set '{"tips": null}'] [--per-clip] [--json out.json]
+
+--set '{"tips": null}' scores the engine's own rules for every kind (the state before tips.py).
 
 Each clip is replayed from the cached model output (vision/eval/cache/) through the live code.
 An event matches a labelled moment of the same kind within TOL seconds, each moment once.
@@ -55,7 +57,7 @@ def clip_events(clip, settings):
     if "scene" in settings:
         kw["scene"] = SceneRules(**settings["scene"])
     if "tips" in settings:
-        kw["tips"] = TipRules(**settings["tips"])
+        kw["tips"] = None if settings["tips"] is None else TipRules(**settings["tips"])
     if "tip_kinds" in settings:
         kw["tip_kinds"] = settings["tip_kinds"]
     evs = [e for e in replay([fs], **kw) if e["kind"] in KINDS]
