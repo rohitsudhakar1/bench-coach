@@ -103,6 +103,29 @@ It runs the scripted demo at three times speed on a free block of ports in 8840-
 temporary runs folder, and checks steps, warnings, angle events, recordings, the note and that
 every port is released. It skips itself when `BENCH_SAMPLES` is unset.
 
+Check every launcher mode in about two minutes (scripted, real vision, hints, table on a
+generated overhead video, three benches, and the bundled replay):
+
+```sh
+"$BENCH_PY" -m pytest tests/test_modes_smoke.py -q -p no:cacheprovider
+```
+
+Each mode starts through `scripts/demo.sh`, starts and stops a run, fetches the note and its
+PDF, ZIP, Benchling, eLabFTW and CSV downloads, the NVIDIA tasks and a task ZIP, opens
+`/trainer`, `/class`, `/step` and `/calibrate`, and checks that no part logged a traceback and
+every port is released. Real vision and hints skip when the vision models are not cached; the
+sample-video modes skip without `BENCH_SAMPLES`. `SWEEP-REPORT.md` has the results.
+
+For three benches with scripted vision (bench 2 is at `/benches/2/`, the overview at `/class`):
+
+```sh
+./scripts/demo.sh --benches 3 --source "$BENCH_SAMPLES/lsv_mv/CP-Left-Front-12-27.mp4" \
+  "$BENCH_SAMPLES/lsv_mv/CP-Right-Front-12-27.mp4" --fake-vision --without angle note
+```
+
+Without note the Lab note tab says the note service is not running; the training tasks still
+appear.
+
 ## Run of show (3 minutes, scripted vision)
 
 Times count from the Start click. The coach leaves at least 3 seconds between spoken lines, so
@@ -197,6 +220,8 @@ Still open (for the part owners):
     not in the page state, and the note ignores them. Harmless.
 14. The reused-tip warning has no step number (`step: null`); the other warnings have one.
 15. Table mode was not tried on a real bench; no overhead camera or caps were available.
+    The October 31 sweep did run table mode through the launcher on the generated overhead video
+    from `tests/test_table_e2e.py`: 5 done and 3 skipped, as scripted.
 
 ## Git log check
 

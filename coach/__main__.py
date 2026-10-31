@@ -205,12 +205,12 @@ async def amain(args):
 
     mic = "file" if args.source else (args.mic or ("off" if args.events else "capture"))
     tasks = []
-    server = None
+    server = serving = None
     if args.port:
         import uvicorn
         server = uvicorn.Server(uvicorn.Config(health_app(coach), host="127.0.0.1", port=args.port,
                                                log_level="warning"))
-        tasks.append(asyncio.create_task(server.serve()))
+        serving = asyncio.create_task(server.serve())
     if not args.events:
         tasks.append(asyncio.create_task(coach.ticker()))
 
@@ -253,7 +253,13 @@ async def amain(args):
         await asyncio.to_thread(speaker.wait_idle, 60)
     finally:
         if server:
+            # Let uvicorn finish its own shutdown; cancelling it mid-way leaves its lifespan
+            # task pending and prints "Event loop is closed" tracebacks on every Ctrl-C.
             server.should_exit = True
+            try:
+                await asyncio.wait_for(serving, 5)
+            except BaseException:
+                serving.cancel()
         for t in tasks:
             t.cancel()
         await asyncio.gather(*tasks, return_exceptions=True)

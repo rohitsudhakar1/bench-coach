@@ -7,7 +7,7 @@ const code = source.slice(source.indexOf('async function renderNote()'), source.
 test('notebook links follow the displayed run and hide for empty or inline notes', async () => {
   const elements = {};
   const element = () => ({hidden: false, append(){}, replaceChildren(){}, setAttribute(){}});
-  const context = {noteAttempt: 0, benchPrefix: '', state: {run: 'fake-run', note: {path: '/note/fake-run'}},
+  const context = {noteAttempt: 0, noteOff: false, benchPrefix: '', state: {run: 'fake-run', note: {path: '/note/fake-run'}},
     $: id => elements[id] ||= element(), document: {createElement: element},
     fetch: async () => ({ok: true, text: async () => '<p>Note</p>'})};
   vm.createContext(context);
@@ -26,4 +26,17 @@ test('notebook links follow the displayed run and hide for empty or inline notes
     await context.renderNote();
     for (const id of ['benchling','eln','csv']) assert.equal(elements[id].hidden, true);
   }
+});
+test('a stopped run without a note service says so instead of waiting forever', async () => {
+  const elements = {}, texts = [];
+  const element = () => ({hidden: false, append(child){ if (child?.textContent) texts.push(child.textContent); }, replaceChildren(){}, setAttribute(){}});
+  const context = {noteAttempt: 0, noteOff: false, benchPrefix: '', state: {run: 'r1', recording: false, note: null},
+    $: id => elements[id] ||= element(), document: {createElement: element}};
+  vm.createContext(context);
+  vm.runInContext(code, context);
+  await context.renderNote();
+  assert.match(texts.pop(), /Waiting for the note service/);
+  context.noteOff = true;
+  await context.renderNote();
+  assert.match(texts.pop(), /note service is not running/);
 });

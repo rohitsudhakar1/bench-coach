@@ -2,7 +2,7 @@
 const benchPrefix = (location.pathname || '').match(/^\/benches\/[^/]+/)?.[0] || '';
 const $ = id => document.getElementById(id);
 let state = null, connected = false, busy = false, previousRun = null, previousRecording = null;
-let noteKey = '', chatKey = '', noteAttempt = 0, refreshActive = false, refreshAgain = false;
+let noteKey = '', chatKey = '', noteAttempt = 0, noteOff = false, refreshActive = false, refreshAgain = false;
 const names = ['app', 'capture', 'vision', 'angle', 'coach', 'note'];
 for (const name of names) {
   const item = document.createElement('span'); item.className = 'part off'; item.id = `part-${name}`;
@@ -125,7 +125,7 @@ async function renderNote() {
   for (const id of ['full-note','pdf','zip','benchling','eln','csv']) $(id).hidden = true;
   $('note-content').replaceChildren();
   const message = text => { const p = document.createElement('p'); p.className = 'empty'; p.textContent = text; $('note-content').append(p); };
-  if (!note) { message(run && !state.recording ? 'Waiting for the note service to finish this run…' : 'Stop a run to prepare its lab note.'); return; }
+  if (!note) { message(run && !state.recording ? (noteOff ? 'The note service is not running, so this run has no lab note. Training tasks still work.' : 'Waiting for the note service to finish this run…') : 'Stop a run to prepare its lab note.'); return; }
   const inline = note.text || note.markdown || note.content;
   if (typeof inline === 'string' && !note.url && !note.path) { const pre = document.createElement('pre'); pre.textContent = inline; $('note-content').append(pre); return; }
   const base = `${benchPrefix}/lab-note/${encodeURIComponent(run)}`;
@@ -161,6 +161,8 @@ function socket() {
 async function pollParts() {
   try {
     const data = await api('/parts');
+    const off = data.parts.note?.alive === false;
+    if (off !== noteOff) { noteOff = off; if (state && !state.note) renderNote(); }
     for (const name of names) { const value = data.parts[name], element = $('part-' + name); element.className = 'part ' + (value?.status || 'off'); element.title = `${name}: ${value?.message || 'Status unavailable.'}`; element.setAttribute('aria-label',element.title); }
   } catch {
     for (const name of names) { const element = $('part-' + name); element.className = 'part off'; element.title = `${name}: Hub unavailable; cannot check status.`; element.setAttribute('aria-label',element.title); }
