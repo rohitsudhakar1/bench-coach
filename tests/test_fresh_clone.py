@@ -47,7 +47,7 @@ def test_quick_start_files_are_committed():
 
 
 def test_no_machine_paths_in_tracked_files():
-    out = subprocess.run(['git', 'grep', '-n', '-I', '/Users/', '--', '.', ':!*.lock'],
+    home = '/' + 'Users' + '/'  # split so this file does not match itself
+    out = subprocess.run(['git', 'grep', '-n', '-I', home, '--', '.', ':!*.lock'],
                          cwd=ROOT, capture_output=True, text=True)
-    hits = [l for l in out.stdout.splitlines() if not l.startswith('tests/test_fresh_clone.py:')]
-    assert not hits, hits
+    assert not out.stdout, out.stdout
