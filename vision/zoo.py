@@ -4,8 +4,10 @@ names in core.py. Measured against Grounding DINO tiny in DETECTOR2-REPORT.md.
 - gdino-tiny: Grounding DINO tiny (IDEA-Research, Apache 2.0), the default.
 - gdino-base: Grounding DINO base (IDEA-Research, Apache 2.0), same code, bigger model.
 - owlv2: OWLv2 base patch16 ensemble (Google, Apache 2.0), several phrasings per thing.
-- florence2: Florence-2 base (Microsoft, MIT), phrase grounding of one caption. It gives no
-  scores, so every box gets FLORENCE_SCORE.
+- florence2: Florence-2 base (Microsoft, MIT), phrase grounding of one caption. Its boxes have
+  no score of their own, so each box's score is how sure the model was when it started writing
+  that phrase (see phrase_scores); a box that repeats an earlier box of another name is marked
+  down. Measured in FLORENCE-REPORT.md.
 - yoloe: YOLOE-26 large (Ultralytics, AGPL-3.0: using it in a product means opening that
   product's source, or buying an Ultralytics licence) with text prompts. Weights are looked up in
   VISION_YOLO_DIR (yoloe-26l-seg.pt and its mobileclip2_b.ts text encoder), else downloaded there.
@@ -28,7 +30,12 @@ NAMES = ("gdino-tiny", "gdino-base", "owlv2", "florence2", "yoloe")
 GDINO_BASE = "IDEA-Research/grounding-dino-base"
 OWL_ID = "google/owlv2-base-patch16-ensemble"
 FLORENCE_ID = "florence-community/Florence-2-base"
-FLORENCE_SCORE = 0.5
+FLORENCE_SCORE = 0.5  # used only when the token probabilities cannot be lined up with the boxes
+# Per-name score cuts for the live (non-raw) output, picked on the tuning frames by
+# vision.eval.florence_cut. Waste is cut hard because no labelled clip has a waste bin, so every
+# waste box seen so far was wrong; on a bench that has one, check this first.
+FLORENCE_CUTS = {"tip box": 0.3, "waste": 0.9}
+FLORENCE_DUP = 0.1  # score multiplier for a box that copies an earlier box of another name
 
 # OWLv2 reads each phrase on its own, so it gets several phrasings per name.
 OWL_PHRASES = {
@@ -101,6 +108,7 @@ class Florence2:
         self.proc = AutoProcessor.from_pretrained(model_id)
         self.model = Florence2ForConditionalGeneration.from_pretrained(model_id).to(self.device).eval()
         self.raw = raw
+        self.last_parts: list = []  # per box of the last raw call: the numbers behind its score
         self.set_prompts(prompts or PROMPTS)
 
     def set_prompts(self, prompts: dict):
@@ -117,17 +125,85 @@ class Florence2:
         task = "<CAPTION_TO_PHRASE_GROUNDING>"
         inp = self.proc(text=task + self.caption, images=cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB),
                         return_tensors="pt").to(self.device)
+        steps = []
+
+        def keep(_ids, logits):  # every step's token probabilities, to score the boxes afterwards
+            steps.append(self.torch.log_softmax(logits.float(), -1))
+            return logits
+
+        from transformers import LogitsProcessorList
         with self.torch.no_grad():
             ids = self.model.generate(input_ids=inp["input_ids"], pixel_values=inp["pixel_values"],
-                                      max_new_tokens=256, num_beams=1, do_sample=False)
+                                      max_new_tokens=256, num_beams=1, do_sample=False,
+                                      logits_processor=LogitsProcessorList([keep]))
+        seq = ids[0]
+        # step k chose token seq[k + 1] (seq[0] is the decoder start)
+        n = min(len(steps), len(seq) - 1)
+        chosen = seq[1:n + 1]
+        probs = self.torch.stack([steps[k][0, chosen[k]] for k in range(n)]).exp().tolist() if n else []
+        toks = self.proc.tokenizer.convert_ids_to_tokens(chosen.tolist())
         text = self.proc.batch_decode(ids, skip_special_tokens=False)[0]
         res = self.proc.post_process_generation(text, task=task, image_size=(w, h))[task]
-        dets = []
-        for lab, box in zip(res.get("labels", []), res.get("bboxes", [])):
+        labels, bxs = res.get("labels", []), res.get("bboxes", [])
+        parts = phrase_scores(toks, probs)
+        if len(parts) != len(bxs):
+            parts = [None] * len(bxs)
+        dets, self.last_parts = [], []
+        for lab, box, part in zip(labels, bxs, parts):
             name = canonical(str(lab), self.prompts)
-            if name:
-                dets.append(Det(name, tuple(float(v) for v in box), FLORENCE_SCORE))
-        return dets if self.raw else clean(dets, w, h)
+            if not name:
+                continue
+            box = tuple(float(v) for v in box)
+            if part is None:
+                score, part = FLORENCE_SCORE, {}
+            else:
+                dup = any(d.label != name and iou(d.box, box) > 0.9 for d in dets)
+                part = {**part, "dup": dup}
+                score = part["start"] * (FLORENCE_DUP if dup else 1.0)
+            dets.append(Det(name, box, round(score, 3)))
+            self.last_parts.append(part)
+        if self.raw:
+            return dets
+        return clean(present(dets), w, h)
+
+
+def present(dets: list, cuts: dict = FLORENCE_CUTS) -> list:
+    """Florence-2 boxes whose name's cut they reach (names with no cut are all kept)."""
+    return [d for d in dets if d.score >= cuts.get(d.label, 0.0)]
+
+
+def phrase_scores(toks: list, probs: list) -> list:
+    """One entry per box in Florence-2's output order: the probability of the first token of the
+    box's phrase ("start", the model's choice to name that thing at all), the product over the
+    phrase's tokens ("phrase") and the mean over the box's four location tokens ("loc"). A phrase
+    with several boxes gives each box the same phrase numbers."""
+    out, phrase, k = [], None, 0
+    while k < len(toks):
+        t = toks[k]
+        if t.startswith("<loc_"):
+            if phrase is None or k + 4 > len(toks):
+                return []
+            loc = probs[k:k + 4]
+            out.append({"start": round(phrase[0], 3), "phrase": round(_prod(phrase), 3),
+                        "loc": round(sum(loc) / 4, 3)})
+            k += 4
+            continue
+        if t in ("<s>", "</s>", "<pad>"):
+            phrase = None if t == "</s>" else phrase
+            k += 1
+            continue
+        if k == 0 or toks[k - 1].startswith("<loc_") or toks[k - 1] == "<s>" or phrase is None:
+            phrase = []
+        phrase.append(probs[k])
+        k += 1
+    return out
+
+
+def _prod(xs):
+    r = 1.0
+    for x in xs:
+        r *= x
+    return r
 
 
 YOLOE_WEIGHTS = "yoloe-26l-seg.pt"
@@ -230,4 +306,4 @@ def make(name: str = "gdino-tiny", raw: bool = False, **kw):
     raise ValueError(f"unknown detector {name!r}; one of {', '.join(NAMES)} or ensemble:<a>+<b>")
 
 
-__all__ = ["NAMES", "make", "merge", "Ensemble", "Owl2", "Florence2", "WithContainers"]
+__all__ = ["NAMES", "make", "merge", "Ensemble", "Owl2", "Florence2", "WithContainers", "phrase_scores"]

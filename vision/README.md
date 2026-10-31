@@ -28,7 +28,10 @@ keeps a copy, `--quiet-objects` keeps `objects` events off the printed log. Othe
 `yoloe`, or `ensemble:<a>+<b>` (both, overlapping boxes merged). `yoloe` needs
 `VISION_YOLO_DIR`, a folder for its weights. How they compare is in
 [DETECTOR2-REPORT.md](DETECTOR2-REPORT.md); Florence-2 boxes the pipette and tip box best but is
-too slow for two cameras, so the default did not change.
+too slow for two cameras, so the default did not change. [FLORENCE-REPORT.md](FLORENCE-REPORT.md)
+finishes that check: Florence-2 boxes now carry a score from the model's own word probabilities,
+unsure waste and tip box boxes are dropped, and on held-out clips Florence-2 still finds far fewer
+draws and dispenses than tiny with `--new-draw`, so tiny stays the demo's detector.
 
 `VISION_DEVICE` picks where the detector runs (`cuda`, `mps` or `cpu`); without it the best one
 present is used.

@@ -43,6 +43,17 @@ def build(name: str):
     return det, det.with_prompts(CONTAINER_PROMPTS)
 
 
+def with_parts(det, dets) -> list:
+    """Cached boxes, plus Florence-2's per-box token probabilities when it has them."""
+    out = boxes(dets)
+    parts = getattr(det, "last_parts", None)
+    if parts is not None and len(parts) == len(out):
+        for b, p in zip(out, parts):
+            if p:
+                b["parts"] = p
+    return out
+
+
 def redo(stem: str, det, cdet, out: Path) -> list:
     """Rerun the detectors on one cache file's detector frames; returns per-frame seconds."""
     from ..sources import fit
@@ -68,9 +79,9 @@ def redo(stem: str, det, cdet, out: Path) -> list:
         img = fit(f, MAX_SIDE)
         assert img.shape[1] == rec["w"] and img.shape[0] == rec["h"], (img.shape, rec["w"], rec["h"])
         t0 = time.perf_counter()
-        rec["dets"] = boxes(det(img))
+        rec["dets"] = with_parts(det, det(img))
         t1 = time.perf_counter()
-        rec["cont"] = boxes(cdet(img))
+        rec["cont"] = with_parts(cdet, cdet(img))
         times.append((t1 - t0, time.perf_counter() - t1))
     cap.release()
     if want:
@@ -87,6 +98,7 @@ def main():
     ap.add_argument("--labels", action="store_true", help="only the labels.json clips")
     ap.add_argument("--all", action="store_true", help="every cached file")
     ap.add_argument("files", nargs="*", help="cache file stems, e.g. pcr_105@0")
+    ap.add_argument("--out", help="cache folder name under vision/eval/ (default cache-<detector>)")
     ap.add_argument("--budget", type=float, default=170.0, help="stop starting files after this many seconds")
     a = ap.parse_args()
     stems = list(a.files)
@@ -94,7 +106,7 @@ def main():
         stems += LABEL_FILES
     if a.all:
         stems += sorted(p.name[:-len(".json.gz")] for p in SRC.glob("*.json.gz"))
-    out = HERE / f"cache-{a.detector.replace(':', '-').replace('+', '-')}"
+    out = HERE / (a.out or f"cache-{a.detector.replace(':', '-').replace('+', '-')}")
     stems = [s for s in dict.fromkeys(stems) if not (out / f"{s}.json.gz").exists()]
     if not stems:
         print("nothing to do")
