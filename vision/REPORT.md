@@ -126,3 +126,19 @@ CPU replay finds 42/58 with 65/148 wrong boxes. See the speed report for the old
 discrepancy and the limits of these CPU comparisons. Files are uncommitted.
 
 Speed date audit: `git log --format='%h %an %aI %cI' main..HEAD` returned no output.
+
+## Label OCR follow-up
+
+No additional event-contract changes are proposed. See [LABELS-REPORT.md](LABELS-REPORT.md)
+for the five-line answer for Andy, pixel arithmetic and reproducible commands.
+`vision.labels` implements standalone Apple Vision accurate OCR, frame sampling, crops,
+2× enlargement, original-pixel boxes and a standard-library unavailable fallback.
+Swift compiles, but native inference is blocked in this execution environment: all 36
+camera/image-variant attempts returned unavailable, so Apple Vision accuracy is unmeasured.
+A separate installed Tesseract diagnostic reads the USB heading after manual straightening;
+2× then adds the fragrance phrase. It is not the production fallback. Ribbon label text
+remains unread in that diagnostic despite larger, blurred letters.
+OCR tests: 28 passed. Vision suite excluding model-marked tests: 140 passed, 1 skipped,
+1 deselected in 10.66 s. No packages added, no sample media saved in the repository,
+no servers or sound, and all edits remain uncommitted under vision/.
+Latest `git log --format='%h %an %aI %cI' main..HEAD` output: empty.

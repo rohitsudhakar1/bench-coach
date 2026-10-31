@@ -1,0 +1,296 @@
+{
+  "vision": {
+    "attempts": 36,
+    "status_counts": {
+      "unavailable": 36
+    },
+    "times": [
+      0,
+      6,
+      12,
+      15,
+      18,
+      21
+    ],
+    "variants": [
+      "full frame",
+      "bottle crop",
+      "bottle crop 2x"
+    ],
+    "usb_crop": [
+      400,
+      150,
+      700,
+      570
+    ],
+    "ribbon_crop": [
+      0,
+      150,
+      1000,
+      570
+    ],
+    "total_helper_seconds": 2.5808,
+    "confidence": null
+  },
+  "tesseract": {
+    "version": "5.5.2",
+    "language": "eng",
+    "psm": 11,
+    "attempts": 40,
+    "raw_or_unrotated_crop_reference_phrase_hits": 0,
+    "reference_phrases": [
+      "shea better",
+      "vanilla cashmere"
+    ],
+    "label_visible_sample_times": [
+      6,
+      12,
+      15,
+      18,
+      21
+    ],
+    "selected_deskew_results": [
+      {
+        "source": "pi-usb-cam.mov",
+        "backend": "tesseract",
+        "t": 18.0,
+        "frame_size": [
+          1280,
+          720
+        ],
+        "crop": [
+          570,
+          350,
+          420,
+          370
+        ],
+        "upscale": 1,
+        "deskew_degrees": -20,
+        "box_space": "crop after rotation, before enlargement, xywh",
+        "status": "ok",
+        "words": [
+          {
+            "text": "shea",
+            "confidence": 0.81273773,
+            "box": [
+              138.0,
+              69.0,
+              40.0,
+              13.0
+            ]
+          },
+          {
+            "text": "better",
+            "confidence": 0.96243294,
+            "box": [
+              184.0,
+              68.0,
+              50.0,
+              12.0
+            ]
+          }
+        ],
+        "seconds": 0.0946,
+        "note": "Only the named reference words are retained; see report for incorrect and missing text."
+      },
+      {
+        "source": "pi-usb-cam.mov",
+        "backend": "tesseract",
+        "t": 18.0,
+        "frame_size": [
+          1280,
+          720
+        ],
+        "crop": [
+          570,
+          350,
+          420,
+          370
+        ],
+        "upscale": 2,
+        "deskew_degrees": -20,
+        "box_space": "crop after rotation, before enlargement, xywh",
+        "status": "ok",
+        "words": [
+          {
+            "text": "shea",
+            "confidence": 0.9634301000000001,
+            "box": [
+              138.5,
+              68.5,
+              40.0,
+              14.0
+            ]
+          },
+          {
+            "text": "better",
+            "confidence": 0.9634301000000001,
+            "box": [
+              184.0,
+              68.5,
+              50.0,
+              12.0
+            ]
+          },
+          {
+            "text": "Shea",
+            "confidence": 0.60120827,
+            "box": [
+              148.5,
+              110.5,
+              22.5,
+              7.5
+            ]
+          },
+          {
+            "text": "Butter",
+            "confidence": 0.89064301,
+            "box": [
+              174.0,
+              110.5,
+              27.5,
+              6.5
+            ]
+          },
+          {
+            "text": "vanilla",
+            "confidence": 0.8586616499999999,
+            "box": [
+              143.5,
+              166.5,
+              38.0,
+              7.0
+            ]
+          },
+          {
+            "text": "cashmere",
+            "confidence": 0.9525311999999999,
+            "box": [
+              185.5,
+              165.0,
+              51.5,
+              8.0
+            ]
+          }
+        ],
+        "seconds": 0.221,
+        "note": "Only the named reference words are retained; see report for incorrect and missing text."
+      },
+      {
+        "source": "pi-ribbon-cam.mov",
+        "backend": "tesseract",
+        "t": 18.0,
+        "frame_size": [
+          1280,
+          720
+        ],
+        "crop": [
+          20,
+          230,
+          610,
+          490
+        ],
+        "upscale": 1,
+        "deskew_degrees": -7,
+        "box_space": "crop after rotation, before enlargement, xywh",
+        "status": "ok",
+        "words": [],
+        "seconds": 0.1308,
+        "note": "Only the named reference words are retained; see report for incorrect and missing text."
+      },
+      {
+        "source": "pi-ribbon-cam.mov",
+        "backend": "tesseract",
+        "t": 18.0,
+        "frame_size": [
+          1280,
+          720
+        ],
+        "crop": [
+          20,
+          230,
+          610,
+          490
+        ],
+        "upscale": 2,
+        "deskew_degrees": -7,
+        "box_space": "crop after rotation, before enlargement, xywh",
+        "status": "ok",
+        "words": [],
+        "seconds": 0.2892,
+        "note": "Only the named reference words are retained; see report for incorrect and missing text."
+      }
+    ],
+    "phone_positive_control": {
+      "source": "pi-ribbon-cam.mov",
+      "backend": "tesseract",
+      "t": 0.0,
+      "frame_size": [
+        1280,
+        720
+      ],
+      "crop": [
+        0,
+        0,
+        1280,
+        720
+      ],
+      "upscale": 1,
+      "deskew_degrees": 0,
+      "box_space": "crop after rotation, before enlargement, xywh",
+      "status": "ok",
+      "words": [
+        {
+          "text": "nae",
+          "confidence": 0.28843212,
+          "box": [
+            326.0,
+            397.0,
+            39.0,
+            16.0
+          ]
+        },
+        {
+          "text": "00:11.73",
+          "confidence": 0.9181198899999999,
+          "box": [
+            280.0,
+            591.0,
+            361.0,
+            94.0
+          ]
+        }
+      ],
+      "seconds": 0.132
+    }
+  },
+  "pixel_estimates": {
+    "method": "manual source-pixel inspection at 18 s, approximate ranges; word heights after deskew in selected results",
+    "usb_heading_height": [
+      12,
+      14
+    ],
+    "usb_body_height": [
+      6,
+      9
+    ],
+    "usb_fine_print_height": [
+      4,
+      6
+    ],
+    "ribbon_heading_height": [
+      18,
+      24
+    ],
+    "ribbon_body_height": [
+      10,
+      16
+    ]
+  },
+  "planning_target_pixels": 20,
+  "limits": [
+    "No successful Apple Vision OCR run in this environment.",
+    "Tesseract is a separate diagnostic, not the production fallback.",
+    "No tubes or handwriting tested."
+  ]
+}

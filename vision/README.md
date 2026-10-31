@@ -284,3 +284,60 @@ All were already in the shared environment; no package was added.
 | YOLOE-26 large | https://github.com/ultralytics/ultralytics | AGPL-3.0 | `--detector yoloe`, measured only; AGPL means a product using it must publish its source or buy a licence |
 
 All load through transformers or ultralytics, both already in the shared environment.
+
+## Read bottle and tube labels
+
+`python -m vision.labels` runs a separate offline OCR check using macOS Apple Vision
+(`VNRecognizeTextRequest`, accurate mode, English, language correction disabled). It does
+not start a service, publish hub events, or change protocol steps. OpenCV reads the video;
+a small Swift helper reads temporary PNGs. Nothing is downloaded and no API key is needed.
+The helper requires macOS and `swiftc` from the Apple command-line tools. Compilation happens
+once per command in a temporary directory, which is removed on exit; a cold SDK compile can
+add roughly a minute. The video is never copied into the repository.
+
+```sh
+# BENCH_SAMPLES points to the directory containing the two Pi camera clips.
+"$BENCH_PY" -m vision.labels --source "$BENCH_SAMPLES/pi-usb-cam.mov" --sample-rate 1
+"$BENCH_PY" -m vision.labels --source "$BENCH_SAMPLES/pi-usb-cam.mov" \
+    --sample-rate 1 --crop 400,150,700,570 --upscale 2
+"$BENCH_PY" -m pytest vision/tests/test_labels.py -q
+```
+
+`--crop` is `x,y,width,height` in original-frame pixels, top-left origin. It must fit fully
+inside the video. `--upscale 2` applies bicubic interpolation to the crop (or full frame).
+Output is one JSON line per recognized text region: `{t, text, confidence, box}`. `box` is
+`[x,y,width,height]` in the original frame, including the crop offset and undoing enlargement;
+these are axis-aligned text-region boxes, not individual letter heights. Confidence is Vision's
+score, not a measured probability of correct identification. Empty frames emit the same four
+fields with empty text, null confidence/box and `status: "no_text"`.
+
+`t` is media seconds for these standalone analysis rows. `--time-origin` adds an explicit
+origin if alignment to capture epoch time is needed. These rows are not the event contract's
+event envelope and are never posted to the hub. Timing uses frame index/FPS; this reader is
+intended for constant-frame-rate footage, including these 30 fps samples. `--start` and
+`--seconds` limit the inspected interval. Sampling picks the first frame at or after each
+target time and rejects rates above the source frame rate.
+
+Non-Mac hosts need only the standard library to return a single `status: "unavailable"`
+row with all four fields null and a reason (exit 2). Missing Swift, compile failures and
+Vision runtime failures also return unavailable, rather than suggesting there was no text.
+Bad input returns exit 1 with an error on stderr. There is no non-Mac OCR implementation.
+
+See [LABELS-REPORT.md](LABELS-REPORT.md) for the camera check and its blocked Vision measurements.
+`python -m vision.eval.labels_camera --source video.mov` repeats six samples with the native
+backend. It can also run the already-installed `tesseract` executable with `--backend tesseract`
+as a separate diagnostic. That option is not used by production OCR and is not its fallback.
+The evaluator accepts `--times`, `--crop`, `--upscale`; `--deskew` is an optional diagnostic
+rotation in degrees (positive counterclockwise). It prints JSONL and saves no sample images.
+
+Additional OCR sources and licences:
+
+- Apple Vision: https://developer.apple.com/documentation/vision/vnrecognizetextrequest.
+  Proprietary macOS framework under Apple's SDK/OS terms, not an open-source OCR library.
+- Swift compiler: https://www.swift.org. Apache-2.0 with Runtime Library Exception.
+  Compiles the helper; Foundation and ImageIO load the image and serialize results.
+- OpenCV: https://opencv.org, Apache-2.0 (Python wheel packaging MIT).
+  Existing dependency for frame decoding, crops and bicubic resizing.
+- Tesseract: https://github.com/tesseract-ocr/tesseract, Apache-2.0.
+  Optional, separate measurement diagnostic, using its installed English trained data.
+  It is not added to runtime requirements. No packages or trained data were installed.
