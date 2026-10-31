@@ -156,3 +156,18 @@ git log --format='%h %an %aI %cI' main..HEAD
 
 Output: empty. No commits, author overrides, timestamp overrides or history rewrites
 were made. All changes are left uncommitted for the lead.
+
+## Rerun on the Mac's GPU (lead, Oct 31 04:30)
+
+`scripts/soak.py --seconds 600 --base-port 8830`, real vision on the GPU, five runs started and stopped, five notes built, ports released.
+
+| Part | Start MiB | Peak MiB | End MiB | Late growth MiB/min | Steady growth |
+| --- | --- | --- | --- | --- | --- |
+| app | 97 | 104 | 104 | 0.6 | no |
+| capture | 268 | 1136 | 1136 | 8.7 | yes |
+| vision | 781 | 1045 | 1044 | 0.5 | no |
+| angle | 116 | 132 | 132 | 0.6 | no |
+| coach | 60 | 62 | 62 | 0.0 | no |
+| note | 60 | 206 | 201 | 1.0 | yes, levelling off |
+
+No part restarted and no progress gap was longer than 3 seconds. Capture's memory keeps climbing, about 0.5 GB an hour at this rate, which a short demo survives but a long session would not.
