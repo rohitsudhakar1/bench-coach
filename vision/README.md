@@ -94,6 +94,14 @@ different tube `dispense`, back into the same tube within 4 s is mixing. Mixing 
 `detail.mode = "table"`, `object` like `"tube A"`, confidence 0.75. Losing the band for more than
 0.5 s drops the visit. It only knows the band visited a place, not that liquid moved.
 
+The launcher supplies `--port` for health and `--follow-runs` to poll the hub's run state
+at 0.1-second intervals. Start opens the source and resets tracking; Stop releases it.
+File EOF waits for the next run; standalone file runs still exit at EOF and default to
+no health port. Capture playback runs independently of Start, so a shared video needs
+an idle lead-in or a full loop before the first tip visit. Health reports `mode`, `run`
+and processed `frames`; it is not proof that the source is fresh. A stalled HTTP frame
+read can delay noticing Stop by the reader's ten-second timeout.
+
 ## Measuring it
 
 `vision/eval/` holds the earlier draft's hand labels: 128 labelled frames (`labels.json`) and 85

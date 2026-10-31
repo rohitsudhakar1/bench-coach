@@ -217,16 +217,48 @@ def setup(a):
 
 def run(a):
     cfg = validate(json.loads(Path(a.config).read_text()))
-    src = Source(a.source)
+    if a.follow_runs and a.hub == "none":
+        raise ValueError("--follow-runs needs a hub")
+    from .__main__ import serve_health
+    import httpx
+    stats = {"mode": "table", "frames": 0, "run": None}
+    server = serve_health(a.port, stats) if a.port else None
+    control = httpx.Client(timeout=2.0) if a.follow_runs else None
+    src = None if a.follow_runs else Source(a.source)
     sink = Sink(None if a.hub == "none" else a.hub, a.log)
     trk = TableTracker(cfg["regions"])
     start, i = time.time(), 0
+    active_run, finished_run, next_poll = None, None, 0.0
     try:
         while True:
+            if control and time.monotonic() >= next_poll:
+                response = control.get(a.hub.rstrip("/") + "/state")
+                response.raise_for_status()
+                state = response.json()
+                run_id = state.get("run") if state.get("recording") else None
+                if run_id != active_run:
+                    if src:
+                        src.close()
+                    src = None
+                    active_run = run_id
+                    stats["run"] = run_id
+                    if run_id and run_id != finished_run:
+                        src = Source(a.source)
+                        trk = TableTracker(cfg["regions"])
+                        start, i = time.time(), 0
+                next_poll = time.monotonic() + 0.1
+            if src is None:
+                time.sleep(0.03)
+                continue
             stamp, frame = src.read()
             if frame is None:
                 if i == 0:
                     raise ValueError("cannot read the source")
+                if control:
+                    src.close()
+                    src = None
+                    finished_run = active_run
+                    continue
                 break
             if [frame.shape[1], frame.shape[0]] != cfg["size"]:
                 raise ValueError("frame size differs from setup; run setup again")
@@ -238,6 +270,7 @@ def run(a):
             pt = marker(frame)
             sink.send(trk.update(t, pt))
             i += 1
+            stats["frames"] += 1
             if a.preview:
                 img = draw_regions(frame, cfg["regions"])
                 if pt:
@@ -246,8 +279,13 @@ def run(a):
                 if cv2.waitKey(1) & 255 == 27:
                     break
     finally:
-        src.close()
+        if src:
+            src.close()
         sink.close()
+        if control:
+            control.close()
+        if server:
+            server.should_exit = True
         if a.preview:
             cv2.destroyAllWindows()
 
@@ -266,6 +304,8 @@ def main(argv=None):
             s.add_argument("--tip-box", type=float, nargs=3, metavar=("X", "Y", "R"))
             s.add_argument("--waste", type=float, nargs=3, metavar=("X", "Y", "R"))
         else:
+            s.add_argument("--port", type=int, default=0, help="health port; 0 disables it")
+            s.add_argument("--follow-runs", action="store_true", help="reset on hub Start; release source on Stop")
             s.add_argument("--hub", default="http://localhost:8700")
             s.add_argument("--log")
             s.add_argument("--seconds", type=float, default=0.0)

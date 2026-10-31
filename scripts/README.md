@@ -156,3 +156,20 @@ No packages were added. Existing dependencies used here:
 Services retain their own dependency and model licence lists. The launcher uses the
 standard library alone; preflight uses the libraries above and the parts' table and
 calibration helpers. No third-party source was copied into this directory.
+
+## Table end-to-end regression
+
+```sh
+"${BENCH_PY:-python3}" -m pytest tests/test_table_e2e.py -q -p no:cacheprovider
+```
+
+This test creates an overhead video, calibrates its first frame with `vision.table setup`,
+and runs capture, hub, table vision, coach and note through `run_demo.py --table on`
+on ports 8860–8865. Both capture inputs use the generated video. No `BENCH_SAMPLES`,
+API key, model, microphone or speaker is needed. Occupied ports fail before launching.
+The test checks named tube events from capture pixels, five done and three skipped
+steps, tip reuse and skipped dispense warnings, the note, recordings, capture timestamps,
+and port release. It has a 90-second work deadline and a two-minute total limit.
+See `TABLE-E2E-REPORT.md` for measured results and limits.
+
+`--table on` and bare `--table` enable table mode; `--table off` disables it.

@@ -59,12 +59,13 @@ def parse_args(argv=None):
     p.add_argument('--runs', type=Path, default=ROOT / 'runs')
     p.add_argument('--timeout', type=float, default=60)
     p.add_argument('--hints', action='store_true')
-    p.add_argument('--table', action='store_true')
+    p.add_argument('--table', nargs='?', const='on', choices=('on', 'off'), default='off')
     p.add_argument('--table-source', default='capture:0')
     p.add_argument('--table-config', type=Path, default=ROOT / 'vision/table.json')
     p.add_argument('--angle-roi', action='append', default=[], metavar='X,Y,W,H')
     p.add_argument('--calibration', type=Path)
     args = p.parse_args(argv)
+    args.table = args.table == 'on'
     if not 1024 <= args.base_port <= 65530:
         p.error('--base-port must be between 1024 and 65530')
     if not math.isfinite(args.timeout) or args.timeout <= 0:
@@ -182,6 +183,8 @@ def ready(part):
 def check_ports(parts):
     for part in parts:
         with socket.socket() as sock:
+            # Match the servers: permit TIME_WAIT sockets from a just-finished run.
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             try:
                 sock.bind(('127.0.0.1', part.port))
             except OSError as exc:
