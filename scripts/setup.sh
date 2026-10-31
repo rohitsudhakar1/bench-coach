@@ -41,4 +41,7 @@ Setup done. Next, from $ROOT:
   ./scripts/demo.sh --replay app/samples/demo.jsonl --without capture vision angle coach note
 
 Then open http://127.0.0.1:8700 once it prints "Demo ready". Ctrl-C stops it.
+
+Tests: .venv/bin/python -m pytest -q
+Browser checks in app/tests also need: .venv/bin/python -m playwright install chromium
 NEXT
