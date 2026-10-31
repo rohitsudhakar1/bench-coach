@@ -5,3 +5,5 @@
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 
 #note-panel{overflow:auto}#nvidia-panel{padding:12px 16px;border-bottom:1px solid var(--border);flex:none;font-size:12px;line-height:1.5}#nvidia-panel h3{font-size:15px;margin:0 0 8px}#nvidia-tasks{max-height:220px;overflow:auto}#nvidia-tasks p{margin:8px 0 12px}#nvidia-panel a{color:var(--mint)}#nvidia-panel small{display:block;color:var(--muted)}#nvidia-comparison{overflow:auto}#nvidia-comparison table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}#nvidia-comparison th,#nvidia-comparison td{text-align:left;padding:4px;border-bottom:1px solid var(--border)}.nvidia-caveat{color:var(--muted)}
+
+.student-field{display:flex;align-items:center;gap:6px;font-size:12px}.student-field input{width:150px;min-width:0;padding:8px} @media(max-width:700px){.actions{flex-wrap:wrap}.student-field input{width:120px}}

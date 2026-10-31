@@ -24,6 +24,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 
 from app.nvidia_jobs import install as install_nvidia
 from app.parts import PartStatus
+from app.trainer import overview
 from protocols.convert import MAX_TEXT, convert_text, validate_protocol
 
 ROOT = Path(__file__).resolve().parent
@@ -56,6 +57,7 @@ class Event(BaseModel):
 
 class RunRequest(BaseModel):
     protocol: str | None = None
+    student: str = Field(default="", max_length=120)
 
 
 class ProtocolRequest(BaseModel):
@@ -85,7 +87,7 @@ class Hub:
         kind, detail = event['kind'], event['detail']
         if kind == 'run' and detail.get('status') == 'start':
             self.reset()
-            self.state.update(run=detail['run'], recording=True)
+            self.state.update(run=detail['run'], recording=True, student=detail.get('student', ''))
         elif kind == 'run' and detail.get('status') == 'stop':
             self.state.update(recording=False, warnings=[], question=None, angle=None, objects={})
         elif kind == 'step':
@@ -305,7 +307,7 @@ def create_app(runs_dir=None, capture_url=None, note_service_url=None, protocols
             async with hub.lock:
                 hub.selected_file, hub.protocol = filename, protocol
                 hub.publish(make_event('run', dict(status='start', run=run,
-                    protocol='protocols/' + filename, protocol_data=protocol)))
+                    protocol='protocols/' + filename, protocol_data=protocol, student=request.student.strip())))
             result = await record('start', run)
             hub.state['capture'] = result
             return {'run': run, 'capture': result}
@@ -383,6 +385,14 @@ def create_app(runs_dir=None, capture_url=None, note_service_url=None, protocols
             return response.json()
         except ValueError:
             return {'text': response.text}
+
+    @app.get('/trainer')
+    async def trainer_page():
+        return FileResponse(ROOT / 'static/trainer.html', headers={'Cache-Control': 'no-store'})
+
+    @app.get('/trainer/runs')
+    def trainer_runs(protocol: str = '', student: str = ''):
+        return JSONResponse(overview(hub.runs, protocol, student), headers={'Cache-Control': 'no-store'})
 
     @app.get('/')
     async def index():
