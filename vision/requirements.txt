@@ -9,4 +9,4 @@ fastapi
 uvicorn
 anthropic
 pytest
-ultralytics  # only for --detector yoloe (AGPL-3.0)
+# Optional, not installed by setup: ultralytics, only for --detector yoloe (AGPL-3.0).
