@@ -336,8 +336,9 @@ tools stop with a one-line message saying what is missing.
    ```
 
    Newest first: device, session id, start time in local time, length, and the size of each
-   file. A USB file under 1 MB for a 30-second session means that camera did not record; use
-   another session.
+   file. A USB file of about 1 MB or less for 30 seconds still has every frame, but the picture
+   is dark or the lens is covered (two of the Oct 31 test sessions look like this); turn the
+   lights on and record again.
 2. One command fetches the newest session and renders the finished video, with the USB camera
    and the ribbon camera as the two views and the recorded sound under the footage:
 
