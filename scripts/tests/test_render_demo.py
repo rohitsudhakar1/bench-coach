@@ -120,3 +120,34 @@ def test_encoder_writes_a_1080p_h264_file(tmp_path):
                             "stream=codec_name,width,height", "-of", "json", str(out)], capture_output=True, text=True)
     s = json.loads(probe.stdout)["streams"][0]
     assert (s["codec_name"], s["width"], s["height"]) == ("h264", 1920, 1080)
+
+
+def test_filter_flag_applies_after_cache_load_without_polluting_cache(tmp_path, monkeypatch):
+    from copy import deepcopy
+    from types import SimpleNamespace
+    from vision.labelfilter import filter_analysis
+
+    video = tmp_path / "clip.mp4"
+    video.touch()
+    proto = tmp_path / "protocol.txt"
+    proto.write_text("Attach a fresh tip to the pipette\n")
+    out = tmp_path / "out.mp4"
+    analysis = {"t0": T0, "detector": "none", "snaps": [[(0, [{"label": "waste", "score": .9,
+                  "box": [0, 0, 30, 30]}])]], "hands": [[(0, [])]], "events": [vis(0, "tip_on")]}
+    calls, rendered = [], []
+    monkeypatch.setattr(R, "analyse", lambda *args: calls.append(1) or deepcopy(analysis))
+    monkeypatch.setattr(R.cv2, "VideoCapture", lambda path: SimpleNamespace(
+        get=lambda prop: 30, release=lambda: None))
+    monkeypatch.setattr(R, "pick_codec", lambda codec: "x264")
+    monkeypatch.setattr(R, "render", lambda out, videos, names, a, *args: rendered.append(a) or
+                        {"duration": 1, "frames": 30})
+    args = ["--video", str(video), "--protocol", str(proto), "--out", str(out), "--no-note"]
+    assert not R.parse(args).filter_labels
+    R.main(args + ["--filter-labels"])
+    assert len(calls) == 1 and rendered[-1]["events"] == []
+    saved = json.loads((tmp_path / "out-work/analysis.json").read_text())
+    assert saved["events"] and saved["snaps"][0][0][1]  # reusable raw pass
+    R.main(args + ["--reuse"])
+    assert len(calls) == 1 and rendered[-1] == saved
+    R.main(args + ["--reuse", "--filter-labels"])
+    assert len(calls) == 1 and rendered[-1]["events"] == []

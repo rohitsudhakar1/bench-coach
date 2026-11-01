@@ -352,3 +352,17 @@ The picture is drawn on every camera frame with the newest outlines and hands, s
 Add `--post-events` only when the vision part is not running: the live view then sends vision's own events (objects, touches, tips) to the hub, so the coach can tick steps. Other flags: `--no-outlines` (boxes only), `--no-detector`, `--no-hands`, `--max-side` (picture size, default 960), `--mirrored`, `--hub none`, `--port`, `--seconds N` (stop after N seconds, printing the measured rates every 2 s). Routes: `/` the page, `/stream.mjpeg` the drawn picture, `/frame.jpg` the newest drawn frame, `/data` rates, objects, hands and the hub summary as JSON.
 
 Libraries: OpenCV GrabCut (https://github.com/opencv/opencv, Apache 2.0) for outlines; Grounding DINO tiny and MediaPipe Hand Landmarker as listed in vision/README.md. Measurements are in [LIVE-REPORT.md](LIVE-REPORT.md).
+
+### Filter labels in the live view
+
+Add `--filter-labels` to `python -m app.live --source ...`. Supply
+`--protocol protocols/pipetting-demo.yaml` (or a numbered text file) for standalone
+use, or omit it to follow the hub's current instruction lines. Hands remain visible
+with no protocol, but equipment labels are suppressed. Protocol and run changes
+reset the filter. Both flags are optional; the default view is unchanged.
+
+With `--post-events`, the view also filters its published object labels and
+rejects `tip_on` without a held pipette body and a nearby tip box. It cannot filter
+events from a separate vision process. Other action kinds are unchanged.
+See [the label-filter report](../vision/LABELFILTER-REPORT.md): false boxes fall,
+but so does the number of real pipettes shown. Persistent wrong labels remain.

@@ -393,3 +393,54 @@ Additional OCR sources and licences:
 - Tesseract: https://github.com/tesseract-ocr/tesseract, Apache-2.0.
   Optional, separate measurement diagnostic, using its installed English trained data.
   It is not added to runtime requirements. No packages or trained data were installed.
+
+## Optional label filter for rendered and live views
+
+Add `--filter-labels` to `python -m scripts.render_demo` or `python -m app.live`.
+The defaults are unchanged. The renderer uses its `--protocol`; the live view
+uses `--protocol file.txt` (or YAML) when supplied, otherwise the hub's current
+instruction lines. With no protocol it shows hands but no equipment labels.
+
+```sh
+"$BENCH_PY" -m scripts.render_demo --video "$BENCH_SAMPLES/lsv_mv/CP-Left-Front-414-445.mp4" \
+  --protocol "$BENCH_SAMPLES/lsv_mv/CP-414-445-protocol.txt" --out filtered.mp4 --filter-labels
+"$BENCH_PY" -m app.live --source "$BENCH_SAMPLES/lsv_mv/CP-Left-Front-414-445.mp4" \
+  --protocol "$BENCH_SAMPLES/lsv_mv/CP-414-445-protocol.txt" --filter-labels --hub none
+"$BENCH_PY" -m vision.eval.labelfilter --output vision/eval/labelfilter-results.json
+"$BENCH_PY" -m pytest vision/tests/test_labelfilter.py app/tests/test_live_labelfilter.py
+```
+
+`labelfilter.LabelFilter(protocol).update(t, detections, hands)` accepts `Det`
+records or detection dictionaries and returns copied dictionaries, preserving
+outlines. Use one instance per camera, one call per new detector observation,
+and matching pixel coordinates for hands and detections. `visible(t)` expires
+stale results; `filter_events(events, t, hands)` gates `tip_on` only. `reset()`
+starts a new session. No models, network, packages or keys are needed by the filter.
+It uses the Python standard library (PSF-2.0, https://docs.python.org/3/library/)
+and existing `vision.core` geometry. Tests use the existing pytest dependency.
+
+Only classes named in instruction text or expected objects are eligible. A tip
+attachment also enables pipette, pipette tip and tip box, the context it needs.
+Hands remain available regardless of protocol. Equipment needs a current hand
+for scale, plausible class-specific dimensions, three consecutive detector
+observations, and at least three votes in a five-observation label window.
+Tracks match across labels by box overlap; size checks also apply to the winning
+label. Missing observations break persistence; gaps over one second, backward
+time and explicit resets discard evidence. The live view resets for protocol,
+run, source-fallback and frame-size changes and uses hands from the detector's
+source frame. Renderer cache files stay unfiltered, so `--reuse` can toggle the
+filter and change protocols without running a model again.
+
+Tip attachment needs a stable pipette **body** near a hand and a stable tip box
+near that same hand. A detection named only `pipette tip` cannot establish this.
+The filter never creates an event. Hand-labelled events added through renderer
+`--labels` still bypass this gate and retain their on-screen attribution.
+The live view filters its own posted events only with `--post-events`; it does
+not intercept a separate vision service. Other action kinds and the vision
+engine's internal sequencing are unchanged. Published held metadata cannot
+turn a pipeline rejection into acceptance.
+
+This reduces clutter but loses real objects: on 64 held-out labelled frames,
+wrong boxes went from 129 to 42 and right boxes from 69 to 27. Remaining wrong
+boxes still outnumber right ones. See [LABELFILTER-REPORT.md](LABELFILTER-REPORT.md)
+for counts, thresholds, replay commands and limits. It is not a recognition fix.

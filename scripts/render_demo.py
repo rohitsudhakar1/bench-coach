@@ -677,6 +677,8 @@ def credits_for(analysis: dict, labelled: bool) -> list[str]:
     seen = ("Objects outlined by Grounding DINO tiny" if det == "gdino-tiny" else
             f"Objects outlined by {det}" if det and det != "none" else "No object detector: hands only")
     out = [f"{seen}, hands by MediaPipe. Steps ticked by the coach's rules from what the cameras saw."]
+    if analysis.get("filter_labels"):
+        out.append("Protocol, size and persistence label filter enabled; tip attachment requires held-pipette context.")
     if labelled:
         out.append("Hand-labelled events were added; steps they decided say hand-labelled.")
     return out
@@ -695,6 +697,7 @@ def parse(argv=None):
     p.add_argument("--detector", default="gdino-tiny", help="gdino-tiny, gdino-base, florence2 or none")
     p.add_argument("--hints", action="store_true", help="vision --new-draw (tip-into-container hints)")
     p.add_argument("--seconds", type=float, default=0.0, help="only the first this many seconds")
+    p.add_argument("--filter-labels", action="store_true", help="filter labels and require context for tip attachment")
     p.add_argument("--reuse", action="store_true", help="reuse the saved vision pass if there is one")
     p.add_argument("--no-note", action="store_true")
     p.add_argument("--llm-protocol", action="store_true", help="let Claude convert a .txt protocol (needs a key)")
@@ -729,6 +732,9 @@ def main(argv=None):
         analysis = analyse(videos, a.fps, a.detect_every, a.detector, a.hints, a.seconds)
         analysis["key"] = key
         cache.write_text(json.dumps(analysis))
+    if a.filter_labels:
+        from vision.labelfilter import filter_analysis
+        analysis = filter_analysis(analysis, protocol)
     timings["vision"] = round(time.time() - t, 1)
 
     t = time.time()
