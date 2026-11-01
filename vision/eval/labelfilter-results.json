@@ -1,0 +1,851 @@
+{
+  "limits": {
+    "pipette": [
+      0.25,
+      3.5,
+      1.2,
+      30.0,
+      0.02,
+      6.0
+    ],
+    "pipette tip": [
+      0.08,
+      3.0,
+      1.05,
+      30.0,
+      0.003,
+      5.5
+    ],
+    "tip box": [
+      0.7,
+      5.0,
+      1.0,
+      2.2,
+      0.4,
+      20.0
+    ],
+    "tube": [
+      0.08,
+      2.5,
+      1.0,
+      15.0,
+      0.005,
+      4.0
+    ],
+    "tube rack": [
+      0.5,
+      5.0,
+      1.0,
+      5.0,
+      0.2,
+      20.0
+    ],
+    "plate": [
+      0.3,
+      4.0,
+      1.0,
+      4.0,
+      0.1,
+      12.0
+    ],
+    "waste": [
+      0.3,
+      4.0,
+      1.0,
+      4.0,
+      0.1,
+      12.0
+    ]
+  },
+  "labelled": {
+    "protocol": "pipette, pipette tip, tip box, tube, tube rack, plate, waste",
+    "clips": {
+      "mv12L": {
+        "split": "tune",
+        "labelled_frames": 15,
+        "before": {
+          "boxes": {
+            "pipette": {
+              "right": 0,
+              "wrong": 2,
+              "unknown": 0
+            },
+            "pipette tip": {
+              "right": 0,
+              "wrong": 10,
+              "unknown": 0
+            },
+            "tip box": {
+              "right": 5,
+              "wrong": 4,
+              "unknown": 0
+            },
+            "waste": {
+              "right": 0,
+              "wrong": 19,
+              "unknown": 0
+            }
+          },
+          "pipette_frames": {
+            "found": 0,
+            "labelled": 3
+          }
+        },
+        "after": {
+          "boxes": {
+            "pipette": {
+              "right": 0,
+              "wrong": 1,
+              "unknown": 0
+            },
+            "pipette tip": {
+              "right": 0,
+              "wrong": 4,
+              "unknown": 0
+            },
+            "tip box": {
+              "right": 5,
+              "wrong": 0,
+              "unknown": 0
+            },
+            "waste": {
+              "right": 0,
+              "wrong": 14,
+              "unknown": 0
+            }
+          },
+          "pipette_frames": {
+            "found": 0,
+            "labelled": 3
+          }
+        },
+        "tip_on_before": 0,
+        "tip_on_after": 0
+      },
+      "mv12R": {
+        "split": "hold",
+        "labelled_frames": 15,
+        "before": {
+          "boxes": {
+            "pipette": {
+              "right": 0,
+              "wrong": 2,
+              "unknown": 0
+            },
+            "pipette tip": {
+              "right": 3,
+              "wrong": 1,
+              "unknown": 0
+            },
+            "tip box": {
+              "right": 9,
+              "wrong": 0,
+              "unknown": 0
+            },
+            "waste": {
+              "right": 0,
+              "wrong": 4,
+              "unknown": 0
+            }
+          },
+          "pipette_frames": {
+            "found": 2,
+            "labelled": 10
+          }
+        },
+        "after": {
+          "boxes": {
+            "pipette": {
+              "right": 0,
+              "wrong": 0,
+              "unknown": 0
+            },
+            "pipette tip": {
+              "right": 0,
+              "wrong": 0,
+              "unknown": 0
+            },
+            "tip box": {
+              "right": 4,
+              "wrong": 0,
+              "unknown": 0
+            },
+            "waste": {
+              "right": 0,
+              "wrong": 0,
+              "unknown": 0
+            }
+          },
+          "pipette_frames": {
+            "found": 0,
+            "labelled": 10
+          }
+        },
+        "tip_on_before": 0,
+        "tip_on_after": 0
+      },
+      "mv249L": {
+        "split": "hold",
+        "labelled_frames": 20,
+        "before": {
+          "boxes": {
+            "pipette": {
+              "right": 3,
+              "wrong": 2,
+              "unknown": 0
+            },
+            "pipette tip": {
+              "right": 15,
+              "wrong": 12,
+              "unknown": 0
+            },
+            "tip box": {
+              "right": 13,
+              "wrong": 20,
+              "unknown": 0
+            },
+            "waste": {
+              "right": 0,
+              "wrong": 15,
+              "unknown": 0
+            }
+          },
+          "pipette_frames": {
+            "found": 11,
+            "labelled": 20
+          }
+        },
+        "after": {
+          "boxes": {
+            "pipette": {
+              "right": 1,
+              "wrong": 0,
+              "unknown": 0
+            },
+            "pipette tip": {
+              "right": 3,
+              "wrong": 4,
+              "unknown": 0
+            },
+            "tip box": {
+              "right": 10,
+              "wrong": 9,
+              "unknown": 0
+            },
+            "waste": {
+              "right": 0,
+              "wrong": 10,
+              "unknown": 0
+            }
+          },
+          "pipette_frames": {
+            "found": 4,
+            "labelled": 20
+          }
+        },
+        "tip_on_before": 0,
+        "tip_on_after": 0
+      },
+      "mv249R": {
+        "split": "tune",
+        "labelled_frames": 20,
+        "before": {
+          "boxes": {
+            "pipette": {
+              "right": 2,
+              "wrong": 0,
+              "unknown": 0
+            },
+            "pipette tip": {
+              "right": 22,
+              "wrong": 4,
+              "unknown": 0
+            },
+            "tip box": {
+              "right": 11,
+              "wrong": 1,
+              "unknown": 0
+            },
+            "waste": {
+              "right": 0,
+              "wrong": 14,
+              "unknown": 0
+            }
+          },
+          "pipette_frames": {
+            "found": 15,
+            "labelled": 20
+          }
+        },
+        "after": {
+          "boxes": {
+            "pipette": {
+              "right": 0,
+              "wrong": 0,
+              "unknown": 0
+            },
+            "pipette tip": {
+              "right": 4,
+              "wrong": 0,
+              "unknown": 0
+            },
+            "tip box": {
+              "right": 9,
+              "wrong": 0,
+              "unknown": 0
+            },
+            "waste": {
+              "right": 0,
+              "wrong": 13,
+              "unknown": 0
+            }
+          },
+          "pipette_frames": {
+            "found": 4,
+            "labelled": 20
+          }
+        },
+        "tip_on_before": 0,
+        "tip_on_after": 0
+      },
+      "mv414L": {
+        "split": "hold",
+        "labelled_frames": 21,
+        "before": {
+          "boxes": {
+            "pipette": {
+              "right": 2,
+              "wrong": 0,
+              "unknown": 0
+            },
+            "pipette tip": {
+              "right": 9,
+              "wrong": 11,
+              "unknown": 1
+            },
+            "tip box": {
+              "right": 1,
+              "wrong": 38,
+              "unknown": 0
+            },
+            "waste": {
+              "right": 0,
+              "wrong": 11,
+              "unknown": 0
+            }
+          },
+          "pipette_frames": {
+            "found": 9,
+            "labelled": 20
+          }
+        },
+        "after": {
+          "boxes": {
+            "pipette": {
+              "right": 0,
+              "wrong": 0,
+              "unknown": 0
+            },
+            "pipette tip": {
+              "right": 2,
+              "wrong": 1,
+              "unknown": 0
+            },
+            "tip box": {
+              "right": 0,
+              "wrong": 5,
+              "unknown": 0
+            },
+            "waste": {
+              "right": 0,
+              "wrong": 6,
+              "unknown": 0
+            }
+          },
+          "pipette_frames": {
+            "found": 2,
+            "labelled": 20
+          }
+        },
+        "tip_on_before": 1,
+        "tip_on_after": 0
+      },
+      "mv414R": {
+        "split": "tune",
+        "labelled_frames": 21,
+        "before": {
+          "boxes": {
+            "pipette": {
+              "right": 0,
+              "wrong": 2,
+              "unknown": 0
+            },
+            "pipette tip": {
+              "right": 14,
+              "wrong": 13,
+              "unknown": 1
+            },
+            "tip box": {
+              "right": 14,
+              "wrong": 10,
+              "unknown": 0
+            },
+            "waste": {
+              "right": 0,
+              "wrong": 20,
+              "unknown": 0
+            }
+          },
+          "pipette_frames": {
+            "found": 8,
+            "labelled": 20
+          }
+        },
+        "after": {
+          "boxes": {
+            "pipette": {
+              "right": 0,
+              "wrong": 0,
+              "unknown": 0
+            },
+            "pipette tip": {
+              "right": 0,
+              "wrong": 2,
+              "unknown": 0
+            },
+            "tip box": {
+              "right": 10,
+              "wrong": 4,
+              "unknown": 0
+            },
+            "waste": {
+              "right": 0,
+              "wrong": 19,
+              "unknown": 0
+            }
+          },
+          "pipette_frames": {
+            "found": 0,
+            "labelled": 20
+          }
+        },
+        "tip_on_before": 0,
+        "tip_on_after": 0
+      },
+      "hood033": {
+        "split": "hold",
+        "labelled_frames": 8,
+        "before": {
+          "boxes": {
+            "pipette": {
+              "right": 2,
+              "wrong": 1,
+              "unknown": 0
+            },
+            "pipette tip": {
+              "right": 12,
+              "wrong": 1,
+              "unknown": 0
+            },
+            "tip box": {
+              "right": 0,
+              "wrong": 8,
+              "unknown": 0
+            },
+            "waste": {
+              "right": 0,
+              "wrong": 3,
+              "unknown": 0
+            }
+          },
+          "pipette_frames": {
+            "found": 8,
+            "labelled": 8
+          }
+        },
+        "after": {
+          "boxes": {
+            "pipette": {
+              "right": 0,
+              "wrong": 1,
+              "unknown": 0
+            },
+            "pipette tip": {
+              "right": 7,
+              "wrong": 0,
+              "unknown": 0
+            },
+            "tip box": {
+              "right": 0,
+              "wrong": 5,
+              "unknown": 0
+            },
+            "waste": {
+              "right": 0,
+              "wrong": 1,
+              "unknown": 0
+            }
+          },
+          "pipette_frames": {
+            "found": 6,
+            "labelled": 8
+          }
+        },
+        "tip_on_before": 0,
+        "tip_on_after": 0
+      },
+      "dji105": {
+        "split": "tune",
+        "labelled_frames": 8,
+        "before": {
+          "boxes": {
+            "pipette": {
+              "right": 0,
+              "wrong": 2,
+              "unknown": 0
+            },
+            "pipette tip": {
+              "right": 1,
+              "wrong": 6,
+              "unknown": 0
+            },
+            "tip box": {
+              "right": 7,
+              "wrong": 3,
+              "unknown": 0
+            },
+            "waste": {
+              "right": 0,
+              "wrong": 0,
+              "unknown": 0
+            }
+          },
+          "pipette_frames": {
+            "found": 0,
+            "labelled": 0
+          }
+        },
+        "after": {
+          "boxes": {
+            "pipette": {
+              "right": 0,
+              "wrong": 0,
+              "unknown": 0
+            },
+            "pipette tip": {
+              "right": 1,
+              "wrong": 1,
+              "unknown": 0
+            },
+            "tip box": {
+              "right": 0,
+              "wrong": 1,
+              "unknown": 0
+            },
+            "waste": {
+              "right": 0,
+              "wrong": 0,
+              "unknown": 0
+            }
+          },
+          "pipette_frames": {
+            "found": 0,
+            "labelled": 0
+          }
+        },
+        "tip_on_before": 1,
+        "tip_on_after": 0
+      }
+    },
+    "totals": {
+      "tune": {
+        "before": {
+          "boxes": {
+            "pipette": {
+              "right": 2,
+              "wrong": 6,
+              "unknown": 0
+            },
+            "pipette tip": {
+              "right": 37,
+              "wrong": 33,
+              "unknown": 1
+            },
+            "tip box": {
+              "right": 37,
+              "wrong": 18,
+              "unknown": 0
+            },
+            "waste": {
+              "right": 0,
+              "wrong": 53,
+              "unknown": 0
+            }
+          },
+          "right": 76,
+          "wrong": 110,
+          "pipette_frames": {
+            "found": 23,
+            "labelled": 43
+          }
+        },
+        "after": {
+          "boxes": {
+            "pipette": {
+              "right": 0,
+              "wrong": 1,
+              "unknown": 0
+            },
+            "pipette tip": {
+              "right": 5,
+              "wrong": 7,
+              "unknown": 0
+            },
+            "tip box": {
+              "right": 24,
+              "wrong": 5,
+              "unknown": 0
+            },
+            "waste": {
+              "right": 0,
+              "wrong": 46,
+              "unknown": 0
+            }
+          },
+          "right": 29,
+          "wrong": 59,
+          "pipette_frames": {
+            "found": 4,
+            "labelled": 43
+          }
+        }
+      },
+      "hold": {
+        "before": {
+          "boxes": {
+            "pipette": {
+              "right": 7,
+              "wrong": 5,
+              "unknown": 0
+            },
+            "pipette tip": {
+              "right": 39,
+              "wrong": 25,
+              "unknown": 1
+            },
+            "tip box": {
+              "right": 23,
+              "wrong": 66,
+              "unknown": 0
+            },
+            "waste": {
+              "right": 0,
+              "wrong": 33,
+              "unknown": 0
+            }
+          },
+          "right": 69,
+          "wrong": 129,
+          "pipette_frames": {
+            "found": 30,
+            "labelled": 58
+          }
+        },
+        "after": {
+          "boxes": {
+            "pipette": {
+              "right": 1,
+              "wrong": 1,
+              "unknown": 0
+            },
+            "pipette tip": {
+              "right": 12,
+              "wrong": 5,
+              "unknown": 0
+            },
+            "tip box": {
+              "right": 14,
+              "wrong": 19,
+              "unknown": 0
+            },
+            "waste": {
+              "right": 0,
+              "wrong": 17,
+              "unknown": 0
+            }
+          },
+          "right": 27,
+          "wrong": 42,
+          "pipette_frames": {
+            "found": 12,
+            "labelled": 58
+          }
+        }
+      }
+    },
+    "filter_observations": 452,
+    "filter_seconds": 0.017782,
+    "filter_ms_per_observation": 0.0393
+  },
+  "render": {
+    "cp-12-27": {
+      "before": {
+        "labels": {
+          "pipette tip": 33,
+          "tip box": 46,
+          "tube rack": 40,
+          "waste": 56,
+          "pipette": 9,
+          "plate": 31,
+          "tube": 1
+        },
+        "events": {
+          "hand_touch": 1
+        }
+      },
+      "after": {
+        "labels": {},
+        "events": {
+          "hand_touch": 1
+        }
+      },
+      "filter_seconds": 0.000414,
+      "detector_observations": 76,
+      "allowed_classes": []
+    },
+    "cp-249-269": {
+      "before": {
+        "labels": {
+          "tip box": 110,
+          "pipette tip": 130,
+          "tube rack": 36,
+          "pipette": 22,
+          "waste": 76,
+          "plate": 7
+        },
+        "events": {
+          "hand_touch": 1
+        }
+      },
+      "after": {
+        "labels": {
+          "tip box": 62,
+          "pipette tip": 29,
+          "pipette": 1
+        },
+        "events": {
+          "hand_touch": 1
+        }
+      },
+      "filter_seconds": 0.002317,
+      "detector_observations": 100,
+      "allowed_classes": [
+        "pipette",
+        "pipette tip",
+        "tip box"
+      ]
+    },
+    "cp-414-445-labelled": {
+      "before": {
+        "labels": {
+          "tip box": 237,
+          "pipette tip": 148,
+          "tube rack": 53,
+          "waste": 112,
+          "pipette": 15,
+          "plate": 20
+        },
+        "events": {
+          "tip_on": 1,
+          "hand_touch": 2
+        }
+      },
+      "after": {
+        "labels": {
+          "tip box": 71,
+          "pipette tip": 26
+        },
+        "events": {
+          "hand_touch": 2
+        }
+      },
+      "filter_seconds": 0.003252,
+      "detector_observations": 156,
+      "allowed_classes": [
+        "pipette",
+        "pipette tip",
+        "tip box"
+      ]
+    },
+    "pcr-105-2min": {
+      "before": {
+        "labels": {
+          "pipette tip": 315,
+          "plate": 221,
+          "tube rack": 398,
+          "tip box": 362,
+          "pipette": 64,
+          "tube": 42,
+          "waste": 15
+        },
+        "events": {
+          "tip_on": 8,
+          "hand_touch": 1
+        }
+      },
+      "after": {
+        "labels": {
+          "pipette tip": 63,
+          "tip box": 15,
+          "tube": 33,
+          "pipette": 7
+        },
+        "events": {
+          "hand_touch": 1
+        }
+      },
+      "filter_seconds": 0.00513,
+      "detector_observations": 305,
+      "allowed_classes": [
+        "pipette",
+        "pipette tip",
+        "tip box",
+        "tube"
+      ]
+    },
+    "pi-usb-cam": {
+      "before": {
+        "labels": {
+          "tip box": 69,
+          "pipette tip": 132,
+          "pipette": 22,
+          "tube rack": 29,
+          "plate": 11,
+          "waste": 31,
+          "tube": 1
+        },
+        "events": {
+          "tip_on": 4,
+          "tip_off": 1
+        }
+      },
+      "after": {
+        "labels": {
+          "pipette tip": 18,
+          "tip box": 1
+        },
+        "events": {
+          "tip_off": 1
+        }
+      },
+      "filter_seconds": 0.001116,
+      "detector_observations": 75,
+      "allowed_classes": [
+        "pipette",
+        "pipette tip",
+        "tip box",
+        "tube"
+      ]
+    }
+  }
+}

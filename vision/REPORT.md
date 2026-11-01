@@ -142,3 +142,12 @@ OCR tests: 28 passed. Vision suite excluding model-marked tests: 140 passed, 1 s
 1 deselected in 10.66 s. No packages added, no sample media saved in the repository,
 no servers or sound, and all edits remain uncommitted under vision/.
 Latest `git log --format='%h %an %aI %cI' main..HEAD` output: empty.
+
+## Optional renderer/live label filter
+
+The uncommitted label-filter addition is measured separately in
+[LABELFILTER-REPORT.md](LABELFILTER-REPORT.md). No event contract change.
+The default paths remain unchanged. On 64 held-out labelled frames, false box
+observations fall from 129 to 42, but true ones also fall from 69 to 27.
+The cached Pi clip's four false `tip_on` events are rejected; its false `tip_off`
+is unchanged. See that report for test results, thresholds and the date audit.

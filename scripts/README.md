@@ -387,3 +387,12 @@ screen, and the credits line says hand-labelled events were added. Never present
 
 On this Mac a 2-minute clip takes about the time measured in `scripts/RENDER-REPORT.md`.
 Nothing plays sound and no server is started.
+
+### Filter labels in a render
+
+`python -m scripts.render_demo ... --filter-labels` applies the protocol, hand-size
+and temporal rules in `vision/labelfilter.py` before drawing and gates detected
+`tip_on` events before the coach pass. It works with `--reuse`; the saved analysis
+remains unfiltered. Manually supplied `--labels` events keep their attribution
+and bypass this gate. The option is off by default. It removes many real labels
+as well as false ones; see [the measurements](../vision/LABELFILTER-REPORT.md).

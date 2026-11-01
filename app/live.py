@@ -271,11 +271,16 @@ class LiveView:
 
     def __init__(self, source: Source, detect=None, hands=None, hub: HubState | None = None,
                  max_side: int = 960, outlines: bool = True, fallback: str | None = None,
-                 vision=None, sink=None, quality: int = 80, segmenter=None):
+                 vision=None, sink=None, quality: int = 80, segmenter=None,
+                 filter_labels: bool = False, protocol=None):
         self.src, self.fallback, self.max_side, self.quality = source, fallback, max_side, quality
         self.det = DetectorThread(detect, outlines, segmenter) if detect is not None else None
         self.hands_fn, self.hub = hands, hub or HubState(None)
         self.vision, self.sink = vision, sink
+        self.filter_labels, self.filter_protocol = filter_labels, protocol
+        self.label_filter, self.filter_key = None, None
+        self.hand_history = deque(maxlen=180)
+        self.filter_start = -float("inf")
         self.jpeg, self.version, self.frame_t, self.size = None, 0, None, (0, 0)
         self.objects, self.hands = [], []
         self.rate, self.hand_ms, self.draw_ms = Rate(), 0.0, 0.0
@@ -294,6 +299,11 @@ class LiveView:
         self.src.close()
         self.src = Source(self.fallback, realtime=True, loop=True)
         self.using_fallback = True
+        if self.label_filter is not None:
+            self.label_filter.reset()
+            self.filter_start = time.time()
+            self.objects = []
+            self.hand_history.clear()
 
     def step(self, frame, t: float):
         """One frame: hands, newest boxes, overlay, JPEG. Returns the drawn picture."""
@@ -302,12 +312,29 @@ class LiveView:
         raw = None
         if self.det is not None:
             self.det.submit(t, frame)
-            v, _, objs = self.det.latest()
+            v, detector_t, objs = self.det.latest()
             if v != self.seen_det:
                 self.seen_det, self.objects, raw = v, objs, objs
         t0 = time.perf_counter()
         found = self.hands_fn(frame, t) if self.hands_fn else []
         t1 = time.perf_counter()
+        if self.filter_labels:
+            from vision.labelfilter import LabelFilter
+            # Explicit file wins; otherwise use only the hub's current instruction lines.
+            protocol = self.filter_protocol if self.filter_protocol is not None else {
+                "steps": [{"text": step.get("text", "")}
+                          for step in self.hub.data.get("steps", [])]}
+            key = (repr(protocol), self.hub.data.get("run"), (w, h))
+            if key != self.filter_key:
+                self.label_filter, self.filter_key = LabelFilter(protocol), key
+                self.filter_start = t
+                self.hand_history.clear()
+            self.hand_history.append((t, found))
+            if raw is not None and detector_t is not None and detector_t >= self.filter_start:
+                historical = next((hs for ht, hs in reversed(self.hand_history)
+                                   if ht <= detector_t and detector_t - ht <= 0.25), [])
+                self.label_filter.update(detector_t, raw, historical)
+            self.objects = self.label_filter.visible(t)
         hands = [{"side": hd.side, "pts": [[round(x, 1), round(y, 1)] for x, y in hd.pts] if hd.pts else None,
                   "box": list(hd.box) if hd.box else None} for hd in found]
         # A detector hand box no tracked hand explains is still drawn, as a box.
@@ -337,6 +364,21 @@ class LiveView:
         from vision.core import Det
         dets = [Det(o["label"], tuple(o["box"]), o["score"]) for o in raw] if raw is not None else None
         events = self.vision.step(0, t, w, h, found, dets)
+        if self.label_filter is not None:
+            events = self.label_filter.filter_events(events, t, found or None)
+            for event in events:
+                if event["kind"] == "objects":
+                    from vision.core import iou
+                    original = event["detail"]["boxes"]
+                    boxes = [{k: v for k, v in o.items() if k != "outline"}
+                             for o in self.label_filter.visible(t) if o["label"] != HAND]
+                    for box in boxes:
+                        if "held" in box:
+                            # Never undo the pipeline's tripod/stationary rejection.
+                            box["held"] = box["held"] and any(
+                                old.get("held") is True and iou(old["box"], box["box"]) >= .25
+                                for old in original if old["label"] == box["label"])
+                    event["detail"]["boxes"] = boxes
         if self.sink is not None and events:
             self.sink.send(events)
 
@@ -460,6 +502,9 @@ def parse(argv=None):
     p.add_argument("--no-detector", action="store_true", help="hands only")
     p.add_argument("--no-hands", action="store_true")
     p.add_argument("--mirrored", action="store_true", help="camera image is mirrored (selfie view)")
+    p.add_argument("--filter-labels", action="store_true",
+                   help="filter labels using --protocol or the hub's current protocol")
+    p.add_argument("--protocol", type=Path, help="protocol .txt or .yaml for --filter-labels")
     p.add_argument("--post-events", action="store_true",
                    help="also send vision's events to the hub (only when the vision part is not running)")
     p.add_argument("--seconds", type=float, default=0.0, help="stop after this long and print the measured rates")
@@ -470,6 +515,10 @@ def main(argv=None):
     a = parse(argv)
     import uvicorn
 
+    protocol = None
+    if a.filter_labels and a.protocol:
+        from scripts.render_demo import load_protocol
+        protocol = load_protocol(a.protocol)
     src = Source(a.source, realtime=not a.fast, loop=a.loop)
     if not src.ok and not a.fallback:
         raise SystemExit(f"cannot open source {a.source}; give --fallback clip.mp4 to play a video instead")
@@ -492,7 +541,8 @@ def main(argv=None):
         from vision.sink import Sink
         vision, sink = Vision(1), Sink(hub_url, quiet_objects=True)
     view = LiveView(src, detect, hands, HubState(hub_url), a.max_side, not a.no_outlines, a.fallback,
-                    vision, sink, segmenter=segmenter).start()
+                    vision, sink, segmenter=segmenter, filter_labels=a.filter_labels,
+                    protocol=protocol).start()
     server = uvicorn.Server(uvicorn.Config(create_app(view), host=a.host, port=a.port, log_level="warning"))
     th = threading.Thread(target=server.run, daemon=True)
     th.start()
