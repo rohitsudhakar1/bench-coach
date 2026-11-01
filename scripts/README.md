@@ -172,7 +172,10 @@ own children and verify listener release. No sample-data download, physical devi
 API key or model inference is needed. Table detector calls are faked until vision is
 merged; no table recognition accuracy is claimed.
 
-No packages were added. Existing dependencies used here:
+One package was added for the R2 download (`scripts/requirements.txt`): boto3
+(https://github.com/boto/boto3, Apache-2.0), used only for `list_objects_v2`, `get_object` and
+`download_file` against R2's S3-compatible endpoint. Its tests use a fake client and need no
+network. Existing dependencies used here:
 
 | Library | Source | Licence | Use |
 | --- | --- | --- | --- |
