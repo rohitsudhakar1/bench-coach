@@ -120,6 +120,8 @@ def test_pull_downloads_checks_sizes_and_writes_sync(tmp_path):
     # mtime = real end of recording, so "mtime - length" gives the real start
     assert abs((d / "usb.mp4").stat().st_mtime - (START_MS / 1000 + 30.2)) < 1
     assert not list(d.glob("*.part"))
+    assert (tmp_path / "current").resolve() == d.resolve()
+    assert (tmp_path / "current" / "usb.mp4").stat().st_size == 600
     # second pull downloads nothing
     n = s3.calls.count("download")
     again = P.pull(s3, "b", s, tmp_path, log=lambda *_: None)
@@ -148,7 +150,9 @@ def test_size_limit(tmp_path):
 def test_session_without_sync_gets_a_written_one(tmp_path):
     s3 = FakeS3(bucket())
     s = P.pick(P.sessions(s3, "b"), session="0d3abd")
+    P.pull(s3, "b", P.pick(P.sessions(s3, "b"), latest=True), tmp_path, log=lambda *_: None)
     P.pull(s3, "b", s, tmp_path, log=lambda *_: None)
+    assert (tmp_path / "current").resolve().name == "campi-0d3abd"  # moves to the last pull
     sync = json.loads((tmp_path / "campi-0d3abd" / "sync.json").read_text())
     assert sync["start_epoch_ms"] is None and "No sync.json" in sync["note"]
 

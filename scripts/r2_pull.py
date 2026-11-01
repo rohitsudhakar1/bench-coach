@@ -9,7 +9,8 @@ Each session in the bucket is up to four objects:
 with stream usb, ribbon (videos), audio (.m4a) and sync (.json). Older uploads have no
 "_<stream>" suffix and no sync file; they are listed too.
 
-A pull writes DIR/<device>-<session>/usb.mp4, ribbon.mp4, audio.m4a and sync.json. Files already
+A pull writes DIR/<device>-<session>/usb.mp4, ribbon.mp4, audio.m4a and sync.json, and points
+DIR/current at that folder. Files already
 there with the right size are not downloaded again. Every file is checked against the size R2
 reports. Each video's modification time is set to the session's real end, so tools that read
 "start = mtime - length" (the renderer's lab note date) get the real recording time.
@@ -217,6 +218,13 @@ def pull(s3, bucket: str, s: dict, out: Path, max_mb: float = DEFAULT_MAX_MB, lo
         for n in ("usb", "ribbon", "audio"):
             if n in paths:
                 os.utime(paths[n], (end, end))
+    link = out / "current"  # always the last session pulled, so the live demo command never changes
+    if link.is_symlink() or not link.exists():
+        tmp = out / ".current-tmp"
+        if tmp.is_symlink():
+            tmp.unlink()
+        tmp.symlink_to(dest.name)
+        tmp.replace(link)
     return {"dir": dest, "fetched_bytes": fetched, **paths}
 
 
