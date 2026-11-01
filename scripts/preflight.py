@@ -45,11 +45,14 @@ async def frame(client, url):
 
 async def cameras(client, args):
     rows = {row['id']: row for row in (await fetch(client, args.capture + '/cams')).json()}
-    stamps = [[], []]
+    count = len(rows)
+    if count not in (1, 2) or set(rows) != set(range(count)):
+        raise ValueError('capture must serve one or two cameras')
+    stamps = [[] for _ in range(count)]
     images = {}
     end = time.monotonic() + 3
     while time.monotonic() < end:
-        pair = await asyncio.gather(*(frame(client, args.capture + f'/cam/{i}/frame.jpg') for i in range(2)))
+        pair = await asyncio.gather(*(frame(client, args.capture + f'/cam/{i}/frame.jpg') for i in range(count)))
         for i, (stamp, image) in enumerate(pair):
             if stamps[i] and stamp < stamps[i][-1]:
                 raise ValueError('camera clock moved backwards')
@@ -57,13 +60,19 @@ async def cameras(client, args):
             images[i] = image
         await asyncio.sleep(.09)
     rates = [(len(set(s)) - 1) / (s[-1] - s[0]) if s[-1] > s[0] else 0 for s in stamps]
-    if not all(rows[i].get('live') is True for i in range(2)) or min(rates) < args.min_fps:
+    if not all(rows[i].get('live') is True for i in range(count)) or min(rates) < args.min_fps:
         raise ValueError('camera stopped or too slow')
-    sources = args.camera_sources or [rows[i].get('source') for i in range(2)]
+    sources = args.camera_sources or [rows[i].get('source') for i in range(count)]
+    if len(sources) != count:
+        raise ValueError('--camera-sources count does not match capture')
     def canonical(source):
         source = str(source).strip()
         return str(int(source)) if source.isdecimal() else source.rstrip('/')
-    if any(s is None or not str(s).strip() for s in sources) or canonical(sources[0]) == canonical(sources[1]):
+    if any(s is None or not str(s).strip() for s in sources):
+        raise ValueError('camera identity missing')
+    if count == 1:
+        return images, f'one fresh view at {rates[0]:.1f} observed fps (one-camera mode)'
+    if canonical(sources[0]) == canonical(sources[1]):
         raise ValueError('camera identities missing or duplicated')
     if images[0].shape == images[1].shape and np.array_equal(images[0], images[1]):
         raise ValueError('camera images identical')
@@ -96,6 +105,9 @@ def caps(image, path):
 
 
 def calibration(path, images):
+    if len(images) == 1:
+        # Stereo calibration needs two views; one camera gives a rough lean estimate instead.
+        return 'one camera: angle shows a rough one-view lean, no stereo calibration needed'
     from angle.geometry import Calibration
     cal = Calibration.load(path)
     data = json.loads(path.read_text())
@@ -236,7 +248,7 @@ async def run(args):
             nonlocal images
             images, detail = await cameras(client, args)
             return detail
-        await check('cameras', camera_check, 'Restore two fresh, distinct camera feeds; pass --camera-sources matching capture, cover each lens, and check both reach 5 fps.')
+        await check('cameras', camera_check, 'Restore one or two fresh camera feeds (two must be distinct); pass --camera-sources matching capture, cover each lens, and check each reaches 5 fps.')
         if not args.no_table:
             async def cap_check():
                 _, image = await frame(client, args.table_url)
@@ -284,7 +296,7 @@ def parse_args(argv=None):
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--capture', default='http://127.0.0.1:8701')
     p.add_argument('--hub', default='http://127.0.0.1:8700')
-    p.add_argument('--camera-sources', nargs=2)
+    p.add_argument('--camera-sources', nargs='+', help='one or two, matching capture')
     p.add_argument('--table-url')
     p.add_argument('--table-config', type=Path, default=ROOT / 'vision/table.json')
     p.add_argument('--calibration', type=Path, default=ROOT / 'angle/calibration.json')

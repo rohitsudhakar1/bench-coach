@@ -268,3 +268,34 @@ def test_offline_ready_reads_fetch_models_output(monkeypatch):
         else:
             with pytest.raises(ValueError, match='hand-landmarker'):
                 asyncio.run(REAL_OFFLINE_READY())
+
+
+class OneCam(Fake):
+    def __call__(self, request):
+        if request.url.path == '/cams':
+            return httpx.Response(200, json=[dict(id=0, source='0', live=True)])
+        if '/cam/1/' in request.url.path:
+            return httpx.Response(404)
+        return super().__call__(request)
+
+
+def test_one_camera_passes(scene, tmp_path):
+    async def run():
+        async with httpx.AsyncClient(transport=httpx.MockTransport(OneCam(scene[0]))) as client:
+            images, text = await p.cameras(client, p.parse_args(['--capture', 'http://127.0.0.1:8801']))
+            assert len(images) == 1 and 'one-camera' in text
+            # Stereo calibration does not apply to one view, so a missing file is fine.
+            assert 'one camera' in p.calibration(tmp_path / 'missing.json', images)
+            with pytest.raises(ValueError):
+                await p.cameras(client, p.parse_args(['--capture', 'http://127.0.0.1:8801', '--camera-sources', '0', '1']))
+    asyncio.run(run())
+
+
+def test_one_camera_full_preflight(scene, monkeypatch, capsys):
+    transport = httpx.MockTransport(OneCam(scene[0]))
+    original = httpx.AsyncClient
+    monkeypatch.setattr(p.httpx, 'AsyncClient', lambda **kw: original(**{**kw, 'transport': transport}))
+    code = p.main(['--no-table', '--no-mic', '--calibration', '/nonexistent.json'])
+    out = capsys.readouterr().out
+    assert 'PASS cameras' in out and 'PASS calibration' in out and 'FIX' not in out
+    assert code == 0
