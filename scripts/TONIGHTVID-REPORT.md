@@ -74,3 +74,11 @@ E=(--end "Bench Coach" --end "Two cameras watch the bench, tick off the protocol
 
 Vision pass took 38 s (414-445), 23 s (249-269) and 16 s (12-27); each redraw with `--reuse` took 3-7 s.
 Frames were checked by eye: title card, mid-clip panel, note card, end card and the join in the cut.
+
+## Git log
+
+```
+b914ba7 Rohit Sudhakar 2026-10-31T20:00:32-04:00 2026-10-31T20:00:32-04:00
+76e5bf6 Rohit Sudhakar 2026-10-31T19:59:24-04:00 2026-10-31T19:59:24-04:00
+50cd818 Rohit Sudhakar 2026-10-31T19:57:18-04:00 2026-10-31T19:57:18-04:00
+```
