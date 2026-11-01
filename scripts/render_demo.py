@@ -819,6 +819,10 @@ def main(argv=None):
     for v in videos + [a.protocol]:
         if not v.is_file():
             sys.exit(f"not found: {v}")
+    # Phone footage (HEVC, 4K, 60 fps, rotated, HDR) becomes upright 1080p30 SDR H.264 first.
+    from scripts.phonevid import prepare
+    names = [v.stem for v in videos]
+    videos = [Path(prepare(v)) for v in videos]
     a.out.parent.mkdir(parents=True, exist_ok=True)
     work = a.out.with_name(a.out.stem + "-work")
     work.mkdir(exist_ok=True)
@@ -878,7 +882,6 @@ def main(argv=None):
     timings["note"] = round(time.time() - t, 1)
 
     t = time.time()
-    names = [v.stem for v in videos]
     info = render(a.out, videos, names, analysis, log, protocol, note,
                    credits_for(analysis, labelled, len(videos)), pick_codec(a.codec), a.seconds,
                    brand=a.brand, title_seconds=a.title_seconds, note_seconds=a.note_seconds, end_lines=a.end)
