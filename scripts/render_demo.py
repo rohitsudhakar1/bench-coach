@@ -15,12 +15,15 @@ What it does, in four passes:
 
 Pass 1 is cached next to the output (<out>-work/analysis.json); --reuse skips it on a re-render.
 --labels FILE adds hand-labelled events (JSON lines: {"s": 12.5, "kind": "draw", "object": "tube A"});
-anything they decide is marked "hand-labelled" on screen. Nothing makes sound.
+it also reads explicit step/warning annotations saved by scripts.label_steps. Explicit step
+outcomes replace rule-based progress. Anything they decide is marked "hand-labelled" on screen.
+Nothing makes sound.
 """
 from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
 import shutil
 import subprocess
@@ -214,6 +217,7 @@ def load_protocol(path: Path, use_llm: bool = False) -> dict:
 
 
 def labelled_events(path: Path, t0: float) -> list[dict]:
+    """Read legacy action hints and explicit step/warning annotations in video seconds."""
     out = []
     for line in path.read_text().splitlines():
         line = line.strip()
@@ -221,6 +225,24 @@ def labelled_events(path: Path, t0: float) -> list[dict]:
             continue
         row = json.loads(line)
         s = float(row["s"])
+        if not math.isfinite(s) or s < 0:
+            raise ValueError("Label time must be finite, nonnegative video seconds")
+        if row["kind"] in ("step", "warning"):
+            index = row.get("step")
+            if index is not None and (type(index) is not int or index < 0):
+                raise ValueError("Label step must be a zero-based index")
+            detail = {"labelled": True, "source": "hand-labelled", "text": row.get("text", "")}
+            if row["kind"] == "step":
+                if index is None or row.get("status") not in ("done", "skipped"):
+                    raise ValueError("Step labels need an index and done/skipped status")
+                detail.update(index=index, status=row["status"])
+            elif not detail["text"]:
+                raise ValueError("Warning labels need text")
+            elif "hand-labelled" not in detail["text"]:
+                detail["text"] += " (hand-labelled)"
+            out.append({"t": t0 + s, "s": s, "source": "coach", "kind": row["kind"],
+                        "object": None, "hand": None, "step": index, "confidence": None, "detail": detail})
+            continue
         out.append({"t": t0 + s, "s": s, "source": "vision", "kind": row["kind"], "object": row.get("object"),
                     "hand": row.get("hand"), "step": None, "confidence": float(row.get("confidence", 0.9)),
                     "detail": {"cam": row.get("cam", 0), "labelled": True}})
@@ -238,6 +260,32 @@ def coach(protocol: dict, events: list[dict], t0: float, end_s: float, run_id: s
              "confidence": None, "detail": {"status": "start", "run": run_id, "protocol": protocol.get("name"),
                                             "protocol_data": protocol}}
     log = [start]
+
+    # Explicit outcomes are a human review of the protocol, not action hints for the
+    # rule engine. Do not let noisy detections finish or skip other steps in this mode.
+    manual = [e for e in events if e["kind"] == "step" and e.get("detail", {}).get("labelled")]
+    if manual:
+        count = len(protocol.get("steps", []))
+        if any(e["step"] >= count for e in manual):
+            raise ValueError("A step label is outside this protocol")
+        finished = set()
+
+        def current(t, s):
+            index = next((i for i in range(count) if i not in finished), None)
+            if index is not None:
+                log.append({"t": t, "s": s, "source": "coach", "kind": "step", "object": None,
+                            "hand": None, "step": index, "confidence": None,
+                            "detail": {"index": index, "status": "current", "text": protocol["steps"][index]["text"]}})
+
+        current(t0, 0.0)
+        for e in sorted((e for e in events if 0 <= e["s"] <= end_s), key=lambda e: e["t"]):
+            log.append(e)
+            if e["kind"] == "step" and e.get("detail", {}).get("labelled"):
+                finished.add(e["step"])
+                current(e["t"], e["s"])
+        log.append({"t": t0 + end_s, "s": end_s, "source": "app", "kind": "run", "object": None,
+                    "hand": None, "step": None, "confidence": None, "detail": {"status": "stop", "run": run_id}})
+        return log
 
     def take(outs, labelled=False):
         for o in outs:
@@ -257,6 +305,8 @@ def coach(protocol: dict, events: list[dict], t0: float, end_s: float, run_id: s
     for e in sorted(events, key=lambda e: e["t"]):
         now[0] = e["t"]
         log.append(e)
+        if e["kind"] == "warning" and e.get("detail", {}).get("labelled"):
+            continue
         take(brain.handle(e), labelled=bool(e["detail"].get("labelled")))
     now[0] = t0 + end_s
     take(brain.tick(now[0]))
@@ -278,7 +328,17 @@ def build_note(work: Path, run_id: str, log: list[dict], videos: list[Path]) -> 
     for i, v in enumerate(videos):
         (run_dir / f"cam{i}.mp4").symlink_to(Path(v).resolve())
     try:
-        return _make_note(run_dir, use_claude=None, frames=False)["note"]
+        note = _make_note(run_dir, use_claude=None, frames=False)["note"]
+        if any(e.get("detail", {}).get("labelled") for e in log):
+            from note.frames import attach_offsets
+            from note.runfolder import load_run
+            from note.render import to_html, to_markdown
+            mark_labelled(note, log)
+            attach_offsets(note, load_run(run_dir))
+            (run_dir / "note.json").write_text(json.dumps(note, indent=1, default=str), encoding="utf-8")
+            (run_dir / "note.md").write_text(to_markdown(note), encoding="utf-8")
+            (run_dir / "note.html").write_text(to_html(note), encoding="utf-8")
+        return note
     except Exception as exc:  # the video still renders without a note
         print(f"  note failed: {type(exc).__name__}: {exc}", file=sys.stderr)
         return None
@@ -726,10 +786,20 @@ def render(out: Path, videos, names, analysis, log, protocol, note, credits, cod
 def mark_labelled(note: dict, log: list[dict]) -> None:
     """The note part calls every camera-event step "seen"; steps decided by hand labels must not be."""
     hand = {e.get("step") for e in log if e.get("source") == "coach" and e["kind"] == "step"
-            and (e.get("detail") or {}).get("labelled") and (e.get("detail") or {}).get("status") in ("done", "unsure")}
+            and (e.get("detail") or {}).get("labelled") and (e.get("detail") or {}).get("status") in ("done", "unsure", "skipped")}
     for s in note.get("steps", []):
         if s.get("index") in hand:
             s["label"] = "hand-labelled"
+    # The note builder can move a "seen" completion to a matching detector event.
+    # An explicit annotation's chosen timestamp must survive that inference.
+    explicit = {e["step"]: e for e in log if e.get("source") == "coach" and e["kind"] == "step"
+                and e.get("detail", {}).get("source") == "hand-labelled"
+                and e.get("detail", {}).get("status") in ("done", "skipped")}
+    for s in note.get("steps", []):
+        if s.get("index") in explicit:
+            event = explicit[s["index"]]
+            s["t"] = event["t"]
+            s["at"] = event["s"]
 
 
 def credits_for(analysis: dict, labelled: bool, cams: int = 2) -> list[str]:
@@ -760,7 +830,7 @@ def parse(argv=None):
     p.add_argument("--protocol", required=True, type=Path, help="numbered steps in a .txt, or a protocol .yaml")
     p.add_argument("--out", required=True, type=Path)
     p.add_argument("--title", help="protocol title on screen (default: from the protocol)")
-    p.add_argument("--labels", type=Path, help="hand-labelled events, JSON lines with s, kind, object")
+    p.add_argument("--labels", type=Path, help="hand-labelled actions or step/warning JSONL from scripts.label_steps")
     p.add_argument("--fps", type=float, default=10.0, help="vision frames per second per camera")
     p.add_argument("--detect-every", type=float, default=0.35)
     p.add_argument("--detector", default="gdino-tiny", help="gdino-tiny, gdino-base, florence2 or none")

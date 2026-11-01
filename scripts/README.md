@@ -341,6 +341,72 @@ large at the top left and the feed box spans the space under it.
 6. Copy the files to the Mac (AirDrop or `scp` from the Pi), or let the Pi upload them to R2
    and pull them as below.
 
+### Label in two minutes, then render
+
+1. Record and copy the video using the checklist above. Keep the same protocol for labelling
+   and rendering. Start the local editor (no hub, models, keys or network needed):
+
+   ```sh
+   "$BENCH_PY" -m scripts.label_steps --video run.mov --protocol protocol.txt --out labels.jsonl
+   ```
+
+2. Open `http://127.0.0.1:8810`. Scrub to the end of each action and click its protocol step,
+   or press its number key (`1`–`9`; click later steps). Space plays/pauses; left/right arrows
+   move one frame using the video's presentation timestamps, including variable frame rate.
+   Clicking an already labelled step replaces its time. Undo or Ctrl/Command-Z restores the
+   previous edit. Playback is always muted. For a short recording, aim to finish in two minutes;
+   this is a workflow target, not a measured usability result.
+3. For a mistake, choose the step beside the warning buttons. **Reused tip** adds a warning.
+   **Skipped step** marks that step skipped and adds its warning at the current video time.
+   Undo restores both together. Only label what the recording shows.
+4. Choose **Save labels** (Ctrl/Command-S), check the saved message, then stop the server with
+   Ctrl-C. Save atomically replaces `--out`; restarting with the same output reopens the labels.
+   Unsaved changes live in the page and are lost if it closes. Keep one editor tab open.
+5. Render the original recording with those labels:
+
+   ```sh
+   "$BENCH_PY" -m scripts.render_demo --video run.mov --protocol protocol.txt \
+     --labels labels.jsonl --out out/bench-coach-demo.mp4
+   ```
+
+MOV (including iPhone HEVC) and non-H.264 input are converted before the server starts to a
+temporary H.264 MP4, with rotation applied and audio removed. The original stays untouched;
+Ctrl-C removes the preview. Preparation needs ffmpeg/ffprobe and enough temporary disk space.
+H.264 MP4 normally plays directly. If the browser rejects one, restart with `--transcode`.
+The preview is for timing review, not colour grading; HDR tone mapping is not implemented.
+`--port 8812` selects another local port in 8800–8899. The server listens only on loopback.
+
+The editor writes video-relative seconds, zero-based step indices and explicit outcomes:
+
+```json
+{"s": 6.5, "kind": "step", "step": 0, "status": "done", "text": "Attach a tip"}
+{"s": 12.0, "kind": "warning", "step": 1, "code": "reused_tip", "text": "Reused tip (hand-labelled)."}
+```
+
+With explicit step labels, the renderer uses those outcomes for protocol progress, leaving
+unmarked steps unfinished. Detected boxes and hands still draw, but noisy action hints cannot
+finish or skip steps behind the manual review. Steps, warnings and saved notes retain their
+hand-labelled attribution. A warning-only file leaves normal rule-based progression enabled.
+Legacy action files such as `scripts/samples/cp-414-445-labels.jsonl` still render as before;
+the editor refuses to overwrite them. Use a new output name to label those clips manually.
+Only reopen a labels file with its original video and protocol; mismatched saved step text is rejected.
+
+Checks (the browser check starts and stops its own server, saves disposable test labels and
+captures desktop/narrow screenshots; it requires an installed Playwright browser):
+
+```sh
+"$BENCH_PY" -m pytest scripts/tests/test_label_steps.py scripts/tests/test_render_demo.py -q
+"$BENCH_PY" -m scripts.tests.check_label_steps_browser --video run.mov --protocol protocol.txt \
+  --screenshots shots-steplabel --port 8810
+```
+
+No packages added. The editor uses existing FastAPI (https://fastapi.tiangolo.com, MIT),
+Starlette (https://www.starlette.io, BSD-3-Clause) for byte-range video serving, Uvicorn
+(https://www.uvicorn.org, BSD-3-Clause), ffmpeg/ffprobe (https://ffmpeg.org, LGPL-2.1-or-later
+or GPL depending on build; libx264 encoding), Python standard library and the renderer's
+existing protocol loader. Browser checks use Playwright (https://playwright.dev, Apache-2.0).
+See [STEPLABEL-REPORT.md](STEPLABEL-REPORT.md) for measured checks and browser limitations.
+
 ### From the Raspberry Pi through R2
 
 The Pi uploads each recording as one session: a USB camera video, a ribbon camera video, the

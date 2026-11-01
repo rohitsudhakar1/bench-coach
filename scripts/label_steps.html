@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Label steps · Bench Coach</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,sans-serif;background:#10161d;color:#eaf0f6}*{box-sizing:border-box}body{margin:0}header{border-bottom:1px solid #30404e;padding:22px 30px;display:flex;justify-content:space-between;align-items:center;gap:20px}h1{font-size:24px;margin:6px 0}h2{font-size:18px;margin:0 0 16px}.eyebrow{color:#63d7ba;font-size:12px;letter-spacing:2px;font-weight:700}p{color:#a9b9c8;margin:6px 0;font-size:14px;line-height:1.5}main{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(320px,1fr);gap:26px;padding:26px 30px;max-width:1700px;margin:auto}video{display:block;width:100%;max-height:58vh;min-height:180px;background:#060a0e;border-radius:10px}button,select,input{font:inherit}button,select{border:1px solid #435361;background:#23313e;color:#edf5fc;border-radius:7px;padding:10px 14px;cursor:pointer}button:hover{background:#304555}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #64d7ba;outline-offset:2px}button:disabled{opacity:.4;cursor:default}#save{background:#61d8b6;color:#0a3028;border:0;font-weight:700}.controls{display:flex;align-items:center;gap:10px;margin:14px 0;flex-wrap:wrap}#scrub{width:100%;accent-color:#63d7ba}#clock{font-variant-numeric:tabular-nums;margin-left:auto;color:#d9e9f5}kbd{border:1px solid #485a68;border-radius:4px;padding:1px 5px;font:12px monospace;color:#d9e6f1}.hint{line-height:1.9}.card{border:1px solid #30404e;border-radius:10px;background:#18222c;padding:18px;margin-top:22px}.badge{display:inline-block;color:#efc36d;border:1px solid #725f37;border-radius:20px;padding:4px 10px;font-size:12px}.step{width:100%;text-align:left;display:flex;gap:12px;margin:9px 0;padding:14px;align-items:flex-start}.step .number{flex-shrink:0;display:grid;place-items:center;border:1px solid #607181;border-radius:6px;width:29px;height:29px;font-weight:700}.step .text{flex:1;line-height:1.45}.step small{display:block;color:#b4c2cf;margin-top:5px}.step.done{border-color:#449d88;background:#193b35}.step.skipped{border-color:#c89c4d;background:#3d3321}.warning{border-left:3px solid #e5ad4c;padding:9px 12px;margin-top:8px;color:#eacb8d;font-size:13px}#status{min-height:24px;margin-top:12px;color:#efc36d}#progress{color:#63d7ba}#steps{max-height:64vh;overflow:auto;padding:3px}#error{color:#ff9b90}#warningStep{max-width:100%;width:100%;margin-top:10px}#mediaStatus{font-size:12px;margin-top:10px}.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}@media(max-width:850px){main{grid-template-columns:1fr;padding:18px}header{padding:18px}#steps{max-height:none}video{max-height:50vh}}
+</style>
+</head>
+<body>
+<header><div><div class="eyebrow">BENCH COACH / VIDEO REVIEW</div><h1>Label protocol steps</h1><p id="subtitle">Opening recording…</p></div><div class="toolbar"><button id="undo" disabled>Undo</button><button id="save" disabled>Save labels</button></div></header>
+<main>
+<section aria-label="Video review">
+<video id="video" muted playsinline preload="auto" aria-label="Recorded bench video"></video>
+<div id="mediaStatus" role="status">Loading video…</div>
+<div class="controls"><button id="play" disabled>Play</button><button id="back" disabled aria-label="Previous frame">← Frame</button><button id="forward" disabled aria-label="Next frame">Frame →</button><span id="clock">00:00.000 / 00:00.000</span></div>
+<input id="scrub" type="range" min="0" max="1" step="0.001" value="0" aria-label="Video time" disabled>
+<p class="hint"><kbd>Space</kbd> play / pause &nbsp; <kbd>←</kbd> <kbd>→</kbd> one frame &nbsp; <kbd>1</kbd>–<kbd>9</kbd> mark step<br><kbd>Ctrl/⌘ Z</kbd> undo &nbsp; <kbd>Ctrl/⌘ S</kbd> save &nbsp; Click a labelled step to replace its time.</p>
+<div class="card"><h2>Mark a warning</h2><p>Use only for something you can see in the recording.</p><label for="warningStep">Step</label><select id="warningStep" disabled></select><div class="controls"><button id="reuse" disabled>Reused tip</button><button id="skip" disabled>Skipped step</button></div><div id="warnings"></div></div>
+<p id="status" role="status" aria-live="polite"></p><p id="error" role="alert"></p>
+</section>
+<section aria-label="Protocol steps"><div class="toolbar" style="justify-content:space-between;margin-bottom:14px"><h2 style="margin:0">Protocol</h2><span class="badge">Hand-labelled</span></div><p>Click a step when it finishes. Times start at the first video frame.</p><p id="progress"></p><div id="steps"></div><p>Unmarked steps stay unfinished in the render. Labels are manual observations, not camera detections.</p></section>
+</main>
+<script>
+'use strict';
+const $=id=>document.getElementById(id), video=$('video');
+let session, labels=[], history=[], saved='[]', ready=false, saving=false, dirty=false;
+const stamp=t=>{t=Math.max(0,t||0);const m=Math.floor(t/60),s=(t%60).toFixed(3).padStart(6,'0');return `${String(m).padStart(2,'0')}:${s}`;};
+const canonical=()=>JSON.stringify(labels);
+function message(text){$('status').textContent=text;}
+function fail(text){$('error').textContent=text;}
+function render(){
+  dirty=canonical()!==saved;
+  $('save').disabled=saving||!session; $('undo').disabled=!history.length||saving;
+  $('progress').textContent=`${labels.filter(r=>r.kind==='step'&&r.status==='done').length} / ${session.steps.length} done · ${labels.filter(r=>r.kind==='step'&&r.status==='skipped').length} skipped`;
+  $('steps').replaceChildren();
+  session.steps.forEach((step,index)=>{
+    const row=labels.find(r=>r.kind==='step'&&r.step===index),button=document.createElement('button');
+    button.type='button';button.className='step '+(row?row.status:'');button.dataset.step=index;button.disabled=!ready||saving;
+    const number=document.createElement('span');number.className='number';number.textContent=index+1;
+    const text=document.createElement('span');text.className='text';text.textContent=step.text;
+    const detail=document.createElement('small');detail.textContent=row?`${row.status==='done'?'Done':'Skipped'} at ${stamp(row.s)} · hand-labelled`:'Click to mark done';
+    text.append(detail);button.append(number,text);button.onclick=()=>mark(index);$('steps').append(button);
+  });
+  $('warnings').replaceChildren();
+  labels.filter(r=>r.kind==='warning').sort((a,b)=>a.s-b.s).forEach(row=>{const el=document.createElement('div');el.className='warning';el.textContent=`${stamp(row.s)} · ${row.code==='reused_tip'?'Reused tip':'Skipped step'}${row.step===null?'':` · step ${row.step+1}`}`;$('warnings').append(el);});
+  for(const id of ['play','back','forward','scrub','reuse','skip','warningStep'])$(id).disabled=!ready||saving;
+}
+function edit(fn){if(!ready||saving)return;history.push(structuredClone(labels));fn();render();message('Unsaved changes · choose Save labels when ready.');}
+function mark(index){
+  edit(()=>{labels=labels.filter(r=>!(r.kind==='step'&&r.step===index)&&!(r.kind==='warning'&&r.code==='skipped_step'&&r.step===index));labels.push({s:video.currentTime,kind:'step',step:index,status:'done'});});
+}
+function warning(code){
+  const index=Number($('warningStep').value),s=video.currentTime;
+  edit(()=>{if(code==='skipped_step'){labels=labels.filter(r=>!(r.kind==='step'&&r.step===index)&&!(r.kind==='warning'&&r.code===code&&r.step===index));labels.push({s,kind:'step',step:index,status:'skipped'});}labels.push({s,kind:'warning',step:index,code});});
+}
+function undo(){if(saving||!history.length)return;labels=history.pop();render();message(dirty?'Undone · unsaved changes.':'Undone · matches saved labels.');}
+async function save(){
+  if(saving||!session)return;const snapshot=canonical();saving=true;render();fail('');message('Saving…');
+  try{const response=await fetch('/api/save',{method:'POST',headers:{'Content-Type':'application/json','X-Label-Token':session.token},body:snapshot});const result=await response.json();if(!response.ok)throw Error(result.detail||'Save failed');saved=snapshot;message(`Saved ${result.saved} labels to ${result.out}.`);}catch(error){fail(error.message);message('Not saved. Your edits are still here.');}finally{saving=false;render();}
+}
+async function toggle(){if(!ready)return;try{if(video.paused)await video.play();else video.pause();}catch(error){fail('Playback failed. Restart with --transcode to prepare a compatible preview.');}}
+function seek(time){video.pause();video.currentTime=Math.max(0,Math.min(session.duration,time));updateClock();}
+function frame(direction){
+  if(!ready)return;const frames=session.frames,t=video.currentTime;
+  // Seek inside each presentation interval, avoiding rounding back onto the previous frame.
+  if(frames.length){let low=0,high=frames.length;while(low<high){const mid=(low+high)>>1;if(frames[mid]<=t+0.00001)low=mid+1;else high=mid;}
+    const index=Math.max(0,Math.min(frames.length-1,low-1+direction));seek(frames[index]+0.000001);
+  }else seek(t+direction/session.fps);
+}
+function updateClock(){if(!session)return;$('clock').textContent=`${stamp(video.currentTime)} / ${stamp(session.duration)}`;$('scrub').value=video.currentTime;}
+$('play').onclick=toggle;$('back').onclick=()=>frame(-1);$('forward').onclick=()=>frame(1);$('undo').onclick=undo;$('save').onclick=save;
+$('reuse').onclick=()=>warning('reused_tip');$('skip').onclick=()=>warning('skipped_step');$('scrub').oninput=e=>seek(Number(e.target.value));
+video.addEventListener('volumechange',()=>{if(!video.muted)video.muted=true;});
+video.addEventListener('timeupdate',updateClock);video.addEventListener('seeked',updateClock);
+video.addEventListener('play',()=>{$('play').textContent='Pause';});video.addEventListener('pause',()=>{$('play').textContent='Play';});
+video.addEventListener('loadeddata',()=>{ready=true;$('mediaStatus').textContent=session.converted?'Silent H.264 preview · original recording unchanged':'Silent playback · original recording';render();updateClock();});
+video.addEventListener('error',()=>{ready=false;if(session)render();fail('This browser could not play the video. Stop the server and rerun the command with --transcode.');});
+document.addEventListener('keydown',event=>{
+  if(event.altKey||event.repeat)return;
+  if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='s'){event.preventDefault();save();return;}
+  if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='z'){event.preventDefault();undo();return;}
+  if(event.ctrlKey||event.metaKey||event.target.matches('select,textarea,input:not([type="range"])'))return;
+  if(event.code==='Space'){event.preventDefault();toggle();}
+  else if(event.key==='ArrowLeft'||event.key==='ArrowRight'){event.preventDefault();frame(event.key==='ArrowLeft'?-1:1);}
+  else if(/^[1-9]$/.test(event.key)&&session&&Number(event.key)<=session.steps.length){event.preventDefault();mark(Number(event.key)-1);}
+});
+window.addEventListener('beforeunload',event=>{if(dirty){event.preventDefault();event.returnValue='';}});
+(async()=>{try{const response=await fetch('/api/session');if(!response.ok)throw Error('Cannot open the session.');session=await response.json();labels=session.labels;saved=canonical();$('subtitle').textContent=`${session.video} · ${session.name} · saving to ${session.out}`;$('scrub').max=session.duration;session.steps.forEach((s,i)=>{const option=document.createElement('option');option.value=i;option.textContent=`${i+1}. ${s.text}`;$('warningStep').append(option);});render();message(labels.length?'Saved labels loaded.':'No labels yet. Scrub to an action and click its step.');video.src='/video';}catch(error){fail(error.message);}})();
+</script>
+</body></html>
