@@ -29,6 +29,7 @@ HAND_URL = ('https://storage.googleapis.com/mediapipe-models/hand_landmarker/'
             'hand_landmarker/float16/latest/hand_landmarker.task')
 GDINO_FILES = ('config.json', 'model.safetensors', 'preprocessor_config.json', 'tokenizer.json',
                'tokenizer_config.json', 'special_tokens_map.json', 'vocab.txt')
+SAM_FILES = ('config.json', 'model.safetensors', 'preprocessor_config.json', 'processor_config.json')
 
 
 @dataclass(frozen=True)
@@ -46,6 +47,8 @@ class Model:
 MODELS = (
     Model('gdino-tiny', 'hf', 'IDEA-Research/grounding-dino-tiny', GDINO_FILES, 690, 'Apache-2.0',
           'vision boxes (default detector)'),
+    Model('edgetam', 'hf', 'yonigozlan/EdgeTAM-hf', SAM_FILES, 56, 'Apache-2.0',
+          'object outlines in render_demo and the live view (vision/masks.py)'),
     Model('hand-landmarker', 'file', HAND_URL, ('vision/models/hand_landmarker.task',), 8, 'Apache-2.0',
           'vision hands'),
     Model('whisper-small.en', 'whisper', 'Systran/faster-whisper-small.en',
@@ -58,6 +61,8 @@ MODELS = (
            'tokenizer.json', 'tokenizer_config.json', 'vocab.json', 'merges.txt', 'added_tokens.json',
            'special_tokens_map.json', 'generation_config.json'), 470, 'MIT',
           'vision --detector florence2', default=False),
+    Model('sam2.1-tiny', 'hf', 'facebook/sam2.1-hiera-tiny', SAM_FILES, 156, 'Apache-2.0',
+          'outlines with VISION_MASKS_MODEL=sam2.1-tiny', default=False),
     Model('gdino-base', 'hf', 'IDEA-Research/grounding-dino-base', GDINO_FILES, 935, 'Apache-2.0',
           'vision --detector gdino-base', default=False),
     Model('owlv2', 'hf', 'google/owlv2-base-patch16-ensemble',
@@ -166,6 +171,10 @@ def load(key: str):
         model = Owlv2ForObjectDetection.from_pretrained(m.source).eval()
         with torch.no_grad():
             model(**proc(text=[['a pipette']], images=Image.new('RGB', (320, 240)), return_tensors='pt'))
+    elif key in ('edgetam', 'sam2.1-tiny'):
+        sys.path.insert(0, str(ROOT))
+        from vision.masks import Segmenter
+        Segmenter(key, device='cpu')(np.zeros((240, 320, 3), np.uint8), [[40, 40, 200, 200]])
     elif key == 'florence2':
         from transformers import AutoProcessor, Florence2ForConditionalGeneration
         AutoProcessor.from_pretrained(m.source)

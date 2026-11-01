@@ -1,7 +1,8 @@
-# All already in the shared environment; nothing was added.
+# timm was added for EdgeTAM (vision/masks.py); the rest was already in the shared environment.
 mediapipe
 torch
-transformers
+transformers>=5
+timm
 opencv-python
 numpy
 httpx

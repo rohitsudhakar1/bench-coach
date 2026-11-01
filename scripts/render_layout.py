@@ -181,8 +181,20 @@ def boxes_at(snaps: list, s: float) -> list:
                 if v > score:
                     best, score = e, v
         box = lerp(d["box"], best["box"], f) if best else tuple(d["box"])
-        out.append({**d, "box": box})
+        moved = {**d, "box": box}
+        if d.get("outline") and best:
+            moved["outline"] = move_outline(d["outline"], d["box"], box)
+        out.append(moved)
     return out
+
+
+def move_outline(poly, old_box, new_box):
+    """Shift and stretch an outline so it follows its box between two detections."""
+    ox1, oy1, ox2, oy2 = old_box
+    nx1, ny1, nx2, ny2 = new_box
+    sx = (nx2 - nx1) / (ox2 - ox1) if ox2 > ox1 else 1.0
+    sy = (ny2 - ny1) / (oy2 - oy1) if oy2 > oy1 else 1.0
+    return [[nx1 + (x - ox1) * sx, ny1 + (y - oy1) * sy] for x, y in poly]
 
 
 def hands_at(samples: list, s: float) -> list:

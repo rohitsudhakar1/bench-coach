@@ -104,7 +104,7 @@ def pretty_title(protocol: dict, path: Path) -> str:
     return name
 
 
-def analyse(videos, fps, detect_every, detector_name, new_draw, seconds, log=print):
+def analyse(videos, fps, detect_every, detector_name, new_draw, seconds, log=print, masks=False):
     from vision.detector import MotionGate, detect_batch
     from vision.hands import HandTracker
     from vision.pipeline import Vision
@@ -122,6 +122,11 @@ def analyse(videos, fps, detect_every, detector_name, new_draw, seconds, log=pri
         if new_draw:
             from vision.detector import WithContainers
             detect = WithContainers(detect, 1)
+    seg = None
+    if masks and detect is not None:
+        from vision.masks import load_segmenter
+        seg = load_segmenter(log=log)
+    mask_ms = []
     motion = MotionGate()
     hands = [[] for _ in range(n)]
     snaps = [[] for _ in range(n)]
@@ -163,9 +168,17 @@ def analyse(videos, fps, detect_every, detector_name, new_draw, seconds, log=pri
                                   if hd.box is not None and not hd.pts else None}
                                  for hd in vis.hands[i]]))
             if raw is not None:
+                objs = [d for d in vis.dets[i] if d.label != "hand"]
+                polys = [None] * len(objs)
+                if seg is not None and objs:
+                    from vision.masks import outlines
+                    tm = time.perf_counter()
+                    polys = outlines(seg, frame, [d.box for d in objs])
+                    mask_ms.append((time.perf_counter() - tm) * 1000)
                 snaps[i].append((s, [{"label": d.label, "score": round(float(d.score), 3),
-                                      "box": [round(v * (sx if k % 2 == 0 else sy), 1) for k, v in enumerate(d.box)]}
-                                     for d in vis.dets[i] if d.label != "hand"]))
+                                      "box": [round(v * (sx if k % 2 == 0 else sy), 1) for k, v in enumerate(d.box)],
+                                      **({"outline": [[round(x * sx, 1), round(y * sy, 1)] for x, y in p]} if p else {})}
+                                     for d, p in zip(objs, polys)]))
             for e in evs:
                 if e["kind"] != "objects":
                     e["s"] = s
@@ -184,6 +197,8 @@ def analyse(videos, fps, detect_every, detector_name, new_draw, seconds, log=pri
         e["t"] = t0 + e["s"]
     return {"t0": t0, "fps": fps, "detector": detector_name, "new_draw": new_draw,
             "hands": hands, "snaps": snaps, "events": events,
+            "masks": seg.name if seg is not None else None,
+            "mask_ms": round(float(np.median(mask_ms)), 1) if mask_ms else None, "mask_calls": len(mask_ms),
             "seconds_taken": round(time.time() - wall, 1)}
 
 
@@ -304,11 +319,25 @@ class Sprites:
         canvas[y:y + h, x:x + w] = (roi * (1 - alpha) + rgb * alpha).astype(np.uint8)
 
 
-def draw_objects(canvas, boxes, src_size, rect, sprites):
-    for d in sorted(boxes, key=lambda d: -(d["box"][2] - d["box"][0]) * (d["box"][3] - d["box"][1])):
+def draw_objects(canvas, boxes, src_size, rect, sprites, fill: float = 0.22):
+    """Each object's outline (lightly filled) when it has one, else its box, and its name."""
+    order = sorted(boxes, key=lambda d: -(d["box"][2] - d["box"][0]) * (d["box"][3] - d["box"][1]))
+    sx, sy = rect.w / src_size[0], rect.h / src_size[1]
+    polys = {id(d): np.asarray([[rect.x + x * sx, rect.y + y * sy] for x, y in d["outline"]], np.int32)
+             for d in order if d.get("outline")}
+    if polys and fill > 0:
+        layer = canvas.copy()
+        for d in order:
+            if id(d) in polys:
+                cv2.fillPoly(layer, [polys[id(d)]], bgr(OBJECT_COLOURS.get(d["label"], (200, 200, 200))))
+        cv2.addWeighted(layer, fill, canvas, 1 - fill, 0, dst=canvas)
+    for d in order:
         c = OBJECT_COLOURS.get(d["label"], (200, 200, 200))
         x1, y1, x2, y2 = (int(round(v)) for v in L.scale_box(d["box"], *src_size, rect))
-        cv2.rectangle(canvas, (x1, y1), (x2, y2), bgr(c), 2, cv2.LINE_AA)
+        if id(d) in polys:
+            cv2.polylines(canvas, [polys[id(d)]], True, bgr(c), 2, cv2.LINE_AA)
+        else:
+            cv2.rectangle(canvas, (x1, y1), (x2, y2), bgr(c), 2, cv2.LINE_AA)
         sp = sprites.pill(d["label"], c)
         sprites.blit(canvas, sp, x1, y1 - sp[1].shape[0] - 2, rect)
 
@@ -705,6 +734,9 @@ def credits_for(analysis: dict, labelled: bool) -> list[str]:
     det = analysis.get("detector")
     seen = ("Objects outlined by Grounding DINO tiny" if det == "gdino-tiny" else
             f"Objects outlined by {det}" if det and det != "none" else "No object detector: hands only")
+    if analysis.get("masks"):
+        seen = seen.replace("outlined", "found") + ", outlined by " + {"edgetam": "EdgeTAM", "sam2.1-tiny": "SAM 2.1 tiny"}.get(
+            analysis["masks"], analysis["masks"])
     out = [f"{seen}, hands by MediaPipe. Steps ticked by the coach's rules from what the cameras saw."]
     if labelled:
         out.append("Hand-labelled events were added; steps they decided say hand-labelled.")
@@ -730,6 +762,8 @@ def parse(argv=None):
     p.add_argument("--detector", default="gdino-tiny", help="gdino-tiny, gdino-base, florence2 or none")
     p.add_argument("--hints", action="store_true", help="vision --new-draw (tip-into-container hints)")
     p.add_argument("--seconds", type=float, default=0.0, help="only the first this many seconds")
+    p.add_argument("--masks", action=argparse.BooleanOptionalAction, default=True,
+                   help="true outlines from EdgeTAM (vision/masks.py); --no-masks draws boxes")
     p.add_argument("--reuse", action="store_true", help="reuse the saved vision pass if there is one")
     p.add_argument("--no-note", action="store_true")
     p.add_argument("--llm-protocol", action="store_true", help="let Claude convert a .txt protocol (needs a key)")
@@ -789,7 +823,8 @@ def main(argv=None):
     protocol["name"] = a.title or pretty_title(protocol, a.protocol)
     cache = work / "analysis.json"
     key = {"videos": [str(v.resolve()) for v in videos], "fps": a.fps, "detect_every": a.detect_every,
-           "detector": a.detector, "hints": a.hints, "seconds": a.seconds}
+           "detector": a.detector, "hints": a.hints, "seconds": a.seconds,
+           "masks": a.masks}
     analysis = None
     if a.reuse and cache.is_file():
         saved = json.loads(cache.read_text())
@@ -798,7 +833,7 @@ def main(argv=None):
             print("vision: reusing the saved pass")
     if analysis is None:
         print(f"vision: {len(videos)} camera(s), {a.fps:g} fps, detector {a.detector}", flush=True)
-        analysis = analyse(videos, a.fps, a.detect_every, a.detector, a.hints, a.seconds)
+        analysis = analyse(videos, a.fps, a.detect_every, a.detector, a.hints, a.seconds, masks=a.masks)
         analysis["key"] = key
         cache.write_text(json.dumps(analysis))
     timings["vision"] = round(time.time() - t, 1)
@@ -848,7 +883,8 @@ def main(argv=None):
         if e.get("source") in ("vision", "coach") and e["kind"] in ("tip_on", "tip_off", "draw", "dispense",
                                                                    "hand_touch", "warning", "step"):
             kinds[e["kind"]] = kinds.get(e["kind"], 0) + 1
-    summary = {"out": a.out.name, "footage_seconds": round(info["duration"], 1), "frames": info["frames"],
+    summary = {"out": a.out.name, "masks": analysis.get("masks"), "mask_ms_median": analysis.get("mask_ms"),
+               "footage_seconds": round(info["duration"], 1), "frames": info["frames"],
                "seconds": timings, "events": kinds, "note": note is not None,
                "audio": a.audio is not None}
     (work / "summary.json").write_text(json.dumps(summary, indent=1))

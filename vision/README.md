@@ -323,7 +323,10 @@ Table calibration and tracking use the existing OpenCV and NumPy dependencies be
   Claude check of hints, model `claude-haiku-5-5`.
 - pytest, MIT, https://pytest.org.
 
-All were already in the shared environment; no package was added.
+- timm, Apache-2.0, https://github.com/huggingface/pytorch-image-models. EdgeTAM's image
+  encoder needs it; added with scripts/addpkg.sh for vision/masks.py.
+
+Apart from timm, all were already in the shared environment.
 
 ## Detector models
 
@@ -336,6 +339,27 @@ All were already in the shared environment; no package was added.
 | YOLOE-26 large | https://github.com/ultralytics/ultralytics | AGPL-3.0 | `--detector yoloe`, measured only; AGPL means a product using it must publish its source or buy a licence |
 
 All load through transformers or ultralytics, both already in the shared environment.
+
+## Object outlines (masks)
+
+`vision/masks.py` turns each detector box into the object's real outline. The box is the prompt;
+the segmenter returns a mask, the biggest outer contour becomes a polygon, and a mask that covers
+almost none of its box or spills far outside it is dropped so the box is drawn instead. With no
+weights, or if the model fails on a frame, every object falls back to its box.
+
+| Model | Weights | Licence | Size | Used for |
+| --- | --- | --- | --- | --- |
+| EdgeTAM (Meta) | https://huggingface.co/yonigozlan/EdgeTAM-hf (code https://github.com/facebookresearch/EdgeTAM) | Apache 2.0 | 56 MB | default outlines |
+| SAM 2.1 hiera tiny (Meta) | https://huggingface.co/facebook/sam2.1-hiera-tiny (code https://github.com/facebookresearch/sam2) | Apache 2.0 | 156 MB | `VISION_MASKS_MODEL=sam2.1-tiny` |
+
+Both run through transformers (`EdgeTamModel`, `Sam2Model`, `Sam2Processor`) on MPS. On 640x360
+CP frames with 4 to 8 boxes, one call for all boxes took 62 ms median for EdgeTAM and 138 ms for
+SAM 2.1 tiny, with the same outlines to the eye, so EdgeTAM is the default.
+`scripts/fetch_models.py --download` fetches EdgeTAM (add `--with sam2.1-tiny` for the other).
+
+Used by `scripts/render_demo.py --masks` (on by default; `--no-masks` for boxes) and
+`app/live.py --masks` (on by default; `--no-masks` keeps the GrabCut cutout). Between detections
+the renderer moves each outline with its box; it does not run the video tracker.
 
 ## Read bottle and tube labels
 
