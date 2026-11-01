@@ -121,6 +121,16 @@ def parse_args(argv=None):
     for path in [*args.source, args.replay, args.mic_file, args.calibration]:
         if path and not Path(path).is_file():
             p.error(f'input file missing: {path}')
+    if args.source:
+        # Phone footage (HEVC, 4K, 60 fps, rotated, HDR) becomes upright 1080p30 SDR H.264 first.
+        try:
+            from scripts.phonevid import prepare
+        except ImportError:
+            from phonevid import prepare
+        try:
+            args.source = [str(prepare(s)) for s in args.source]
+        except RuntimeError as exc:
+            p.error(str(exc))
     if args.fake_vision and args.table:
         p.error('--fake-vision replaces vision; it cannot run table mode')
     if not math.isfinite(args.fake_speed) or args.fake_speed <= 0:
