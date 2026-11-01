@@ -78,7 +78,7 @@ function render() {
   $('needle').style.opacity = valid ? 1 : .2;
   document.querySelector('.angle').classList.toggle('bad', valid && angle.ok === false);
   $('angle-status').textContent = valid ? angle.ok === false ? 'Check technique' : 'In range' : 'No reading';
-  $('angle-caption').textContent = valid ? `${angle.mode === 'stereo' || angle.calibrated ? 'Measured tilt' : 'Camera estimate'} · limit ${angle.limit ?? 20}°` : 'Waiting for a measurement';
+  $('angle-caption').textContent = valid ? `${angle.mode === 'stereo' || angle.calibrated ? 'Measured tilt' : singleCamera ? 'Rough lean from one camera' : 'Camera estimate'} · limit ${angle.limit ?? 20}°` : singleCamera ? 'One camera: rough lean only, not a measured tilt' : 'Waiting for a measurement';
   const nextChat = JSON.stringify(state.chat);
   if (chatKey !== nextChat) {
     chatKey = nextChat;
@@ -102,7 +102,7 @@ function transient() {
   const warning = state.recording && [...(state.warnings || [])].reverse().find(e => Date.now()/1000 - e.t < 15);
   $('warning').textContent = warning?.detail?.text || '';
   $('warning').hidden = !warning;
-  for (let cam = 0; cam < 2; cam++) {
+  for (let cam = 0; cam < (singleCamera ? 1 : 2); cam++) {
     const svg = $('boxes' + cam), detail = state.objects?.[String(cam)], image = $('cam' + cam);
     svg.replaceChildren();
     if (!detail || Date.now()/1000 - detail.t > 3 || image.hidden) continue;
@@ -183,10 +183,22 @@ $('import-form').onsubmit = async event => {
   catch (error) { $('import-error').textContent = error.message; }
   finally { $('convert').disabled = false; $('convert').textContent = 'Load steps'; }
 };
+let singleCamera = false;
+function oneCamera(on) {
+  // One camera: the single view spans both columns and the right panel goes away.
+  singleCamera = on;
+  document.querySelector('.live-grid').classList.toggle('one-cam', on);
+  $('cam1').closest('.camera').hidden = on;
+  $('views-line').textContent = on ? 'One view. One shared run.' : 'Two views. One shared run.';
+  $('boxes0').setAttribute('preserveAspectRatio', on ? 'xMidYMid meet' : 'xMidYMid slice');
+  $('cam0').closest('.camera').querySelector('.card-label span').textContent = on ? '01 / BENCH VIEW' : '01 / LEFT VIEW';
+  if (state) render();
+}
 async function cameraConfig() {
   try {
     const config = await api('/config');
-    for (let i=0;i<2;i++) {
+    oneCamera(config.cams === 1);
+    for (let i=0;i<(config.cams === 1 ? 1 : 2);i++) {
       const img = $('cam'+i), label = img.closest('.camera').querySelector('.camera-state');
       const connect = () => { img.src = `${config.capture_url}/cam/${i}/mjpeg?view=${Date.now()}`; };
       img.onload = () => { img.hidden = false; label.textContent = 'Live feed'; };

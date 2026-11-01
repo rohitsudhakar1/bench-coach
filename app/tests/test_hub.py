@@ -240,3 +240,22 @@ def test_health_probes_are_parallel_and_cached(monkeypatch):
         await parts.snapshot()
         assert count == 10
     asyncio.run(exercise())
+
+
+def test_config_reports_camera_count(setup, monkeypatch):
+    _, client, _, _, _ = setup
+    assert client.get('/config').json()['cams'] == 2  # capture answers without a camera list
+    original = httpx._client.AsyncClient  # the real class; setup already wrapped httpx.AsyncClient
+    one = httpx.MockTransport(lambda request: httpx.Response(200, json=[dict(id=0, live=True)]))
+    monkeypatch.setattr(httpx, 'AsyncClient', lambda **kw: original(**{**kw, 'transport': one}))
+    assert client.get('/config').json()['cams'] == 1
+    down = httpx.MockTransport(lambda request: httpx.Response(503))
+    monkeypatch.setattr(httpx, 'AsyncClient', lambda **kw: original(**{**kw, 'transport': down}))
+    assert client.get('/config').json()['cams'] == 2
+
+
+def test_page_has_one_camera_layout():
+    script = (ROOT / 'app/static/app.js').read_text()
+    assert 'function oneCamera' in script and "config.cams === 1" in script
+    assert '.live-grid.one-cam' in (ROOT / 'app/static/style.css').read_text()
+    assert 'id="views-line"' in (ROOT / 'app/static/index.html').read_text()

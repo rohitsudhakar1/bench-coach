@@ -256,8 +256,18 @@ def create_app(runs_dir=None, capture_url=None, note_service_url=None, protocols
 
     @app.get('/config')
     async def config():
+        # Camera count from capture, so the page lays out one view or two; 2 when capture is down.
+        cams = 2
+        try:
+            async with httpx.AsyncClient(timeout=1, trust_env=False) as client:
+                response = await client.get(capture + '/cams')
+                response.raise_for_status()
+                if isinstance(response.json(), list) and len(response.json()) in (1, 2):
+                    cams = len(response.json())
+        except (httpx.HTTPError, ValueError):
+            pass
         return {'capture_url': capture if service_urls else os.getenv('CAPTURE_PUBLIC_URL', capture), 'protocol': hub.protocol,
-                'protocol_file': hub.selected_file}
+                'protocol_file': hub.selected_file, 'cams': cams}
 
     @app.websocket('/ws')
     async def websocket(ws: WebSocket):
