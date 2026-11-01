@@ -523,9 +523,11 @@ def title_card(title: str, lines: list[str], brand: str = "BENCH COACH") -> np.n
         d.text((160, y), line, font=font(76, "bold"), fill=TEXT)
         y += 92
     y += 20
-    for line in lines:
-        d.text((160, y), line, font=font(30), fill=MUTED)
-        y += 44
+    for text in lines:
+        # Long credit lines wrap so they stay on the card.
+        for line in L.wrap(text, 1600, measure(font(30))):
+            d.text((160, y), line, font=font(30), fill=MUTED)
+            y += 44
     return to_bgr(img)
 
 
@@ -730,14 +732,14 @@ def mark_labelled(note: dict, log: list[dict]) -> None:
             s["label"] = "hand-labelled"
 
 
-def credits_for(analysis: dict, labelled: bool) -> list[str]:
+def credits_for(analysis: dict, labelled: bool, cams: int = 2) -> list[str]:
     det = analysis.get("detector")
     seen = ("Objects outlined by Grounding DINO tiny" if det == "gdino-tiny" else
             f"Objects outlined by {det}" if det and det != "none" else "No object detector: hands only")
     if analysis.get("masks"):
         seen = seen.replace("outlined", "found") + ", outlined by " + {"edgetam": "EdgeTAM", "sam2.1-tiny": "SAM 2.1 tiny"}.get(
             analysis["masks"], analysis["masks"])
-    out = [f"{seen}, hands by MediaPipe. Steps ticked by the coach's rules from what the cameras saw."]
+    out = [f"{seen}, hands by MediaPipe. Steps ticked by the coach's rules from what the {'cameras' if cams > 1 else 'camera'} saw."]
     if analysis.get("filter_labels"):
         out.append("Protocol, size and persistence label filter enabled; tip attachment requires held-pipette context.")
     if labelled:
@@ -878,7 +880,7 @@ def main(argv=None):
     t = time.time()
     names = [v.stem for v in videos]
     info = render(a.out, videos, names, analysis, log, protocol, note,
-                   credits_for(analysis, labelled), pick_codec(a.codec), a.seconds,
+                   credits_for(analysis, labelled, len(videos)), pick_codec(a.codec), a.seconds,
                    brand=a.brand, title_seconds=a.title_seconds, note_seconds=a.note_seconds, end_lines=a.end)
     if a.audio is not None:
         mux_audio(a.out, a.audio, a.seconds, a.title_seconds)

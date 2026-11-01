@@ -164,3 +164,12 @@ def test_filter_flag_applies_after_cache_load_without_polluting_cache(tmp_path, 
     assert len(calls) == 1 and rendered[-1] == saved
     R.main(args + ["--reuse", "--filter-labels"])
     assert len(calls) == 1 and rendered[-1]["events"] == []
+
+
+def test_one_camera_wording_and_wrapped_title_card():
+    assert R.credits_for({"detector": "gdino-tiny"}, False, 1)[0].endswith("what the camera saw.")
+    assert R.credits_for({"detector": "gdino-tiny"}, False, 2)[0].endswith("what the cameras saw.")
+    long = "word " * 120
+    card = R.title_card("Title", [long])
+    # The wrapped text must not reach the right edge of the 1920-wide card.
+    assert (card[:, 1800:] == R.title_card("Title", ["short"])[:, 1800:]).all()
