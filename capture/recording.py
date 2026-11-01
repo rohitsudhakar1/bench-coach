@@ -40,7 +40,7 @@ class Recorder:
                 if self.active:
                     raise RuntimeError('already recording')
             if any(c.latest is None for c in self.cameras):
-                raise RuntimeError('both cameras need a frame')
+                raise RuntimeError('every camera needs a frame')
             folder = self.root / run
             folder.mkdir(parents=True, exist_ok=True)
             if folder.is_symlink():

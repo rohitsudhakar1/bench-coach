@@ -397,3 +397,20 @@ def test_queue_byte_limit_and_failed_writer_releases_frames(tmp_path, monkeypatc
     assert result['dropped'] == 2
     assert state['_queue'].empty() and state['_bytes'] == 0
     assert ref() is None
+
+
+def test_one_camera_serves_and_records(tmp_path, clip):
+    capture = Capture([clip], tmp_path / 'runs', fake_mic=True, loop=True)
+    with TestClient(create_app(capture)) as client:
+        until(lambda: capture.cameras[0].latest)
+        assert len(client.get('/cams').json()) == 1
+        assert client.get('/cam/0/frame.jpg').status_code == 200
+        assert client.get('/cam/1/frame.jpg').status_code == 404
+        assert client.post('/record/start', json={'run': 'solo'}).status_code == 200
+        time.sleep(0.5)
+        assert client.post('/record/stop').json()['error'] is None
+    folder = tmp_path / 'runs' / 'solo'
+    assert (folder / 'cam0.mp4').is_file() and not (folder / 'cam1.mp4').exists()
+    assert {r.get('cam') for r in rows(folder / 'timing.jsonl') if r['kind'] == 'frame'} == {0}
+    with pytest.raises(ValueError):
+        Capture([clip, clip, clip], tmp_path)

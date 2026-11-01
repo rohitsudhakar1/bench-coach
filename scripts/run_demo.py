@@ -51,7 +51,8 @@ def parse_args(argv=None):
     p = argparse.ArgumentParser(description=__doc__)
     source = p.add_mutually_exclusive_group()
     source.add_argument('--source', nargs='+', action='extend', default=[])
-    source.add_argument('--cams', nargs=2, type=int, default=None)
+    source.add_argument('--cams', nargs='+', type=int, default=None, help='one or two camera device numbers')
+    source.add_argument('--cam', type=int, help='one camera device number (same as --cams N)')
     mic = p.add_mutually_exclusive_group()
     mic.add_argument('--fake-mic', action='store_true')
     mic.add_argument('--mic-file', type=Path)
@@ -98,10 +99,12 @@ def parse_args(argv=None):
         p.error('--base-port must be between 1024 and 65530')
     if not math.isfinite(args.timeout) or args.timeout <= 0:
         p.error('--timeout must be positive and finite')
-    if args.source and len(args.source) != 2:
-        p.error('--source needs two video files')
-    if args.cams and (min(args.cams) < 0 or len(set(args.cams)) != 2):
-        p.error('--cams needs two distinct nonnegative device numbers')
+    if args.cam is not None:
+        args.cams = [args.cam]
+    if args.source and len(args.source) not in (1, 2):
+        p.error('--source needs one or two video files')
+    if args.cams and (min(args.cams) < 0 or len(args.cams) not in (1, 2) or len(set(args.cams)) != len(args.cams)):
+        p.error('--cams needs one or two distinct nonnegative device numbers')
     if len(args.angle_roi) > 2:
         p.error('give at most two --angle-roi values')
     for roi in args.angle_roi:
@@ -126,9 +129,19 @@ def parse_args(argv=None):
         p.error('--hints requires general vision, not table mode')
     if args.table_source.startswith('capture:') and args.table_source not in ('capture:0', 'capture:1'):
         p.error('--table-source capture index must be 0 or 1')
+    if camera_count(args) == 1:
+        if len(args.angle_roi) > 1:
+            p.error('one camera takes at most one --angle-roi')
+        if args.table_source == 'capture:1':
+            p.error('--table-source capture:1 needs a second camera')
     args.runs = args.runs.resolve()
     args.table_config = args.table_config.resolve()
     return args
+
+
+def camera_count(args):
+    """How many views this bench has: one or two."""
+    return len(args.source) if args.source else len(args.cams) if args.cams else 2
 
 
 def single_plan(args, root=ROOT):
@@ -177,12 +190,13 @@ def single_plan(args, root=ROOT):
                     source = url('capture') + f'/cam/{source[-1]}/frame.jpg'
                 extra = ['run', *extra, '--source', source, '--config', str(args.table_config), '--follow-runs', '--realtime']
             else:
-                extra += ['--capture', url('capture')]
+                extra += ['--capture', url('capture'), '--cams', str(camera_count(args))]
             if args.hints:
                 extra += ['--new-draw']
         elif name == 'angle':
             # Without manual boxes, angle consumes vision boxes from the hub.
-            for cam in range(len(args.angle_roi) or 2):
+            # One camera gives a rough one-view lean; two give the stereo tilt.
+            for cam in range(len(args.angle_roi) or camera_count(args)):
                 extra += ['--source', url('capture') + f'/cam/{cam}/frame.jpg']
             for roi in args.angle_roi:
                 extra += ['--roi', roi]

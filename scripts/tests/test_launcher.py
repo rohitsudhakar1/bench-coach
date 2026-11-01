@@ -353,3 +353,30 @@ def test_port_in_time_wait_is_free_but_listener_is_not(base):
     client.close()
     listener.close()
     demo.check_ports([part])
+
+
+def test_one_camera_plan(fake_root, tmp_path, monkeypatch):
+    """One video or one device: capture gets one source, vision reads one camera, angle one view."""
+    monkeypatch.setenv('BENCH_PY', sys.executable)
+    clip = tmp_path / 'one.mp4'
+    clip.touch()
+    for argv in (['--source', str(clip)], ['--cam', '3'], ['--cams', '3']):
+        args = demo.parse_args([*argv, '--base-port', '8880'])
+        assert demo.camera_count(args) == 1
+        parts = {p.name: p for p in demo.plan(args, fake_root)}
+        assert parts['capture'].command.count('--source') == 1
+        vision = parts['vision'].command
+        assert vision[vision.index('--cams') + 1] == '1'
+        angle = parts['angle'].command
+        assert angle.count('--source') == 1 and 'http://127.0.0.1:8881/cam/0/frame.jpg' in angle
+    two = {p.name: p for p in demo.plan(demo.parse_args(['--base-port', '8880']), fake_root)}
+    assert two['capture'].command.count('--source') == 2
+    assert two['angle'].command.count('--source') == 2
+
+
+@pytest.mark.parametrize('argv', [['--cam', '1', '--cams', '2', '3'], ['--cam', '-1'], ['--cams', '1', '2', '3'],
+                                  ['--cam', '0', '--angle-roi', '1,2,3,4', '--angle-roi', '1,2,3,4'],
+                                  ['--cam', '0', '--table-source', 'capture:1']])
+def test_one_camera_bad_arguments(argv):
+    with pytest.raises(SystemExit):
+        demo.parse_args(argv)

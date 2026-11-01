@@ -1,4 +1,4 @@
-"""Serve two cameras and a microphone. Run with python -m capture.service."""
+"""Serve one or two cameras and a microphone. Run with python -m capture.service."""
 import argparse
 import asyncio
 from contextlib import asynccontextmanager, nullcontext
@@ -18,8 +18,8 @@ from capture.phone import certificate, lan_address, print_phone_url
 
 class Capture:
     def __init__(self, sources, runs=None, fake_mic=False, loop=False, mic_file=None):
-        if len(sources) != 2:
-            raise ValueError('exactly two sources required')
+        if len(sources) not in (1, 2):
+            raise ValueError('one or two sources required')
         self.done = threading.Event()
         for i, source in enumerate(sources):
             if isinstance(source, str) and source.startswith('phone:') and source != f'phone:{i}':
@@ -80,7 +80,7 @@ def create_app(capture, cert=None):
     app = FastAPI(lifespan=lifespan)
 
     def camera(i):
-        if i not in (0, 1):
+        if not 0 <= i < len(capture.cameras):
             raise HTTPException(404, 'unknown camera')
         return capture.cameras[i]
 
@@ -191,7 +191,7 @@ def create_app(capture, cert=None):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--source', action='append', help='USB index, URL, file or phone:0/phone:1; use twice')
+    parser.add_argument('--source', action='append', help='USB index, URL, file or phone:0/phone:1; once for one camera, twice for two')
     parser.add_argument('--loop', action='store_true')
     mic = parser.add_mutually_exclusive_group()
     mic.add_argument('--fake-mic', action='store_true')
