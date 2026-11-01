@@ -1,7 +1,9 @@
 # Three-minute pitch
 
-What the presenter says, in order. The live run follows REHEARSAL.md. If the cameras fail, play
-`runs/demo-video/bench-coach-demo.mp4` and say that the vision events in it are scripted.
+What the presenter says, in order. The live run follows REHEARSAL.md. If the camera fails, play
+the video made with `scripts/render_demo.py` from a real recorded run (the 9am checklist in
+scripts/README.md) and say which steps on it are marked hand-labelled. Do not use the older
+`runs/demo-video` video: its camera clips and its scripted steps do not match.
 
 ## 0:00 to 0:30, the problem
 
