@@ -323,6 +323,36 @@ One camera is the default for the hackathon demo. The one-camera command:
 Add `--video2 cam2.mp4` only if a second view was recorded. With one video the footage sits
 large at the top left and the feed box spans the space under it.
 
+### iPhone video (AirDrop)
+
+AirDrop the phone video to the Mac, then run either of these on the file as it arrived
+(usually `~/Downloads/IMG_1234.MOV`); no manual conversion is needed:
+
+```sh
+"$BENCH_PY" -m scripts.render_demo --video ~/Downloads/IMG_1234.MOV \
+  --protocol protocol.txt --out ~/Desktop/bench-coach-demo.mp4
+./scripts/demo.sh --source ~/Downloads/IMG_1234.MOV
+```
+
+Both first run `scripts/phonevid.py`, which checks the file with ffprobe and, if it is HEVC,
+bigger than 1920x1080, over 30 fps, variable frame rate, rotated or HDR (HLG, PQ or Dolby
+Vision), writes `IMG_1234.bench.mp4` next to it: H.264, upright, constant 30 fps, at most
+1920x1080 (portrait stays portrait), SDR BT.709. It prints one line saying why, for example
+`phone video: IMG_1234.MOV is HEVC, rotated 270, Dolby Vision HDR; converting ...`. On this Mac it takes about
+5 seconds per minute of footage (4K included); later runs reuse the copy while it is newer than the
+original. A plain 1080p30 H.264 file is used as it is. If the Downloads folder is read-only
+the copy goes to `$BENCH_PHONEVID_CACHE` (default `~/.cache/bench-coach/phonevid`).
+`"$BENCH_PY" scripts/phonevid.py IMG_1234.MOV` does the conversion alone.
+
+9am checklist for the phone:
+
+1. Landscape is best. Portrait or upside-down also works (the rotation tag is applied), but
+   portrait gives a narrow picture.
+2. Any iPhone camera setting works (HEVC or "Most Compatible", 4K or 1080p, 30 or 60 fps,
+   HDR on or off). 1080p30 with HDR off converts fastest.
+3. AirDrop the video, run the render command above, and check the first line of output
+   says what was converted.
+
 ### Recording
 
 1. Camera angle: side-on or 45 degrees from the front, about 60-80 cm from the work, at bench
@@ -331,7 +361,8 @@ large at the top left and the feed box spans the space under it.
    helps when one hand hides the tubes.
 2. Light: bright and even. Overhead lights on, no window behind the bench, no strong shadows on
    the tubes. Blue or purple gloves are fine.
-3. Hold the phone or Pi camera still on a stand. Landscape, 1280x720 or 1920x1080, 30 fps.
+3. Hold the phone or Pi camera still on a stand. Landscape, 1280x720 or 1920x1080, 30 fps
+   (phone footage in other formats is converted automatically, see above).
 4. Before pressing record, write the protocol as numbered lines in a text file, one action
    per line, naming the tubes the way they are labelled (for example `2. Draw 100 uL from tube A`).
    Lines that say attach/eject a tip, draw/collect from and dispense/add into are the ones the
