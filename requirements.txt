@@ -21,7 +21,8 @@ qrcode
 
 # Vision models (weights download on first use)
 torch
-transformers
+transformers>=5      # EdgeTAM and SAM 2.1 image models (vision/masks.py)
+timm                 # EdgeTAM's image encoder (Apache-2.0)
 mediapipe
 
 # Coach speech

@@ -152,8 +152,8 @@ def outline(frame, box, side: int = 96, iters: int = 2, min_fill: float = 0.15):
 class DetectorThread:
     """Runs the box model on the newest frame whenever it is free; the picture never waits for it."""
 
-    def __init__(self, detect, outlines: bool = True):
-        self.detect, self.outlines = detect, outlines
+    def __init__(self, detect, outlines: bool = True, segmenter=None):
+        self.detect, self.outlines, self.segmenter = detect, outlines, segmenter
         self.pending, self.objects, self.version, self.t = None, [], 0, None
         self.ms, self.outline_ms, self.rate = 0.0, 0.0, Rate()
         self.lock, self.wake, self.stopping = threading.Lock(), threading.Event(), False
@@ -187,10 +187,19 @@ class DetectorThread:
                 continue
             t1 = time.perf_counter()
             objs = []
+            things = [d for d in dets if d.label != HAND]
+            masked = {}
+            if self.outlines and self.segmenter is not None and things:
+                # true outlines from the segmenter, all boxes in one call; a box it rejects stays a box
+                from vision.masks import outlines as seg_outlines
+                masked = {id(d): p for d, p in zip(things, seg_outlines(self.segmenter, frame, [d.box for d in things]))}
             for d in dets:
                 o = {"label": d.label, "box": [round(v, 1) for v in d.box], "score": round(d.score, 2),
                      "outline": None}
-                if self.outlines and d.label != HAND:
+                if id(d) in masked:
+                    p = masked[id(d)]
+                    o["outline"] = [[round(x, 1), round(y, 1)] for x, y in p] if p else None
+                elif self.outlines and d.label != HAND:
                     o["outline"] = outline(frame, d.box)
                 objs.append(o)
             t2 = time.perf_counter()
@@ -262,9 +271,9 @@ class LiveView:
 
     def __init__(self, source: Source, detect=None, hands=None, hub: HubState | None = None,
                  max_side: int = 960, outlines: bool = True, fallback: str | None = None,
-                 vision=None, sink=None, quality: int = 80):
+                 vision=None, sink=None, quality: int = 80, segmenter=None):
         self.src, self.fallback, self.max_side, self.quality = source, fallback, max_side, quality
-        self.det = DetectorThread(detect, outlines) if detect is not None else None
+        self.det = DetectorThread(detect, outlines, segmenter) if detect is not None else None
         self.hands_fn, self.hub = hands, hub or HubState(None)
         self.vision, self.sink = vision, sink
         self.jpeg, self.version, self.frame_t, self.size = None, 0, None, (0, 0)
@@ -446,6 +455,8 @@ def parse(argv=None):
     p.add_argument("--port", type=int, default=8706)
     p.add_argument("--max-side", type=int, default=960, help="picture size (longest side)")
     p.add_argument("--no-outlines", action="store_true", help="boxes only")
+    p.add_argument("--masks", action=argparse.BooleanOptionalAction, default=True,
+                   help="true outlines from EdgeTAM (vision/masks.py); --no-masks uses the quick GrabCut cutout")
     p.add_argument("--no-detector", action="store_true", help="hands only")
     p.add_argument("--no-hands", action="store_true")
     p.add_argument("--mirrored", action="store_true", help="camera image is mirrored (selfie view)")
@@ -466,6 +477,10 @@ def main(argv=None):
     if not a.no_detector:
         from vision.zoo import make
         detect = make("gdino-tiny")
+    segmenter = None
+    if detect is not None and a.masks and not a.no_outlines:
+        from vision.masks import load_segmenter
+        segmenter = load_segmenter()
     hands = None
     if not a.no_hands:
         from vision.hands import HandTracker
@@ -477,7 +492,7 @@ def main(argv=None):
         from vision.sink import Sink
         vision, sink = Vision(1), Sink(hub_url, quiet_objects=True)
     view = LiveView(src, detect, hands, HubState(hub_url), a.max_side, not a.no_outlines, a.fallback,
-                    vision, sink).start()
+                    vision, sink, segmenter=segmenter).start()
     server = uvicorn.Server(uvicorn.Config(create_app(view), host=a.host, port=a.port, log_level="warning"))
     th = threading.Thread(target=server.run, daemon=True)
     th.start()

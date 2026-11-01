@@ -37,8 +37,8 @@ def fake_snapshot(cache: Path, repo: str, files):
 
 def test_every_default_model_is_listed_with_size_and_licence():
     keys = [m.key for m in fm.selected()]
-    assert keys == ['gdino-tiny', 'hand-landmarker', 'whisper-small.en', 'silero-vad']
-    assert set(fm.OPTIONAL) == {'florence2', 'gdino-base', 'owlv2'}
+    assert keys == ['gdino-tiny', 'edgetam', 'hand-landmarker', 'whisper-small.en', 'silero-vad']
+    assert set(fm.OPTIONAL) == {'florence2', 'sam2.1-tiny', 'gdino-base', 'owlv2'}
     for m in fm.MODELS:
         assert m.mb > 0 and m.licence and m.used_by
     # vision's own default model id and hand URL are the ones listed here
@@ -195,4 +195,4 @@ def test_real_offline_check_passes():
                           capture_output=True, text=True, timeout=300)
     assert done.returncode == 0, done.stdout
     assert done.stdout.strip().endswith('offline ready')
-    assert done.stdout.count('with the network blocked') == 4
+    assert done.stdout.count('with the network blocked') == 5

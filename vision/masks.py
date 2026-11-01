@@ -59,17 +59,6 @@ def sensible(poly, box, min_fill: float = 0.12, max_spill: float = 0.25) -> bool
     return px1 >= x1 - mx and py1 >= y1 - my and px2 <= x2 + mx and py2 <= y2 + my
 
 
-def move_outline(poly, old_box, new_box):
-    """Carry an outline along when its box moves between detections (shift and stretch)."""
-    if not poly:
-        return poly
-    ox1, oy1, ox2, oy2 = old_box
-    nx1, ny1, nx2, ny2 = new_box
-    sx = (nx2 - nx1) / (ox2 - ox1) if ox2 > ox1 else 1.0
-    sy = (ny2 - ny1) / (oy2 - oy1) if oy2 > oy1 else 1.0
-    return [[nx1 + (x - ox1) * sx, ny1 + (y - oy1) * sy] for x, y in poly]
-
-
 def weights_here(name: str = DEFAULT) -> bool:
     try:
         from huggingface_hub import try_to_load_from_cache
