@@ -172,7 +172,10 @@ own children and verify listener release. No sample-data download, physical devi
 API key or model inference is needed. Table detector calls are faked until vision is
 merged; no table recognition accuracy is claimed.
 
-No packages were added. Existing dependencies used here:
+One package was added for the R2 download (`scripts/requirements.txt`): boto3
+(https://github.com/boto/boto3, Apache-2.0), used only for `list_objects_v2`, `get_object` and
+`download_file` against R2's S3-compatible endpoint. Its tests use a fake client and need no
+network. Existing dependencies used here:
 
 | Library | Source | Licence | Use |
 | --- | --- | --- | --- |
@@ -315,7 +318,49 @@ vision, coach and note code as the live demo, offline, so nothing needs to be st
    cameras can tick off.
 5. Start both cameras, wait two seconds, then do the steps at a normal pace. Change tips where
    the protocol says so. Stop recording two seconds after the last step.
-6. Copy the files to the Mac (AirDrop or `scp` from the Pi).
+6. Copy the files to the Mac (AirDrop or `scp` from the Pi), or let the Pi upload them to R2
+   and pull them as below.
+
+### From the Raspberry Pi through R2
+
+The Pi uploads each recording as one session: a USB camera video, a ribbon camera video, the
+microphone's sound and a `sync.json` that says when all three started. `scripts/r2_pull.py`
+lists and downloads them. It only reads the bucket; it never uploads or deletes.
+
+It needs `boto3` (`BENCH_PY="$BENCH_PY" scripts/addpkg.sh boto3`) and four environment variables:
+`R2_ENDPOINT`, `R2_BUCKET`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`. Keep them in a private
+file outside the repo and load it with `set -a; . path/to/r2.env; set +a`. Without them the
+tools stop with a one-line message saying what is missing.
+
+1. After Rohit stops recording, wait until the Pi says the upload is done, then check it is there:
+
+   ```sh
+   "$BENCH_PY" -m scripts.r2_pull --list
+   ```
+
+   Newest first: device, session id, start time in local time, length, and the size of each
+   file. A USB file of about 1 MB or less for 30 seconds still has every frame, but the picture
+   is dark or the lens is covered (two of the Oct 31 test sessions look like this); turn the
+   lights on and record again.
+2. One command fetches the newest session and renders the finished video, with the USB camera
+   and the ribbon camera as the two views and the recorded sound under the footage:
+
+   ```sh
+   "$BENCH_PY" -m scripts.render_demo --r2-latest --protocol protocol.txt --out ~/Desktop/bench-coach-demo.mp4
+   ```
+
+   `--r2-session e259bf` picks a session from the list instead of the newest; `--r2-device`
+   limits it to one Pi. Downloads go to `$BENCH_R2_CACHE` (default `~/.cache/bench-coach/r2`)
+   in a folder per session, and are not downloaded again on a re-run. `--audio file.m4a` adds
+   sound to any render. The sound starts with the first frame of footage, after the title card.
+3. To run the live demo on the same recording instead:
+
+   ```sh
+   "$BENCH_PY" -m scripts.r2_pull --latest --out ~/bench-r2
+   ./scripts/demo.sh --source ~/bench-r2/current/usb.mp4 ~/bench-r2/current/ribbon.mp4
+   ```
+
+   `current` always points at the last session pulled.
 
 ### The command
 

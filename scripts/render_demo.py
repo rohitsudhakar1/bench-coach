@@ -1,6 +1,7 @@
 """Turn a recorded bench run into a finished 1080p demo video.
 
     python -m scripts.render_demo --video run.mp4 [--video2 cam2.mp4] --protocol protocol.txt --out out.mp4
+    python -m scripts.render_demo --r2-latest --protocol protocol.txt --out out.mp4   (newest Pi session)
 
 What it does, in four passes:
 1. Vision (the same code the live demo runs: Grounding DINO tiny boxes, MediaPipe hands, the
@@ -712,8 +713,14 @@ def credits_for(analysis: dict, labelled: bool) -> list[str]:
 
 def parse(argv=None):
     p = argparse.ArgumentParser(prog="python -m scripts.render_demo", description=__doc__.splitlines()[0])
-    p.add_argument("--video", required=True, type=Path)
+    p.add_argument("--video", type=Path)
     p.add_argument("--video2", type=Path)
+    p.add_argument("--audio", type=Path, help="sound to put under the footage (starts with the first frame)")
+    p.add_argument("--r2-latest", action="store_true",
+                   help="fetch the newest Pi session from R2 (usb and ribbon views, audio) instead of --video")
+    p.add_argument("--r2-session", help="fetch this R2 session id instead of the newest")
+    p.add_argument("--r2-device", help="only sessions from this Pi")
+    p.add_argument("--r2-cache", type=Path, help="download folder (default $BENCH_R2_CACHE or ~/.cache/bench-coach/r2)")
     p.add_argument("--protocol", required=True, type=Path, help="numbered steps in a .txt, or a protocol .yaml")
     p.add_argument("--out", required=True, type=Path)
     p.add_argument("--title", help="protocol title on screen (default: from the protocol)")
@@ -734,8 +741,41 @@ def parse(argv=None):
     return p.parse_args(argv)
 
 
+def from_r2(a):
+    """Fill --video, --video2 and --audio from an R2 session (scripts/r2_pull.py)."""
+    from scripts import r2_pull
+    try:
+        got = r2_pull.fetch(a.r2_session, latest=not a.r2_session, device=a.r2_device, out=a.r2_cache)
+    except r2_pull.PullError as e:
+        sys.exit(f"r2: {e}")
+    views = [got[n] for n in ("usb", "ribbon") if n in got]
+    a.video, a.video2 = views[0], (views[1] if len(views) > 1 else None)
+    if a.audio is None:
+        a.audio = got.get("audio")
+    return a
+
+
+def mux_audio(out: Path, audio: Path, seconds: float = 0.0, title_seconds: float = TITLE_SECONDS):
+    """Put the recording's sound under the footage: it starts after the title card and is cut at
+    the end of the footage. The video stream is copied, not re-encoded."""
+    tmp = out.with_name(out.stem + ".audio-tmp" + out.suffix)
+    trim = ["-t", str(seconds)] if seconds else []
+    delay = int(title_seconds * 1000)
+    cmd = ["ffmpeg", "-y", "-loglevel", "error", "-i", str(out), *trim, "-i", str(audio),
+           "-map", "0:v", "-map", "1:a", "-c:v", "copy", "-c:a", "aac", "-b:a", "160k",
+           "-af", f"adelay={delay}:all=1", "-movflags", "+faststart", str(tmp)]
+    subprocess.run(cmd, check=True)
+    tmp.replace(out)
+
+
 def main(argv=None):
     a = parse(argv)
+    if a.r2_latest or a.r2_session:
+        a = from_r2(a)
+    if a.video is None:
+        sys.exit("give --video (and optionally --video2), or --r2-latest / --r2-session")
+    if a.audio is not None and not a.audio.is_file():
+        sys.exit(f"not found: {a.audio}")
     videos = [a.video] + ([a.video2] if a.video2 else [])
     for v in videos + [a.protocol]:
         if not v.is_file():
@@ -797,8 +837,10 @@ def main(argv=None):
     t = time.time()
     names = [v.stem for v in videos]
     info = render(a.out, videos, names, analysis, log, protocol, note,
-                  credits_for(analysis, labelled), pick_codec(a.codec), a.seconds,
-                  brand=a.brand, title_seconds=a.title_seconds, note_seconds=a.note_seconds, end_lines=a.end)
+                   credits_for(analysis, labelled), pick_codec(a.codec), a.seconds,
+                   brand=a.brand, title_seconds=a.title_seconds, note_seconds=a.note_seconds, end_lines=a.end)
+    if a.audio is not None:
+        mux_audio(a.out, a.audio, a.seconds, a.title_seconds)
     timings["render"] = round(time.time() - t, 1)
     timings["total"] = round(sum(timings.values()), 1)
     kinds = {}
@@ -807,7 +849,8 @@ def main(argv=None):
                                                                    "hand_touch", "warning", "step"):
             kinds[e["kind"]] = kinds.get(e["kind"], 0) + 1
     summary = {"out": a.out.name, "footage_seconds": round(info["duration"], 1), "frames": info["frames"],
-               "seconds": timings, "events": kinds, "note": note is not None}
+               "seconds": timings, "events": kinds, "note": note is not None,
+               "audio": a.audio is not None}
     (work / "summary.json").write_text(json.dumps(summary, indent=1))
     print(json.dumps(summary))
 

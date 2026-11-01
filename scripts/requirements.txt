@@ -1,2 +1,4 @@
 # Process CPU time and resident memory for soak telemetry.
 psutil>=7.2.2
+# Read-only download of Raspberry Pi recordings from Cloudflare R2 (scripts/r2_pull.py).
+boto3>=1.35
