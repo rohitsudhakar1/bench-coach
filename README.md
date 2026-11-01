@@ -1,6 +1,6 @@
 # Bench Coach
 
-Bench Coach uses two cameras and a microphone to follow a pipetting protocol, show the next step, and flag possible technique mistakes. It turns recorded events and speech into a lab note with links back to the video.
+Bench Coach uses one or two cameras and a microphone to follow a pipetting protocol, show the next step, and flag possible technique mistakes. It turns recorded events and speech into a lab note with links back to the video.
 
 Built by the team at the MIT ScienceClaw hackathon, October 30 to November 1, 2026, with AI coding agents. Everything in this repository was written during the hackathon.
 
@@ -24,9 +24,10 @@ To see the full pipeline, first fetch the model weights while you have good Wi-F
 "$BENCH_PY" scripts/fetch_models.py --download
 ```
 
-Then point it at any two video files of someone pipetting (the team's sample clips are not in the repo):
+Then point it at a video of someone pipetting (the team's sample clips are not in the repo). One camera is enough; add a second file for two views:
 
 ```sh
+./scripts/demo.sh --source bench.mp4
 ./scripts/demo.sh --source left.mp4 right.mp4
 ```
 
@@ -71,10 +72,14 @@ Run from the repository root with the dependencies listed in each part installed
 Choose one of these three commands. Stop it with Ctrl-C before starting another.
 
 ```sh
-# Live cameras and microphone
-./scripts/demo.sh --cams 0 1
+# One live camera and the microphone (the hackathon demo setup)
+./scripts/demo.sh --cam 0
 
-# Looped sample videos and a silent microphone
+# One looped sample video and a silent microphone
+./scripts/demo.sh --source "$BENCH_SAMPLES/lsv_mv/CP-Left-Front-414-445.mp4"
+
+# Two live cameras, or two looped sample videos
+./scripts/demo.sh --cams 0 1
 ./scripts/demo.sh --source "$BENCH_SAMPLES/lsv_mv/CP-Left-Front-414-445.mp4" "$BENCH_SAMPLES/lsv_mv/CP-Right-Front-414-445.mp4"
 
 # Bundled synthetic event replay with no cameras or live producers
@@ -84,6 +89,8 @@ Choose one of these three commands. Stop it with Ctrl-C before starting another.
 Wait for **Demo ready**, then open <http://127.0.0.1:8700>. For live cameras or sample videos, review the protocol, choose **Start run**, then **Stop**, and open **Lab note**. The Lab note tab offers the PDF, a run ZIP, Benchling HTML, an eLabFTW `.eln` archive and a steps CSV. They are built from the saved note with no network call. A real Benchling paste and a real eLabFTW import have not been tried; see the [export report](note/ELNEXPORT-REPORT.md). Check that capture recorded as well as the hub logging events. Logs are in `runs/logs/`, and Ctrl-C stops the launcher's processes. Speaker playback is off by default.
 
 The bundled replay ticks off the first two steps and shows three lines in the conversation. Its angle reading, warning and question reach the event history but not the page, because the page shows those only during a run and a replay has no run. Its camera panels stay empty and it produces no recording or lab note. It does not measure recognition. For a saved log containing run events, use the [app replay guide](app/README.md) with an existing hub instead. The launcher's direct replay retains run events, which the rebuilt hub rejects through its event endpoint.
+
+With one camera the page shows a single wide view, and the angle panel says it is a rough lean from one camera rather than a measured tilt. Stereo calibration does not apply and preflight skips it.
 
 Angle uses vision's held-pipette boxes by default. Supply `--angle-roi X,Y,W,H` for a manual shaft crop, once per camera used, and `--calibration angle/calibration.json` for your measured camera setup. Without usable calibration, angles are rough image projections. The [launcher guide](scripts/README.md) covers hints, table mode, recorded microphone input and custom ports.
 
@@ -134,7 +141,7 @@ Table mode was reworked to cope with coloured light, dim light, hue shifts, shad
 
 ## At the table
 
-- [ ] Fix both cameras and confirm that each feed advances. Cover one lens at a time to check their identities. Keep demo ports 8700–8705 available and use 8800–8899 for separate checks.
+- [ ] For the one-camera demo, fix the camera side-on or 45 degrees from the front, start `./scripts/demo.sh --cam 0`, and confirm the feed advances. With two cameras, fix both, confirm each feed advances and cover one lens at a time to check their identities. Keep demo ports 8700–8705 available and use 8800–8899 for separate checks.
 - [ ] For table mode, bring an overhead camera, tubes A/B/C with red/blue/yellow caps respectively, a tip box, a waste cup, and a matte magenta band near the pipette tip above the liquid-contact area. Fix the rack and camera in place.
 - [ ] Follow the [table setup commands](scripts/README.md#table-day). With caps closed and the pipette out of view, save the regions through capture's existing feed. Review every region. Start with `--table` for an overhead view in capture camera slot 0, the default table source. Table mode and hint mode cannot be combined.
 - [ ] For physical tilt, follow the [calibration checklist](angle/CALIBRATE.md) with the level checkerboard, then complete the pencil check. Camera order and resolution must match the saved calibration. Do not move cameras afterward. Disable angle for a table-only demo if calibration is not ready.

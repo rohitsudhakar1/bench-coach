@@ -6,6 +6,11 @@ Set `BENCH_PY` to a Python environment containing the parts' dependencies, or le
 unset to use `python3`. Set `BENCH_SAMPLES` to your sample-video folder. From the repo root:
 
 ```sh
+# One camera (the hackathon demo setup): device 0, or one looped video file
+./scripts/demo.sh --cam 0
+./scripts/demo.sh --source "$BENCH_SAMPLES/lsv_mv/CP-Left-Front-414-445.mp4"
+
+# Two cameras:
 ./scripts/demo.sh --cams 0 1
 
 # Two looped files and a silent fake microphone:
@@ -17,6 +22,11 @@ unset to use `python3`. Set `BENCH_SAMPLES` to your sample-video folder. From th
   "$BENCH_SAMPLES/multicam_test/camB_sim.mp4" --base-port 8820 \
   --hints --mic-file tests/voice/testing.wav
 ```
+
+`--cam N` is the same as `--cams N`. With one camera, vision reads one view and angle
+gives a rough lean from that view (no stereo tilt); the hub page shows one wide view and
+says so in the angle panel. `--angle-roi` may be given once, and `--table-source` must be
+`capture:0`. Preflight accepts one camera and skips the stereo calibration check.
 
 The last example requires a locally supplied WAV; it is not bundled here. Live cameras
 use the real microphone unless `--fake-mic` or `--mic-file` is given. File cameras loop
@@ -303,12 +313,22 @@ video: every object outlined and named, both hands drawn, the protocol steps tic
 right with their times, warnings as they happen, and the lab note at the end. It runs the same
 vision, coach and note code as the live demo, offline, so nothing needs to be started first.
 
+One camera is the default for the hackathon demo. The one-camera command:
+
+```sh
+"$BENCH_PY" -m scripts.render_demo --video bench.mp4 \
+  --protocol protocol.txt --out ~/Desktop/bench-coach-demo.mp4
+```
+
+Add `--video2 cam2.mp4` only if a second view was recorded. With one video the footage sits
+large at the top left and the feed box spans the space under it.
+
 ### Recording
 
 1. Camera angle: side-on or 45 degrees from the front, about 60-80 cm from the work, at bench
    height or a little above. The pipette, the tip box and every tube must be in frame the whole
-   time, and the hands must not leave it. A second camera from the other side helps when one
-   hand hides the tubes.
+   time, and the hands must not leave it. One camera is enough; a second from the other side
+   helps when one hand hides the tubes.
 2. Light: bright and even. Overhead lights on, no window behind the bench, no strong shadows on
    the tubes. Blue or purple gloves are fine.
 3. Hold the phone or Pi camera still on a stand. Landscape, 1280x720 or 1920x1080, 30 fps.
@@ -316,7 +336,7 @@ vision, coach and note code as the live demo, offline, so nothing needs to be st
    per line, naming the tubes the way they are labelled (for example `2. Draw 100 uL from tube A`).
    Lines that say attach/eject a tip, draw/collect from and dispense/add into are the ones the
    cameras can tick off.
-5. Start both cameras, wait two seconds, then do the steps at a normal pace. Change tips where
+5. Start the camera (or both), wait two seconds, then do the steps at a normal pace. Change tips where
    the protocol says so. Stop recording two seconds after the last step.
 6. Copy the files to the Mac (AirDrop or `scp` from the Pi), or let the Pi upload them to R2
    and pull them as below.
